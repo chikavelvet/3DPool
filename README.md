@@ -21,4 +21,8 @@ Pool sounds. We can record our own pool sounds in Jester/Union. There are probab
 
 ## Software Architecture
 
+### Data Heirarchy
+Ball class with enumeration for the different kinds of balls (cue, 8, regular). Pocket class with information about pockets.
+
+
 ## Labor Division
