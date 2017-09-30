@@ -31,6 +31,10 @@ http://www.ogre3d.org/wiki/
 #include <OgreFrameListener.h>
 #include <Overlay/OgreOverlaySystem.h>
 
+#include "Simulator.h"
+
+#include <btBulletDynamicsCommon.h>
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 #  include <OIS/OISEvents.h>
 #  include <OIS/OISInputManager.h>
