@@ -59,18 +59,18 @@ Cutting out extraneous GUI. Scale back the extra features.
 
 ## Labor Division
 ### By Person
-Casey:
+*Casey*:
  * Textures/graphics
 
-Rishi:
+*Rishi*:
  * Bullet
  * Finding sounds
 
-Trey:
+*Trey*:
  * Game loop
  * Data structures
 
-All:
+*All*:
  * GUI
  * Bullet Integration
  * Extra features
