@@ -15,28 +15,28 @@ http://www.ogre3d.org/wiki/
 -----------------------------------------------------------------------------
 */
 
-#include "TutorialApplication.h"
+#include "ThreeDPool.h"
 
 //---------------------------------------------------------------------------
-TutorialApplication::TutorialApplication(void)
+ThreeDPool::ThreeDPool(void)
 {
 }
 //---------------------------------------------------------------------------
-TutorialApplication::~TutorialApplication(void)
+ThreeDPool::~ThreeDPool(void)
 {
 }
 
 //---------------------------------------------------------------------------
-void TutorialApplication::createScene(void)
+void ThreeDPool::createScene(void)
 {
     // Create your scene here :)
 }
 //---------------------------------------------------------------------------
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include "windows.h"
-#endif
+//#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+//#define WIN32_LEAN_AND_MEAN
+//#include "windows.h"
+//#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +49,7 @@ extern "C" {
 #endif
     {
         // Create application object
-        TutorialApplication app;
+        ThreeDPool app;
 
         try {
             app.go();

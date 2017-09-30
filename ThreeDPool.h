@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-Filename:    TutorialApplication.h
+Filename:    ThreeDPool.h
 -----------------------------------------------------------------------------
 
 This source file is part of the
@@ -15,18 +15,18 @@ http://www.ogre3d.org/wiki/
 -----------------------------------------------------------------------------
 */
 
-#ifndef __TutorialApplication_h_
-#define __TutorialApplication_h_
+#ifndef __ThreeDPool_h_
+#define __ThreeDPool_h_
 
 #include "BaseApplication.h"
 
 //---------------------------------------------------------------------------
 
-class TutorialApplication : public BaseApplication
+class ThreeDPool : public BaseApplication
 {
 public:
-    TutorialApplication(void);
-    virtual ~TutorialApplication(void);
+    ThreeDPool(void);
+    virtual ~ThreeDPool(void);
 
 protected:
     virtual void createScene(void);
