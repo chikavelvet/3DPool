@@ -19,10 +19,70 @@ Camera locked on cue ball when setting up hit. After hitting, camera moves out t
 ### Sound
 Pool sounds. We can record our own pool sounds in Jester/Union. There are probably free sounds online. Sound dependent on the force at which the balls are hit.
 
+### Extra Features
+(stretch goals)
+ * Different difficulty settings
+	* Adding small gravity to pockets to make getting ball in easier
+ * Prediction line for ball path
+ * Non-spherical/standard balls/cue
+ * GUI menu for configuration
+ * Main menu/title screen
+ * Game saving/loading
+ * Pausing/pause menu
+
 ## Software Architecture
 
 ### Data Heirarchy
 Ball class with enumeration for the different kinds of balls (cue, 8, regular). Pocket class with information about pockets.
 
+### Modularity
+XML/Json file with information about the starting positions of balls, the number of balls, pocket position/size/orientation, etc., that can be modified. 
+
+### Loops
+#### Game Loop
+Mediates between Ogre and Bullet. The game loop will keep track of important state, will send/receive information from the simulation loop (Bullet), and will send out information to the rendering loop (Ogre). Events from the simulation loop will trigger flags that will be dealt with in the game loop.
+
+#### Rendering Loop
+Renders frames based on information from the game loop.
+
+#### Simulation Loop
+Deals with collision detection, ball movement, and other physics things. Communicates with the game loop via events.
+
+### Game State
+Game state will be kept track of by the game loop in various appropriate data structures (vector for balls, vector for pockets).
+
+### Work Estimation
+The hardest part will be figuring out Bullet and integrating the game and simulation loop. The game state and game logic shouldn't be too hard, as well as camera movement and controls.
+
+### Scale-back plan
+Cutting out extraneous GUI. Scale back the extra features.
 
 ## Labor Division
+### By Person
+Casey:
+ * Textures/graphics
+
+Rishi:
+ * Bullet
+ * Finding sounds
+
+Trey:
+ * Game loop
+ * Data structures
+
+All:
+ * GUI
+ * Bullet Integration
+ * Extra features
+
+### Tools for Parallel Work
+ * Git
+ * Slack
+ * Trello
+ * Pair Programming
+
+### Meeting Up Plan
+We have decided that Tuesday and Thursdays are generally better, though MWF can work after 5. Weekends may be fine too. On each meetup, we will schedule the next meet up. 
+
+
+
