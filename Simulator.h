@@ -5,18 +5,31 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "BulletContactCallback.h"
+#include "OgreMotionState.h"
 
-class Simulator {
-    btDefaultCollisionConfiguration* collisionConfiguration;
-    btCollisionDispatcher* dispatcher;
-    btBroadphaseInterface* overlappingPairCache;
-    btSequentialImpulseConstraintSolver* solver;
-    btDiscreteDynamicsWorld* dynamicsWorld;
-    std::vector<btCollisionShape*> collisionShapes;
-    std::map<std::string, btRigidBody*> physicsAccessors;
-public:
-    void initObjects();
-    btDiscreteDynamicsWorld* getDynamicsWorld();
+class GameObject;
+
+class Simulator { 
+protected: 
+	btDefaultCollisionConfiguration* collisionConfiguration; 
+	btCollisionDispatcher* dispatcher; 
+	btBroadphaseInterface* overlappingPairCache; 
+	btSequentialImpulseConstraintSolver* solver;
+	btDiscreteDynamicsWorld* dynamicsWorld;
+	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+	std::deque<GameObject*> objList; 
+
+public: 
+	Simulator(){}; 
+	~Simulator(){}; 
+
+	void initObjects();
+	void addObject(GameObject* o); 
+	bool removeObject(GameObject* o); 
+	btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld; }
+	void stepSimulation(const Ogre::Real elapsedTime, 
+		int maxSubSteps = 1, const Ogre::Real fixedTimestep = 1.0f/60.0f); 
 };
 
 #endif

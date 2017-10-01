@@ -1050,11 +1050,11 @@
  /usr/include/bullet/BulletDynamics/Vehicle/btWheelInfo.h \
  /usr/include/bullet/BulletDynamics/Dynamics/btActionInterface.h \
  /usr/include/bullet/BulletDynamics/Dynamics/btRigidBody.h \
- /usr/include/ois/OISEvents.h /usr/include/ois/OISPrereqs.h \
- /usr/include/ois/OISConfig.h /usr/include/ois/OISInputManager.h \
- /usr/include/ois/OISKeyboard.h /usr/include/ois/OISObject.h \
- /usr/include/ois/OISInterface.h /usr/include/ois/OISEvents.h \
- /usr/include/ois/OISMouse.h
+ BulletContactCallback.h OgreMotionState.h /usr/include/ois/OISEvents.h \
+ /usr/include/ois/OISPrereqs.h /usr/include/ois/OISConfig.h \
+ /usr/include/ois/OISInputManager.h /usr/include/ois/OISKeyboard.h \
+ /usr/include/ois/OISObject.h /usr/include/ois/OISInterface.h \
+ /usr/include/ois/OISEvents.h /usr/include/ois/OISMouse.h
 
 /usr/include/stdc-predef.h:
 
@@ -3481,6 +3481,10 @@ Simulator.h:
 /usr/include/bullet/BulletDynamics/Dynamics/btActionInterface.h:
 
 /usr/include/bullet/BulletDynamics/Dynamics/btRigidBody.h:
+
+BulletContactCallback.h:
+
+OgreMotionState.h:
 
 /usr/include/ois/OISEvents.h:
 

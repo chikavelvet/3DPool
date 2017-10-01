@@ -1,4 +1,5 @@
 #include "Simulator.h"
+#include "GameObject.h"
 
 void Simulator::initObjects() {
     collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -11,6 +12,7 @@ void Simulator::initObjects() {
             collisionConfiguration);
 }
 
-btDiscreteDynamicsWorld* Simulator::getDynamicsWorld() {
-    return dynamicsWorld;
+void Simulator::addObject (GameObject* o) { 
+	objList.push_back(o); 
+	dynamicsWorld->addRigidBody(o->getBody());       
 }

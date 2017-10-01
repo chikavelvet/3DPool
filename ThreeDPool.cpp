@@ -39,7 +39,6 @@ void ThreeDPool::createCamera(void){
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
-    // Create your scene here :)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
