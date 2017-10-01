@@ -28,28 +28,40 @@ ThreeDPool::~ThreeDPool(void)
 {
 }
 
+void ThreeDPool::createCamera(void){
+    //make a new camera and give it a point to look at
+    mCamera = mSceneMgr->createCamera("PlayerCam");
+    mCamera->setPosition(Ogre::Vector3(50, 50, 300));
+    mCamera->lookAt(Ogre::Vector3(50, 50, 50));
+    mCamera->setNearClipDistance(1);
+}
+
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
     // Create your scene here :)
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+
+    Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);//blueprint
+    Ogre::MeshManager::getSingleton().createPlane(
+        "plane1",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Ogre::Plane(Ogre::Vector3::UNIT_Y, 0),
+        1500, 1500, 20, 20,
+        true,
+        1, 5, 5,
+        Ogre::Vector3::UNIT_Z);
+    Ogre::Entity* plane1 = mSceneMgr->createEntity("plane1");
+    Ogre::SceneNode* node1 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    node1->attachObject(plane1);
+    node1->setPosition(0, 0, 0);
+    plane1->setCastShadows(false); //obviously we don't want the ground to cast shadows
+    plane1->setMaterialName("Examples/Rockwall");//give the ground a material
+    
     Simulator physicsEngine;
     physicsEngine.initObjects();
-    
-    Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-    Ogre::MeshPtr planePtr = Ogre::MeshManager::getSingleton().createPlane("ground",
-            Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-            plane,
-            1500, 1500,
-            20, 20,
-            true,
-            1,
-            5, 5,
-            Ogre::Vector3::UNIT_Z);
-    
-    Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
-    Ogre::SceneNode* groundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("groundNode");
-    groundNode->attachObject(entGround);
-    
+
     btTransform groundTransform;
     groundTransform.setIdentity();
     groundTransform.setOrigin(btVector3(0, -50, 0));

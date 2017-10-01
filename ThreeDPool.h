@@ -30,6 +30,7 @@ public:
 
 protected:
     virtual void createScene(void);
+    virtual void createCamera(void);
 };
 
 //---------------------------------------------------------------------------
