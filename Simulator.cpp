@@ -10,6 +10,8 @@ void Simulator::initObjects() {
             overlappingPairCache,
             solver,
             collisionConfiguration);
+
+    dynamicsWorld->setGravity(btVector3(0.0, -0.098, 0.0));
 }
 
 void Simulator::addObject (GameObject* o) { 

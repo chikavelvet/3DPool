@@ -30,6 +30,11 @@ public:
 	btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld; }
 	void stepSimulation(const Ogre::Real elapsedTime, 
 		int maxSubSteps = 1, const Ogre::Real fixedTimestep = 1.0f/60.0f); 
+	btAlignedObjectArray<btCollisionShape*> & getCollisionShapes(){
+		return collisionShapes;
+	}
+	void trackRigidBodyWithName(btRigidBody* body, std::string name){}
+
 };
 
 #endif
