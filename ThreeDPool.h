@@ -27,10 +27,14 @@ class ThreeDPool : public BaseApplication
 public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
+    Simulator* physicsEngine;
+
 
 protected:
     virtual void createScene(void);
     virtual void createCamera(void);
+    virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
 };
 
 //---------------------------------------------------------------------------

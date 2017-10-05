@@ -33,8 +33,7 @@ public:
 	btAlignedObjectArray<btCollisionShape*> & getCollisionShapes(){
 		return collisionShapes;
 	}
-	void trackRigidBodyWithName(btRigidBody* body, std::string name){}
-
+	void trackRigidBodyWithName(btRigidBody* body, std::string name);
 };
 
 #endif
