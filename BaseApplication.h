@@ -123,7 +123,10 @@ protected:
     OIS::Keyboard*              mKeyboard;
 
     // Added for Mac compatibility
-    Ogre::String                 m_ResourcePath;
+    Ogre::String                m_ResourcePath;
+
+
+    bool                        hitBall;
 
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader m_StaticPluginLoader;

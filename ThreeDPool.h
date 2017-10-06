@@ -34,6 +34,11 @@ protected:
     virtual void createScene(void);
     virtual void createCamera(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+	void doPhysicsForThisFrame(void);
+	btRigidBody* makeBall(btScalar x, btScalar y, btScalar z, std::string name);
+	void makeGround(void);
+	void checkForHits(void);
+
 
 };
 

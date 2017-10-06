@@ -36,7 +36,8 @@ BaseApplication::BaseApplication(void)
     mInputManager(0),
     mMouse(0),
     mKeyboard(0),
-    mOverlaySystem(0)
+    mOverlaySystem(0),
+    hitBall(false)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
     m_ResourcePath = Ogre::macBundlePath() + "/Contents/Resources/";
@@ -272,17 +273,38 @@ bool BaseApplication::keyReleased(const OIS::KeyEvent &arg)
     return true;
 }
 //---------------------------------------------------------------------------
-bool BaseApplication::mouseMoved(const OIS::MouseEvent &arg)
+bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
 {
+
+    // ---------CODE I FOUND IN TUTORIALS TO ROTATE MOUSE----------//
+    // if (me.state.buttonDown(OIS::MB_Right))
+    // {
+    //   mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
+    //   mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
+    // }
     return true;
 }
 //---------------------------------------------------------------------------
-bool BaseApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
+    using namespace std;
+    switch(id)
+    {
+        case OIS::MB_Left:
+            cout << "Left" << endl;
+            hitBall = true;
+            break;
+        case OIS::MB_Right:
+            break;
+        case OIS::MB_Middle:
+            break;
+        default:
+            break;
+    }
     return true;
 }
 //---------------------------------------------------------------------------
-bool BaseApplication::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool BaseApplication::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
     return true;
 }

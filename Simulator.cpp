@@ -11,7 +11,7 @@ void Simulator::initObjects() {
             solver,
             collisionConfiguration);
 
-    dynamicsWorld->setGravity(btVector3(0.0, -2, 0.0));
+    dynamicsWorld->setGravity(btVector3(0, 0, 0));
 }
 
 void Simulator::addObject (GameObject* o) { 

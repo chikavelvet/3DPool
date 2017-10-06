@@ -18,13 +18,19 @@ protected:
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
-	std::deque<GameObject*> objList; 
+	// std::deque<GameObject*> objList; 
+	std::vector<GameObject*> objList; 
 
 public: 
 	Simulator(){}; 
 	~Simulator(){}; 
 
 	void initObjects();
+
+	GameObject* getObject(int index){
+		return objList.at(index);
+	}
+
 	void addObject(GameObject* o); 
 	bool removeObject(GameObject* o); 
 	btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld; }
