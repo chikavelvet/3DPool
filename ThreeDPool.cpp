@@ -20,6 +20,7 @@ http://www.ogre3d.org/wiki/
 #include "ThreeDPool.h"
 
 btRigidBody* cueBall;
+btRigidBody* cueStick;
 
 
 //---------------------------------------------------------------------------
@@ -35,7 +36,7 @@ void ThreeDPool::createCamera(void){
     //make a new camera and give it a point to look at
     mCamera = mSceneMgr->createCamera("PlayerCam");
     mCamera->setPosition(Ogre::Vector3(700, 700, 700));
-    mCamera->lookAt(Ogre::Vector3(50, 300, 50));
+    mCamera->lookAt(Ogre::Vector3(50, 300, 300));
     mCamera->setNearClipDistance(1);
 }
 
@@ -67,14 +68,23 @@ void ThreeDPool::doPhysicsForThisFrame()
 
 void ThreeDPool::checkForHits(void)
 {
-    if(hitBall && cueBall)
+    // if(hitBall && cueBall)
+    // {
+    //     hitBall = false;
+    //     if(cueBall->getLinearVelocity() != btVector3(0, 0, 0))
+    //         return;
+
+    //     cueBall->activate(true);
+    //     cueBall->applyCentralImpulse( btVector3( 0.f, 0.f, -300 ) );
+    // }
+    if(hitBall && cueStick)
     {
         hitBall = false;
-        if(cueBall->getLinearVelocity() != btVector3(0, 0, 0))
+        if(cueStick->getLinearVelocity() != btVector3(0, 0, 0))
             return;
 
-        cueBall->activate(true);
-        cueBall->applyCentralImpulse( btVector3( 0.f, 0.f, -300 ) );
+        cueStick->activate(true);
+        cueStick->applyCentralImpulse( btVector3( 0.f, 0.f, -300 ) );
     }
 }
 
@@ -112,7 +122,7 @@ void ThreeDPool::createScene(void)
     makeGround();
     cueBall = makeBall(100, 500, 500, "cueBall");
     makeBall(100, 500, 300, "randomBall");
-
+    cueStick = makeCueStick(100, 500, 600, "cueStick");
 /*    for(int x = 0; x < 1; ++x){
         makeBall((300*x), 200, 0, "ball"+x);
     }
@@ -156,6 +166,46 @@ void ThreeDPool::makeGround(void)
     groundBody->setFriction(btScalar(1.0));
     groundBody->setRollingFriction(btScalar(1.0));
     physicsEngine->getDynamicsWorld()->addRigidBody(groundBody);
+}
+
+btRigidBody* ThreeDPool::makeCueStick(btScalar x, btScalar y, btScalar z, std::string name)
+{
+        Ogre::Entity *entity = this->mSceneMgr->createEntity("cube.mesh"); 
+        Ogre::SceneNode *newNode = this->mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+        newNode->attachObject(entity);
+        newNode->setPosition(x, y, z);
+        newNode->scale(0.05, 0.05, 0.5);
+         
+        //create the new shape, and tell the physics that is a sphere
+        btCollisionShape *newRigidShape = new btBoxShape(btVector3(5, 5, 50));
+        physicsEngine->getCollisionShapes().push_back(newRigidShape);
+        btTransform startTransform;
+        startTransform.setIdentity();
+        startTransform.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
+         
+        //set the mass of the object. a mass of "0" means that it is an immovable object
+        btScalar mass = 10;
+        btVector3 localInertia(0,0,0);
+         
+        btVector3 initialPosition(x, y, z);
+        startTransform.setOrigin(initialPosition);
+        newRigidShape->calculateLocalInertia(mass, localInertia);
+         
+        //actually contruvc the body and add it to the dynamics world
+        btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform); 
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, newRigidShape, localInertia);
+        btRigidBody *body = new btRigidBody(rbInfo);
+        body->setUserPointer(newNode);
+        body->setRestitution(0.8);
+        body->setFriction(btScalar(1.0));
+        body->setRollingFriction(btScalar(1.0));
+        body->setDamping(0.1, 0);
+
+
+        physicsEngine->getDynamicsWorld()->addRigidBody(body);
+        physicsEngine->trackRigidBodyWithName(body, name);    
+        return body;
+
 }
 
 btRigidBody* ThreeDPool::makeBall(btScalar x, btScalar y, btScalar z, std::string name){
