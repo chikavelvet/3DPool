@@ -35,7 +35,7 @@ ThreeDPool::~ThreeDPool(void)
 void ThreeDPool::createCamera(void){
     //make a new camera and give it a point to look at
     mCamera = mSceneMgr->createCamera("PlayerCam");
-    mCamera->setPosition(Ogre::Vector3(700, 700, 700));
+    mCamera->setPosition(Ogre::Vector3(1400, 1400, 1400));
     mCamera->lookAt(Ogre::Vector3(50, 300, 300));
     mCamera->setNearClipDistance(1);
 }
@@ -43,7 +43,12 @@ void ThreeDPool::createCamera(void){
 
 void ThreeDPool::doPhysicsForThisFrame()
 {
-    checkForHits();
+    if(adjustingStick)
+        readjustStickToCueball();
+    else if(hitBall)
+        releaseStick();
+    else
+        moveStick();
 
     if (physicsEngine != NULL){
         physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
@@ -66,26 +71,44 @@ void ThreeDPool::doPhysicsForThisFrame()
     }
 }
 
-void ThreeDPool::checkForHits(void)
-{
-    // if(hitBall && cueBall)
-    // {
-    //     hitBall = false;
-    //     if(cueBall->getLinearVelocity() != btVector3(0, 0, 0))
-    //         return;
+bool ThreeDPool::readjustStickToCueball(void){
+    bool turnIsOver = (fabs(cueStick->getLinearVelocity().length())<0.5f && fabs(cueBall->getLinearVelocity().length())<0.5f);
+    if(!turnIsOver) return false;
+    std::cout << turnIsOver << std::boolalpha << std::endl;
 
-    //     cueBall->activate(true);
-    //     cueBall->applyCentralImpulse( btVector3( 0.f, 0.f, -300 ) );
-    // }
-    if(hitBall && cueStick)
-    {
-        hitBall = false;
-        if(cueStick->getLinearVelocity() != btVector3(0, 0, 0))
-            return;
+    btVector3 ballPos = cueBall->getCenterOfMassPosition();
+    btTransform newTransform = cueStick->getCenterOfMassTransform();
+    newTransform.setOrigin(btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + 50));
+    cueStick->setCenterOfMassTransform(newTransform);
+    adjustingStick = false;
+    return true;
+}
 
-        cueStick->activate(true);
-        cueStick->applyCentralImpulse( btVector3( 0.f, 0.f, -300 ) );
+void ThreeDPool::moveStick(void){
+    if(adjustingStick)
+        return;
+
+    cueStick->activate(true);
+    
+    if(cueStickTotal < cueStickMax) {
+        if(cueStickTotal + cueStickDelta > cueStickMax)
+            cueStickDelta = cueStickMax - cueStickTotal;
+        if(LMBDown) {
+            cueStick->translate(btVector3(0.f, 0.f, cueStickDelta));
+        }
     }
+
+    cueStickTotal += cueStickDelta;
+    cueStickDelta = 0;
+}
+
+void ThreeDPool::releaseStick(void) {
+    cueStick->activate(true);
+    cueStick->applyCentralImpulse( btVector3( 0.f, 0.f, -2 * cueStickTotal) );
+    cueStickTotal = 0;
+    cueStickDelta = 0;
+    adjustingStick = true;
+    hitBall = false;
 }
 
 bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
@@ -177,7 +200,7 @@ btRigidBody* ThreeDPool::makeCueStick(btScalar x, btScalar y, btScalar z, std::s
         newNode->scale(0.05, 0.05, 0.5);
          
         //create the new shape, and tell the physics that is a sphere
-        btCollisionShape *newRigidShape = new btBoxShape(btVector3(5, 5, 50));
+        btCollisionShape *newRigidShape = new btBoxShape(btVector3(5, 5, 23));
         physicsEngine->getCollisionShapes().push_back(newRigidShape);
         btTransform startTransform;
         startTransform.setIdentity();
@@ -196,7 +219,7 @@ btRigidBody* ThreeDPool::makeCueStick(btScalar x, btScalar y, btScalar z, std::s
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, newRigidShape, localInertia);
         btRigidBody *body = new btRigidBody(rbInfo);
         body->setUserPointer(newNode);
-        body->setRestitution(0.8);
+        body->setRestitution(2.0);
         body->setFriction(btScalar(1.0));
         body->setRollingFriction(btScalar(1.0));
         body->setDamping(0.1, 0);
@@ -217,7 +240,7 @@ btRigidBody* ThreeDPool::makeBall(btScalar x, btScalar y, btScalar z, std::strin
         newNode->scale(0.1, 0.1, 0.1);
          
         //create the new shape, and tell the physics that is a sphere
-        btCollisionShape *newRigidShape = new btSphereShape(2);
+        btCollisionShape *newRigidShape = new btSphereShape(9);
         physicsEngine->getCollisionShapes().push_back(newRigidShape);
         btTransform startTransform;
         startTransform.setIdentity();

@@ -39,6 +39,9 @@ protected:
 	void makeGround(void);
 	void checkForHits(void);
   btRigidBody* makeCueStick(btScalar x, btScalar y, btScalar z, std::string name);
+  void moveStick(void);
+  void releaseStick(void);
+  bool readjustStickToCueball(void);
 
 
 };

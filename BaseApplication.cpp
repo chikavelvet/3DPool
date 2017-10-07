@@ -37,7 +37,12 @@ BaseApplication::BaseApplication(void)
     mMouse(0),
     mKeyboard(0),
     mOverlaySystem(0),
-    hitBall(false)
+    hitBall(false),
+    LMBDown(false),
+    cueStickDelta(0),
+    cueStickTotal(0),
+    cueStickMax(100),
+    adjustingStick(false)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
     m_ResourcePath = Ogre::macBundlePath() + "/Contents/Resources/";
@@ -276,7 +281,12 @@ bool BaseApplication::keyReleased(const OIS::KeyEvent &arg)
 bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
 {
 
-    // ---------CODE I FOUND IN TUTORIALS TO ROTATE MOUSE----------//
+    if(me.state.buttonDown(OIS::MB_Left))
+    {
+        cueStickDelta = me.state.Y.rel * 0.1;
+    }
+
+    // // ---------CODE I FOUND IN TUTORIALS TO ROTATE MOUSE----------//
     // if (me.state.buttonDown(OIS::MB_Right))
     // {
     //   mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
@@ -292,7 +302,7 @@ bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID
     {
         case OIS::MB_Left:
             cout << "Left" << endl;
-            hitBall = true;
+            LMBDown = true;
             break;
         case OIS::MB_Right:
             break;
@@ -306,6 +316,9 @@ bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID
 //---------------------------------------------------------------------------
 bool BaseApplication::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
+    if(cueStickTotal!=0)
+        if(id==OIS::MB_Left)
+            hitBall = true;
     return true;
 }
 //---------------------------------------------------------------------------

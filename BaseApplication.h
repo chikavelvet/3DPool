@@ -126,7 +126,12 @@ protected:
     Ogre::String                m_ResourcePath;
 
 
+    float                       cueStickDelta;
+    float                       cueStickTotal;
+    float                       cueStickMax;
     bool                        hitBall;
+    bool                        LMBDown;
+    bool                        adjustingStick;
 
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader m_StaticPluginLoader;
