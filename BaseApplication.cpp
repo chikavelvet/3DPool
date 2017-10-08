@@ -41,8 +41,6 @@ BaseApplication::BaseApplication(void)
     LMBDown(false),
     cueStickDelta(0),
     cueStickTotal(0),
-    cueStickMin(50),
-    cueStickMax(200),
     adjustingStick(false)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE

@@ -128,8 +128,6 @@ protected:
 
     float                       cueStickDelta;
     float                       cueStickTotal;
-    float                       cueStickMax;
-    float                       cueStickMin;
     bool                        hitBall;
     bool                        LMBDown;
     bool                        adjustingStick;

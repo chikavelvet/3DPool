@@ -50,17 +50,19 @@ void ThreeDPool::doPhysicsForThisFrame()
 {
     if(adjustingStick) {
         if(fabs(cueBall->getLinearVelocity().length())>0.f){
-            // cueStick->setDamping(1, 0);    
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
-        bool done = readjustStickToCueball();
+        // bool done = readjustStickToCueball();
+        bool done = cueStickObject->readjustStickToCueball(adjustingStick);
         if(done) cameraFollowStick();
     }
     else if(hitBall) {
-        releaseStick();
+        // releaseStick();
+        cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {
-        chargeStick();
+        // chargeStick();
+        cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
     if (physicsEngine != NULL){
         physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
@@ -83,67 +85,7 @@ void ThreeDPool::doPhysicsForThisFrame()
     }
 }
 
-bool ThreeDPool::readjustStickToCueball(void){
-    if(fabs(cueStick->getLinearVelocity().length())<0.5f){
-        cueStick->activate(false);
-        cueStickObject->getOgreEntity()->setVisible(false);
-    }
 
-    bool turnIsOver = (fabs(cueStick->getLinearVelocity().length())<0.5f && fabs(cueBall->getLinearVelocity().length())<0.5f);
-    if(!turnIsOver) return false;
-    std::cout << turnIsOver << std::boolalpha << std::endl;
-
-    btVector3 ballPos = cueBall->getCenterOfMassPosition();
-    btTransform newTransform = cueStick->getCenterOfMassTransform();
-    newTransform.setOrigin(btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
-    cueStick->setCenterOfMassTransform(newTransform);
-    adjustingStick = false;
-    cueStick->activate(true);
-    cueStickObject->getOgreEntity()->setVisible(true);
-    return true;
-}
-
-void ThreeDPool::cameraFollowStick(void)
-{
-    btVector3 btPos = cueStick->getCenterOfMassPosition();
-    Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
-    mCamera->lookAt(cueStickPos);
-    mCamera->setPosition(cueStickPos + cameraOffset);
-}
-
-void ThreeDPool::chargeStick(void){
-    if(adjustingStick)
-        return;
-
-    cueStick->activate(true);
-    
-    if(cueStickTotal < cueStickMax && cueStickTotal > 0.0f) {
-        if(cueStickTotal + cueStickDelta > cueStickMax)
-            cueStickDelta = cueStickMax - cueStickTotal;
-        if(cueStickTotal + cueStickDelta < cueStickMin){
-            cueStickTotal = cueStickMin;
-            cueStickDelta = 0.0f;
-            return;
-        }
-        if(LMBDown) {
-            cueStick->translate(btVector3(0.f, 0.f, cueStickDelta));
-        }
-    }
-
-    cueStickTotal += cueStickDelta;
-    cueStickDelta = 0;
-}
-
-void ThreeDPool::releaseStick(void) {
-    if(cueStickTotal > 0.0f){
-        cueStick->activate(true);
-        cueStick->applyCentralImpulse( btVector3( 0.f, 0.f, -powerMultiplier * cueStickTotal * cueStickTotal) );
-    }
-    cueStickTotal = 0;
-    cueStickDelta = 0;
-    adjustingStick = true;
-    hitBall = false;
-}
 
 bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
@@ -162,15 +104,9 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     return true;
 }
 
-
-
-
-
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
-    powerMultiplier = 0.02f;
-
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -183,14 +119,15 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 100, 500, 500, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 100, 500, 500 + cueStickMin, "cueStick");
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 100, 500, 500 + 50, "cueStick", 200.f, 50.f, 0.02f, cueBall);
     cueStick = cueStickObject->getRigidBody();
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
     cameraFollowStick();
 
 
     //----------MAKE MORE BALLS AS DESIRED-----------//
-    //makeBall(100, 500, 300, "randomBall");
+    //Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 100, 500, 300, "otherBall1");
+    //....etc.
 }
 
 void ThreeDPool::makeGround(void)
@@ -232,87 +169,74 @@ void ThreeDPool::makeGround(void)
     physicsEngine->getDynamicsWorld()->addRigidBody(groundBody);
 }
 
-// btRigidBody* ThreeDPool::makeCueStick(btScalar x, btScalar y, btScalar z, std::string name)
-// {
-//     Ogre::Entity *entity = this->mSceneMgr->createEntity("cube.mesh"); 
-//     Ogre::SceneNode *newNode = this->mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
-//     newNode->attachObject(entity);
-//     newNode->setPosition(x, y, z);
-//     newNode->scale(0.05, 0.05, 0.5);
-     
-//     //create the new shape, and tell the physics that is a sphere
-//     btCollisionShape *newRigidShape = new btBoxShape(btVector3(5, 5, 23));
-//     physicsEngine->getCollisionShapes().push_back(newRigidShape);
-//     btTransform startTransform;
-//     startTransform.setIdentity();
-//     startTransform.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-     
-//     //set the mass of the object. a mass of "0" means that it is an immovable object
-//     btScalar mass = 10;
-//     btVector3 localInertia(0,0,0);
-     
-//     btVector3 initialPosition(x, y, z);
-//     startTransform.setOrigin(initialPosition);
-//     newRigidShape->calculateLocalInertia(mass, localInertia);
-     
-//     //actually contruvc the body and add it to the dynamics world
-//     btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform); 
-//     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, newRigidShape, localInertia);
-//     btRigidBody *body = new btRigidBody(rbInfo);
-//     body->setUserPointer(newNode);
-//     body->setRestitution(2.0);
-//     body->setFriction(btScalar(1.0));
-//     body->setRollingFriction(btScalar(1.0));
-//     body->setDamping(0.5, 0);
 
 
-//     physicsEngine->getDynamicsWorld()->addRigidBody(body);
-//     physicsEngine->trackRigidBodyWithName(body, name);    
+void ThreeDPool::cameraFollowStick(void)
+{
+    btVector3 btPos = cueStick->getCenterOfMassPosition();
+    Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
+    mCamera->lookAt(cueStickPos);
+    mCamera->setPosition(cueStickPos + cameraOffset);
+}
+
+// bool ThreeDPool::readjustStickToCueball(void){
+//     if(fabs(cueStick->getLinearVelocity().length())<0.5f){
+//         cueStick->activate(false);
+//         cueStickObject->getOgreEntity()->setVisible(false);
+//     }
+
+//     bool turnIsOver = (fabs(cueStick->getLinearVelocity().length())<0.5f && fabs(cueBall->getLinearVelocity().length())<0.5f);
+//     if(!turnIsOver) return false;
+//     std::cout << turnIsOver << std::boolalpha << std::endl;
+
+//     btVector3 ballPos = cueBall->getCenterOfMassPosition();
+//     btTransform newTransform = cueStick->getCenterOfMassTransform();
+//     newTransform.setOrigin(btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
+//     cueStick->setCenterOfMassTransform(newTransform);
+//     adjustingStick = false;
+//     cueStick->activate(true);
+//     cueStickObject->getOgreEntity()->setVisible(true);
+//     return true;
+// }
+
+
+// void ThreeDPool::chargeStick(void){
+//     if(adjustingStick)
+//         return;
+
+//     cueStick->activate(true);
     
+//     if(cueStickTotal < cueStickMax && cueStickTotal > 0.0f) {
+//         if(cueStickTotal + cueStickDelta > cueStickMax)
+//             cueStickDelta = cueStickMax - cueStickTotal;
+//         if(cueStickTotal + cueStickDelta < cueStickMin){
+//             cueStickTotal = cueStickMin;
+//             cueStickDelta = 0.0f;
+//             return;
+//         }
+//         if(LMBDown) {
+//             cueStick->translate(btVector3(0.f, 0.f, cueStickDelta));
+//         }
+//     }
 
-//     cameraOffset = Ogre::Vector3(mCamera->getPosition()-Ogre::Vector3(float(x), float(y), float(z)));
-
-//     return body;
+//     cueStickTotal += cueStickDelta;
+//     cueStickDelta = 0;
 // }
 
-// btRigidBody* ThreeDPool::makeBall(btScalar x, btScalar y, btScalar z, std::string name){
-//         //----------------make a cube-------------------//
-//         Ogre::Entity *entity = this->mSceneMgr->createEntity("sphere.mesh"); 
-//         Ogre::SceneNode *newNode = this->mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
-//         newNode->attachObject(entity);
-//         newNode->setPosition(x, y, z);
-//         newNode->scale(0.1, 0.1, 0.1);
-         
-//         //create the new shape, and tell the physics that is a sphere
-//         btCollisionShape *newRigidShape = new btSphereShape(9);
-//         physicsEngine->getCollisionShapes().push_back(newRigidShape);
-//         btTransform startTransform;
-//         startTransform.setIdentity();
-//         startTransform.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-         
-//         //set the mass of the object. a mass of "0" means that it is an immovable object
-//         btScalar mass = 5;
-//         btVector3 localInertia(0,0,0);
-         
-//         btVector3 initialPosition(x, y, z);
-//         startTransform.setOrigin(initialPosition);
-//         newRigidShape->calculateLocalInertia(mass, localInertia);
-         
-//         //actually contruvc the body and add it to the dynamics world
-//         btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform); 
-//         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, newRigidShape, localInertia);
-//         btRigidBody *body = new btRigidBody(rbInfo);
-//         body->setUserPointer(newNode);
-//         body->setRestitution(0.8);
-//         body->setFriction(btScalar(1.0));
-//         body->setRollingFriction(btScalar(1.0));
-//         body->setDamping(0.1, 0);
-
-
-//         physicsEngine->getDynamicsWorld()->addRigidBody(body);
-//         physicsEngine->trackRigidBodyWithName(body, name);    
-//         return body;
+// void ThreeDPool::releaseStick(void) {
+//     if(cueStickTotal > 0.0f){
+//         cueStick->activate(true);
+//         cueStick->applyCentralImpulse( btVector3( 0.f, 0.f, -powerMultiplier * cueStickTotal * cueStickTotal) );
+//     }
+//     cueStickTotal = 0;
+//     cueStickDelta = 0;
+//     adjustingStick = true;
+//     hitBall = false;
 // }
+
+
+
+
 
 //---------------------------------------------------------------------------
 
