@@ -28,7 +28,7 @@ public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
     Simulator* physicsEngine;
-
+    float powerMultiplier;
 
 protected:
     virtual void createScene(void);
