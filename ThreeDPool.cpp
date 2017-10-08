@@ -46,40 +46,42 @@ void ThreeDPool::createCamera(void){
 }
 
 
-void ThreeDPool::doPhysicsForThisFrame()
+void ThreeDPool::gameLoop()
 {
     if(adjustingStick) {
         if(fabs(cueBall->getLinearVelocity().length())>0.f){
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
-        // bool done = readjustStickToCueball();
         bool done = cueStickObject->readjustStickToCueball(adjustingStick);
         if(done) cameraFollowStick();
     }
     else if(hitBall) {
-        // releaseStick();
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {
-        // chargeStick();
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
-    if (physicsEngine != NULL){
-        physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
-        int length = physicsEngine->getDynamicsWorld()->getCollisionObjectArray().size();
-        for (int i = 0; i< length; i++) {
-            btCollisionObject* obj = physicsEngine->getDynamicsWorld()->getCollisionObjectArray()[i];
-            btRigidBody* body = btRigidBody::upcast(obj);
-            if (body && body->getMotionState()){
-                btTransform trans;
-                body->getMotionState()->getWorldTransform(trans);
-                void *userPointer = body->getUserPointer();
-                if (userPointer) {
-                    btQuaternion orientation = trans.getRotation();
-                    Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode *>(userPointer);
-                    sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-                    sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));
-                }
+}
+
+void ThreeDPool::physicsLoop()
+{
+    if (physicsEngine == NULL)
+        return;
+
+    physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
+    int length = physicsEngine->getDynamicsWorld()->getCollisionObjectArray().size();
+    for (int i = 0; i< length; i++) {
+        btCollisionObject* obj = physicsEngine->getDynamicsWorld()->getCollisionObjectArray()[i];
+        btRigidBody* body = btRigidBody::upcast(obj);
+        if (body && body->getMotionState()){
+            btTransform trans;
+            body->getMotionState()->getWorldTransform(trans);
+            void *userPointer = body->getUserPointer();
+            if (userPointer) {
+                btQuaternion orientation = trans.getRotation();
+                Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode *>(userPointer);
+                sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+                sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));
             }
         }
     }
@@ -119,7 +121,8 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 100, 500, 500, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 100, 500, 500 + 50, "cueStick", 200.f, 50.f, 0.02f, cueBall);
+    float cueStickMax = 200.0f, cueStickMin = 50.0f, powerMultiplier = 0.02f;
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 100, 500, 500 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
     cueStick = cueStickObject->getRigidBody();
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
     cameraFollowStick();
@@ -178,65 +181,6 @@ void ThreeDPool::cameraFollowStick(void)
     mCamera->lookAt(cueStickPos);
     mCamera->setPosition(cueStickPos + cameraOffset);
 }
-
-// bool ThreeDPool::readjustStickToCueball(void){
-//     if(fabs(cueStick->getLinearVelocity().length())<0.5f){
-//         cueStick->activate(false);
-//         cueStickObject->getOgreEntity()->setVisible(false);
-//     }
-
-//     bool turnIsOver = (fabs(cueStick->getLinearVelocity().length())<0.5f && fabs(cueBall->getLinearVelocity().length())<0.5f);
-//     if(!turnIsOver) return false;
-//     std::cout << turnIsOver << std::boolalpha << std::endl;
-
-//     btVector3 ballPos = cueBall->getCenterOfMassPosition();
-//     btTransform newTransform = cueStick->getCenterOfMassTransform();
-//     newTransform.setOrigin(btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
-//     cueStick->setCenterOfMassTransform(newTransform);
-//     adjustingStick = false;
-//     cueStick->activate(true);
-//     cueStickObject->getOgreEntity()->setVisible(true);
-//     return true;
-// }
-
-
-// void ThreeDPool::chargeStick(void){
-//     if(adjustingStick)
-//         return;
-
-//     cueStick->activate(true);
-    
-//     if(cueStickTotal < cueStickMax && cueStickTotal > 0.0f) {
-//         if(cueStickTotal + cueStickDelta > cueStickMax)
-//             cueStickDelta = cueStickMax - cueStickTotal;
-//         if(cueStickTotal + cueStickDelta < cueStickMin){
-//             cueStickTotal = cueStickMin;
-//             cueStickDelta = 0.0f;
-//             return;
-//         }
-//         if(LMBDown) {
-//             cueStick->translate(btVector3(0.f, 0.f, cueStickDelta));
-//         }
-//     }
-
-//     cueStickTotal += cueStickDelta;
-//     cueStickDelta = 0;
-// }
-
-// void ThreeDPool::releaseStick(void) {
-//     if(cueStickTotal > 0.0f){
-//         cueStick->activate(true);
-//         cueStick->applyCentralImpulse( btVector3( 0.f, 0.f, -powerMultiplier * cueStickTotal * cueStickTotal) );
-//     }
-//     cueStickTotal = 0;
-//     cueStickDelta = 0;
-//     adjustingStick = true;
-//     hitBall = false;
-// }
-
-
-
-
 
 //---------------------------------------------------------------------------
 
