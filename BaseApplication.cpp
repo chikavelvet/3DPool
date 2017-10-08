@@ -41,7 +41,8 @@ BaseApplication::BaseApplication(void)
     LMBDown(false),
     cueStickDelta(0),
     cueStickTotal(0),
-    cueStickMax(100),
+    cueStickMin(50),
+    cueStickMax(200),
     adjustingStick(false)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
@@ -283,7 +284,7 @@ bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
 
     if(me.state.buttonDown(OIS::MB_Left))
     {
-        cueStickDelta = me.state.Y.rel * 0.1;
+        cueStickDelta = me.state.Y.rel * 0.05;
     }
 
     // // ---------CODE I FOUND IN TUTORIALS TO ROTATE MOUSE----------//

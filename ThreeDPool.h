@@ -42,8 +42,7 @@ protected:
   void moveStick(void);
   void releaseStick(void);
   bool readjustStickToCueball(void);
-
-
+  void cameraFollowStick(void);
 };
 
 //---------------------------------------------------------------------------
