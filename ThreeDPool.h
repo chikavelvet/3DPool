@@ -33,17 +33,11 @@ protected:
     virtual void createScene(void);
     virtual void createCamera(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
-	void doPhysicsForThisFrame(void);
-	
-
-  btRigidBody* makeBall(btScalar x, btScalar y, btScalar z, std::string name);
-	void makeGround(void);
-	void checkForHits(void);
-  btRigidBody* makeCueStick(btScalar x, btScalar y, btScalar z, std::string name);
-  void chargeStick(void);
-  void releaseStick(void);
-  bool readjustStickToCueball(void);
-  void cameraFollowStick(void);
+    
+    void gameLoop(void);
+    void physicsLoop(void);
+    void makeGround(void);
+    void cameraFollowStick(void);
 };
 
 //---------------------------------------------------------------------------
