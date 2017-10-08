@@ -20,12 +20,14 @@ http://www.ogre3d.org/wiki/
 #include "ThreeDPool.h"
 #include "Ball.h"
 #include "Stick.h"
+#include "Room.h"
 
 Ogre::Vector3 cameraOffset;
 Stick* cueStickObject;
 btRigidBody* cueStick;
 Ball* cueBallObject;
 btRigidBody* cueBall;
+Room* room;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void)
@@ -65,7 +67,7 @@ void ThreeDPool::createScene(void)
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
 
-    makeGround();
+    // makeGround();
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 100, 500, 500, "cueBall");
     cueBall = cueBallObject->getRigidBody();
@@ -76,6 +78,8 @@ void ThreeDPool::createScene(void)
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
     cameraFollowStick();
+
+    room = new Room(mSceneMgr);
 
     //----------MAKE MORE BALLS AS DESIRED-----------//
     //Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 100, 500, 300, "otherBall1");
