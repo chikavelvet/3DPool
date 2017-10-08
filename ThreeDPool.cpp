@@ -60,7 +60,7 @@ void ThreeDPool::doPhysicsForThisFrame()
         releaseStick();
     }
     else {
-        moveStick();
+        chargeStick();
     }
     if (physicsEngine != NULL){
         physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
@@ -86,7 +86,7 @@ void ThreeDPool::doPhysicsForThisFrame()
 bool ThreeDPool::readjustStickToCueball(void){
     if(fabs(cueStick->getLinearVelocity().length())<0.5f){
         cueStick->activate(false);
-
+        cueStickObject->getOgreEntity()->setVisible(false);
     }
 
     bool turnIsOver = (fabs(cueStick->getLinearVelocity().length())<0.5f && fabs(cueBall->getLinearVelocity().length())<0.5f);
@@ -99,6 +99,7 @@ bool ThreeDPool::readjustStickToCueball(void){
     cueStick->setCenterOfMassTransform(newTransform);
     adjustingStick = false;
     cueStick->activate(true);
+    cueStickObject->getOgreEntity()->setVisible(true);
     return true;
 }
 
@@ -110,7 +111,7 @@ void ThreeDPool::cameraFollowStick(void)
     mCamera->setPosition(cueStickPos + cameraOffset);
 }
 
-void ThreeDPool::moveStick(void){
+void ThreeDPool::chargeStick(void){
     if(adjustingStick)
         return;
 
@@ -181,15 +182,15 @@ void ThreeDPool::createScene(void)
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 100, 500, 500, "cueBall");
     cueBall = cueBallObject->getRigidBody();
-    // makeBall(100, 500, 300, "randomBall");
 
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 100, 500, 500 + cueStickMin, "cueStick");
     cueStick = cueStickObject->getRigidBody();
-    // cueStick = makeCueStick(100, 500, 500 + cueStickMin, "cueStick");
-
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
-
     cameraFollowStick();
+
+
+    //----------MAKE MORE BALLS AS DESIRED-----------//
+    //makeBall(100, 500, 300, "randomBall");
 }
 
 void ThreeDPool::makeGround(void)
