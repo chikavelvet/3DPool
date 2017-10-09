@@ -60,6 +60,8 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
+    adjustingCamera = false;
+
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -69,17 +71,20 @@ void ThreeDPool::createScene(void)
 
     // makeGround();
 
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 100, 500, 500, "cueBall");
+    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    float cueStickMax = 300.0f, cueStickMin = 50.0f, powerMultiplier = 0.01f;
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 100, 500, 500 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
+    float cueStickMax = 100.0f, cueStickMin = 40.0f, powerMultiplier = 0.2f;
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
     cueStick = cueStickObject->getRigidBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
-    cameraFollowStick();
+    btVector3 btPos = cueStick->getCenterOfMassPosition();
+    Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
+    mCamera->lookAt(cueStickPos);
+    mCamera->setPosition(cueStickPos + cameraOffset);
 
-    room = new Room(mSceneMgr);
+    room = new Room(mSceneMgr, physicsEngine);
 
     //----------MAKE MORE BALLS AS DESIRED-----------//
     //Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 100, 500, 300, "otherBall1");
@@ -94,6 +99,10 @@ void ThreeDPool::gameLoop()
         }
         bool done = cueStickObject->readjustStickToCueball(adjustingStick);
         if(done) cameraFollowStick();
+        adjustingCamera = true;
+    }
+    else if(adjustingCamera){
+
     }
     else if(hitBall) {
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
@@ -127,54 +136,80 @@ void ThreeDPool::physicsLoop()
     }
 }
 
-void ThreeDPool::makeGround(void)
-{
-    //---------------make a ground plane------------------------//
-    Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);//blueprint
-    Ogre::MeshManager::getSingleton().createPlane(
-        "plane1",
-        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-        Ogre::Plane(Ogre::Vector3::UNIT_Y, 0),
-        1500, 1500, 20, 20,
-        true,
-        1, 5, 5,
-        Ogre::Vector3::UNIT_Z);
-    Ogre::Entity* plane1 = mSceneMgr->createEntity("plane1");
-    Ogre::SceneNode* node1 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    node1->attachObject(plane1);
-    node1->setPosition(0, 0, 0);
-    plane1->setCastShadows(false); //obviously we don't want the ground to cast shadows
-    plane1->setMaterialName("Examples/Rockwall");//give the ground a material
+// void ThreeDPool::makeGround(void)
+// {
+//     //---------------make a ground plane------------------------//
+//     Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);//blueprint
+//     Ogre::MeshManager::getSingleton().createPlane(
+//         "plane1",
+//         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+//         Ogre::Plane(Ogre::Vector3::UNIT_Y, 0),
+//         1500, 1500, 20, 20,
+//         true,
+//         1, 5, 5,
+//         Ogre::Vector3::UNIT_Z);
+//     Ogre::Entity* plane1 = mSceneMgr->createEntity("plane1");
+//     Ogre::SceneNode* node1 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+//     node1->attachObject(plane1);
+//     node1->setPosition(0, 0, 0);
+//     plane1->setCastShadows(false); //obviously we don't want the ground to cast shadows
+//     plane1->setMaterialName("Examples/Rockwall");//give the ground a material
     
-    btTransform groundTransform;
-    groundTransform.setIdentity();
-    groundTransform.setOrigin(btVector3(0, 10, 0));
+//     btTransform groundTransform;
+//     groundTransform.setIdentity();
+//     groundTransform.setOrigin(btVector3(0, 10, 0));
     
-    btScalar groundMass(0.);
-    btVector3 localGroundInertia(0, 0, 0);
+//     btScalar groundMass(0.);
+//     btVector3 localGroundInertia(0, 0, 0);
     
-    btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(1500.), btScalar(20.), btScalar(1500.)));
-    btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
+//     btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(1500.), btScalar(20.), btScalar(1500.)));
+//     btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
     
-    groundShape->calculateLocalInertia(groundMass, localGroundInertia);
+//     groundShape->calculateLocalInertia(groundMass, localGroundInertia);
     
-    btRigidBody::btRigidBodyConstructionInfo groundRBInfo(groundMass, groundMotionState, groundShape, localGroundInertia);
-    btRigidBody* groundBody = new btRigidBody(groundRBInfo);
-    groundBody->setRestitution(1.0);
-    groundBody->setFriction(btScalar(1.0));
-    groundBody->setRollingFriction(btScalar(1.0));
-    physicsEngine->getDynamicsWorld()->addRigidBody(groundBody);
-}
+//     btRigidBody::btRigidBodyConstructionInfo groundRBInfo(groundMass, groundMotionState, groundShape, localGroundInertia);
+//     btRigidBody* groundBody = new btRigidBody(groundRBInfo);
+//     groundBody->setRestitution(1.0);
+//     groundBody->setFriction(btScalar(1.0));
+//     groundBody->setRollingFriction(btScalar(1.0));
+//     physicsEngine->getDynamicsWorld()->addRigidBody(groundBody);
+// }
 
 
 //--------Camera Section-------//
 void ThreeDPool::createCamera(void){
     mCamera = mSceneMgr->createCamera("PlayerCam");
-    mCamera->setPosition(Ogre::Vector3(1400, 1400, 1400));
+    mCamera->setPosition(Ogre::Vector3(200, 200, 200));
     mCamera->setNearClipDistance(1);
 
     // mCamera->lookAt(Ogre::Vector3(50, 300, 300));
 }
+
+// void ThreeDPool::startCameraAdjust(){
+//     cameraCounter = 30;
+//     btVector3 btPos = cueStick->getCenterOfMassPosition();
+//     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
+
+//     newLookAt = cueStickPos;
+//     newCamPos = cueStickPos + cameraOffset;
+// }
+
+// void ThreeDPool::cameraAdjust(){
+//     assert(cameraCounter >= 0);
+//     if(cameraCounter==0){
+//         adjustingCamera = false;
+//         return;
+//     }
+//     --cameraCounter;
+
+//     mCamera->lookAt()
+
+//     btVector3 btPos = cueStick->getCenterOfMassPosition();
+//     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
+//     mCamera->lookAt(cueStickPos);
+//     mCamera->setPosition(cueStickPos + cameraOffset);
+
+// }
 
 void ThreeDPool::cameraFollowStick(void)
 {

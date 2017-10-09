@@ -284,12 +284,12 @@ bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
     {
         cueStickDelta = me.state.Y.rel * 0.05;
     }
-/*    else
-    {
-      mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
-      mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
-    }
-*/    return true;
+    // else
+    // {
+    //   mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
+    //   mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
+    // }
+    return true;
 }
 //---------------------------------------------------------------------------
 bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)

@@ -27,10 +27,10 @@ public:
         node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
         node->attachObject(entity);
         node->setPosition(x, y, z);
-        node->scale(0.05, 0.05, 0.5);
+        node->scale(0.01, 0.01, 0.5);
          
         //create the new shape, and tell the physics that is a sphere
-        colShape = new btBoxShape(btVector3(5, 5, 23));
+        colShape = new btBoxShape(btVector3(1, 1, 23));
         physicsEngine->getCollisionShapes().push_back(colShape);
         btTransform startTransform;
         startTransform.setIdentity();

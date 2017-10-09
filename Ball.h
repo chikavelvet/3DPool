@@ -46,9 +46,10 @@ public:
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
         body = new btRigidBody(rbInfo);
         body->setUserPointer(node);
-        body->setRestitution(0.8);
         body->setFriction(btScalar(1.0));
         body->setRollingFriction(btScalar(1.0));
+        
+        body->setRestitution(0.8);
         body->setDamping(0.03, 0);
 
         physicsEngine->getDynamicsWorld()->addRigidBody(body);

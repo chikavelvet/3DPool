@@ -27,7 +27,6 @@ class ThreeDPool : public BaseApplication
 public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
-    Simulator* physicsEngine;
 
 protected:
     virtual void createScene(void);
@@ -38,6 +37,12 @@ protected:
     void physicsLoop(void);
     void makeGround(void);
     void cameraFollowStick(void);
+
+    Simulator* physicsEngine;
+    bool adjustingCamera;
+    int cameraCounter = 0;
+    Ogre::Vector3 newLookAt;
+    Ogre::Vector3 newCamPos;
 };
 
 //---------------------------------------------------------------------------
