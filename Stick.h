@@ -95,12 +95,11 @@ public:
         // std::cout << turnIsOver << std::boolalpha << std::endl;
 
         btVector3 ballPos = cueBall->getCenterOfMassPosition();
-        btTransform newTransform = body->getCenterOfMassTransform();
-        newTransform.setOrigin(btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
+        btTransform newTransform (btQuaternion(0, 0, 0, 1), btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
         body->setCenterOfMassTransform(newTransform);
         adjustingStick = false;
         // body->activate(true);
-        physicsEngine->getDynamicsWorld()->addRigidBody(body);    
+        physicsEngine->getDynamicsWorld()->addRigidBody(body);
         entity->setVisible(true);
         return true;
     }
@@ -120,7 +119,9 @@ public:
                 return;
             }
             if(LMBDown) {
-                body->translate(btVector3(0.f, 0.f, cueStickDelta));
+
+                btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * cueStickDelta;
+                body->translate(movement);
             }
         }
 
@@ -132,7 +133,8 @@ public:
     void releaseStick(bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
         if(cueStickTotal >= cueStickMin){
             body->activate(true);
-            body->applyCentralImpulse( btVector3( 0.f, 0.f, -powerMultiplier * cueStickTotal) );
+            btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * -powerMultiplier * cueStickTotal;    
+            body->applyCentralImpulse(movement);
         }
         cueStickTotal = 0;
         cueStickDelta = 0;
