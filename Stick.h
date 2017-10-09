@@ -140,28 +140,13 @@ public:
         hitBall = false;
     }
 
-    // void rotateToMouseInput(float& deltaRotationX, float& deltaRotationY){
- 
-    //     //make X rotation
-    //     btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
-    //     rotation *= body->getOrientation();
-        
-    //     //add on Y rotation
-    //     // rotation *= btQuaternion(btVector3(1, 0, 0), btRadians(deltaRotationY));
 
-    //     btVector3 newPosition = body->getCenterOfMassPosition();
-    //     newPosition += 
-
-
-    //     //actually apply the rotations
-    //     body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
-        
-    //     //reset delta rotations
-    //     deltaRotationX = 0.0f;
-    //     deltaRotationY = 0.0f;
-    // }
     void rotateToMouseInput(float& deltaRotationX, float& deltaRotationY){
+        rotateToMouseXInput(deltaRotationX);
+        rotateToMouseYInput(deltaRotationY);
+    }
 
+    void rotateToMouseXInput(float& deltaRotationX){
         btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
         body->translate(difference);
 
@@ -169,16 +154,33 @@ public:
         btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
         rotation *= body->getOrientation();
        
-        //add on Y rotation
-        // rotation *= btQuaternion(btVector3(1, 0, 0), btRadians(deltaRotationY));
-
         //actually apply the rotations
         body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
         
-        body->translate(-difference);
+        btVector3 invDifference = difference;
+        invDifference = invDifference.rotate(btVector3(0, 1, 0),btRadians(deltaRotationX));
+        body->translate(-invDifference);
 
         //reset delta rotations
         deltaRotationX = 0.0f;
+    }
+
+    void rotateToMouseYInput(float& deltaRotationY){
+        btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
+        body->translate(difference);
+
+        //make Y rotation
+        btQuaternion rotation(btVector3(1, 0, 0),btRadians(deltaRotationY));
+        rotation *= body->getOrientation();
+       
+        //actually apply the rotations
+        body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
+        
+        btVector3 invDifference = difference;
+        invDifference = invDifference.rotate(btVector3(1, 0, 0), btRadians(deltaRotationY));
+        body->translate(-invDifference);
+
+        //reset delta rotations
         deltaRotationY = 0.0f;
     }
 
