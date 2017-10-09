@@ -74,12 +74,34 @@ void ThreeDPool::createScene(void)
 }
 
 bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
+    if (!BaseApplication::keyReleased(arg))
+        return false;
+    
     switch(arg.key) {
         case OIS::KC_T :
             adjustingCamera = !adjustingCamera;
             break;
     }
     return true;
+}
+
+bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
+    if (!BaseApplication::mouseMoved(me))
+        return false;
+    
+    if (!adjustingCamera) {
+        if(me.state.buttonDown(OIS::MB_Left))
+        {
+            cueStickDelta = me.state.Y.rel * 0.05;
+        }
+        else{
+            cueStickRotationX = 0.13 * me.state.X.rel;
+            cueStickRotationY = 0.13 * me.state.Y.rel;
+        }
+    } else {
+       mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
+       mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
+    }
 }
 
 bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)

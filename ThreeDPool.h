@@ -37,7 +37,9 @@ protected:
     void physicsLoop(void);
     void makeGround(void);
     void cameraFollowStick(void);
+    
     bool keyReleased(const OIS::KeyEvent &arg);
+    bool mouseMoved(const OIS::MouseEvent &me);
 
     Simulator* physicsEngine;
     bool adjustingCamera;
