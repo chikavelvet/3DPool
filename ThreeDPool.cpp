@@ -74,7 +74,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    float cueStickMax = 100.0f, cueStickMin = 40.0f, powerMultiplier = 0.2f;
+    float cueStickMax = 100.0f, cueStickMin = 50.0f, powerMultiplier = 0.1f;
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
     cueStick = cueStickObject->getRigidBody();
     
@@ -99,11 +99,9 @@ void ThreeDPool::gameLoop()
         }
         bool done = cueStickObject->readjustStickToCueball(adjustingStick);
         if(done) cameraFollowStick();
-        adjustingCamera = true;
+        // adjustingCamera = true;
     }
-    else if(adjustingCamera){
-
-    }
+    // else if(adjustingCamera){}
     else if(hitBall) {
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
