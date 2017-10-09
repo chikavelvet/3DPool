@@ -29,6 +29,9 @@ Ball* cueBallObject;
 btRigidBody* cueBall;
 Room* room;
 
+Ogre::Vector3 preFreeLookCameraPosition;
+Ogre::Vector3 preFreeLookCameraDirection;
+
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
 mMoveSpeed(750)
@@ -79,7 +82,15 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
     
     switch(arg.key) {
         case OIS::KC_T :
-            adjustingCamera = !adjustingCamera;
+            if (!adjustingCamera){
+                preFreeLookCameraPosition = mCamera->getPosition();
+                preFreeLookCameraDirection = mCamera->getDirection();
+                adjustingCamera = true;
+            } else {
+                mCamera->setPosition(preFreeLookCameraPosition);
+                mCamera->setDirection(preFreeLookCameraDirection);
+                adjustingCamera = false;
+            }
             break;
     }
     return true;
