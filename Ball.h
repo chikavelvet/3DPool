@@ -24,10 +24,10 @@ public:
         node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
         node->attachObject(entity);
         node->setPosition(x, y, z);
-        node->scale(0.1, 0.1, 0.1);
+        node->scale(0.05, 0.05, 0.05);
          
         //create the new shape, and tell the physics that is a sphere
-        colShape = new btSphereShape(9);
+        colShape = new btSphereShape(1);
         physicsEngine->getCollisionShapes().push_back(colShape);
         btTransform startTransform;
         startTransform.setIdentity();

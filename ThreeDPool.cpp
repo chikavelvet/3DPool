@@ -74,7 +74,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    float cueStickMax = 100.0f, cueStickMin = 50.0f, powerMultiplier = 0.1f;
+    float cueStickMax = 50.0f, cueStickMin = 30.0f, powerMultiplier = 0.02f;
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
     cueStick = cueStickObject->getRigidBody();
     
