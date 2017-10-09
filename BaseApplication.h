@@ -132,6 +132,9 @@ protected:
     bool                        LMBDown;
     bool                        adjustingStick;
 
+    float                       cueStickRotationX;
+    float                       cueStickRotationY;
+
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader m_StaticPluginLoader;
 #endif

@@ -80,15 +80,17 @@ public:
 		return node;
 	}
 
-    bool readjustStickToCueball(bool& adjustingStick){
-        float cueBallSpeed = fabs(cueBall->getLinearVelocity().length());
-        float cueStickSpeed = fabs(body->getLinearVelocity().length());
-        if(cueStickSpeed<0.5f){
-            body->activate(false);
+    bool readjustStickToCueball(bool& adjustingStick, Simulator* physicsEngine){
+        bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.5f) && (fabs(body->getTotalForce().length()) < 0.5f);        
+        bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.5f) && (fabs(cueBall->getTotalForce().length()) < 0.5f);
+
+        if(cueStickStopped){
+            physicsEngine->getDynamicsWorld()->removeRigidBody(body);
+            // body->activate(false);
             entity->setVisible(false);
         }
 
-        bool turnIsOver = (cueStickSpeed<0.5f) && (cueBallSpeed<0.5f);
+        bool turnIsOver = cueBallStopped && cueStickStopped;
         if(!turnIsOver) return false;
         // std::cout << turnIsOver << std::boolalpha << std::endl;
 
@@ -97,7 +99,8 @@ public:
         newTransform.setOrigin(btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
         body->setCenterOfMassTransform(newTransform);
         adjustingStick = false;
-        body->activate(true);
+        // body->activate(true);
+        physicsEngine->getDynamicsWorld()->addRigidBody(body);    
         entity->setVisible(true);
         return true;
     }
@@ -129,12 +132,54 @@ public:
     void releaseStick(bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
         if(cueStickTotal >= cueStickMin){
             body->activate(true);
-            body->applyCentralImpulse( btVector3( 0.f, 0.f, -powerMultiplier * cueStickTotal * cueStickTotal) );
+            body->applyCentralImpulse( btVector3( 0.f, 0.f, -powerMultiplier * cueStickTotal) );
         }
         cueStickTotal = 0;
         cueStickDelta = 0;
         adjustingStick = true;
         hitBall = false;
+    }
+
+    // void rotateToMouseInput(float& deltaRotationX, float& deltaRotationY){
+ 
+    //     //make X rotation
+    //     btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
+    //     rotation *= body->getOrientation();
+        
+    //     //add on Y rotation
+    //     // rotation *= btQuaternion(btVector3(1, 0, 0), btRadians(deltaRotationY));
+
+    //     btVector3 newPosition = body->getCenterOfMassPosition();
+    //     newPosition += 
+
+
+    //     //actually apply the rotations
+    //     body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
+        
+    //     //reset delta rotations
+    //     deltaRotationX = 0.0f;
+    //     deltaRotationY = 0.0f;
+    // }
+    void rotateToMouseInput(float& deltaRotationX, float& deltaRotationY){
+
+        btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
+        body->translate(difference);
+
+         //make X rotation
+        btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
+        rotation *= body->getOrientation();
+       
+        //add on Y rotation
+        // rotation *= btQuaternion(btVector3(1, 0, 0), btRadians(deltaRotationY));
+
+        //actually apply the rotations
+        body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
+        
+        body->translate(-difference);
+
+        //reset delta rotations
+        deltaRotationX = 0.0f;
+        deltaRotationY = 0.0f;
     }
 
 
