@@ -59,7 +59,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    float cueStickMax = 100.0f, cueStickMin = 30.0f, powerMultiplier = 2.0f;
+    float cueStickMax = 200.0f, cueStickMin = 50.0f, powerMultiplier = 3.0f;
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
     cueStick = cueStickObject->getRigidBody();
     
@@ -106,8 +106,8 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
             cueStickDelta = me.state.Y.rel * 0.05;
         }
         else{
-            cueStickRotationX = 0.13 * me.state.X.rel;
-            cueStickRotationY = 0.13 * me.state.Y.rel;
+            cueStickRotationX = 0.01 * me.state.X.rel;
+            cueStickRotationY = 0.01 * me.state.Y.rel;
         }
     } else {
        mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
@@ -165,7 +165,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {
-        // cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
+        cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
 }
