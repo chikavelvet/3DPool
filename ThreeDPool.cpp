@@ -30,7 +30,8 @@ btRigidBody* cueBall;
 Room* room;
 
 //---------------------------------------------------------------------------
-ThreeDPool::ThreeDPool(void)
+ThreeDPool::ThreeDPool(void) :
+mMoveSpeed(750)
 {
 }
 //---------------------------------------------------------------------------
@@ -38,30 +39,11 @@ ThreeDPool::~ThreeDPool(void)
 {
 }
 
-
-bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
-{
-    if(mWindow->isClosed())
-        return false;
-
-    if(mShutDown)
-        return false;
-
-    // Need to capture/update each device
-    mKeyboard->capture();
-    mMouse->capture();
-
-    gameLoop();
-    physicsLoop();
-
-    return true;
-}
-
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
     adjustingCamera = false;
-
+    
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -91,7 +73,34 @@ void ThreeDPool::createScene(void)
     //....etc.
 }
 
-void ThreeDPool::gameLoop()
+bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
+    switch(arg.key) {
+        case OIS::KC_T :
+            adjustingCamera = !adjustingCamera;
+            break;
+    }
+    return true;
+}
+
+bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+    if(mWindow->isClosed())
+        return false;
+
+    if(mShutDown)
+        return false;
+
+    // Need to capture/update each device
+    mKeyboard->capture();
+    mMouse->capture();
+
+    gameLoop(evt);
+    physicsLoop();
+
+    return true;
+}
+
+void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
     if(adjustingStick) {
         if(fabs(cueBall->getLinearVelocity().length())>0.f){
@@ -100,9 +109,26 @@ void ThreeDPool::gameLoop()
         bool done = cueStickObject->readjustStickToCueball(adjustingStick, physicsEngine);
         if(done) cameraFollowStick();
         // adjustingCamera = true;
-    }
-    // else if(adjustingCamera){}
-    else if(hitBall) {
+    } else if(adjustingCamera){
+        using namespace Ogre;
+        Vector3 camDirVec = Vector3::ZERO;
+        Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
+            mMoveSpeed : mMoveSpeed / 2;
+    
+        if (mKeyboard->isKeyDown(OIS::KC_W))
+            camDirVec += (mCamera->getDirection() * thisMove);
+
+        if (mKeyboard->isKeyDown(OIS::KC_S))
+            camDirVec -= (mCamera->getDirection() * thisMove);
+
+        if (mKeyboard->isKeyDown(OIS::KC_A))
+            camDirVec -= (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+
+        if (mKeyboard->isKeyDown(OIS::KC_D))
+            camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+        
+        mCamera->move(camDirVec * evt.timeSinceLastFrame);
+    } else if(hitBall) {
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {
