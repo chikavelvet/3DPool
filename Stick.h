@@ -19,7 +19,7 @@ public:
 	Stick();
 
 	Stick(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, btScalar x, btScalar y, btScalar z, std::string _name, float _cueStickMax, float _cueStickMin, float _powerMultiplier, btRigidBody* _cueBall) {
-        kinematic = true;
+        kinematic = false;
         simulator = _simulator;
         name = _name;
         sceneMgr = _sceneMgr;
@@ -38,7 +38,7 @@ public:
         tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
          
         //set the mass of the object. a mass of "0" means that it is an immovable object
-        mass = 1;
+        mass = 10;
         inertia = btVector3(0,0,0);
          
         btVector3 initialPosition(x, y, z);
@@ -46,7 +46,8 @@ public:
         shape->calculateLocalInertia(mass, inertia);
          
         //actually contruvc the body and add it to the dynamics world
-        motionState = new OgreMotionState(tr, rootNode); 
+        // motionState = new OgreMotionState(tr, rootNode); 
+        motionState = new btDefaultMotionState(tr); 
         restitution = 1.0;
         friction = 1.0;
         linearDamping = 0;
@@ -100,6 +101,9 @@ public:
             if(LMBDown) {
 
                 btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * cueStickDelta;
+
+                std::cout << movement.length() << std::endl;
+
                 body->translate(movement);
             }
         }

@@ -23,7 +23,8 @@ protected:
 	Ogre::Entity* geom;
 	btCollisionShape* shape;
 	btScalar mass;
-	OgreMotionState* motionState;
+	// OgreMotionState* motionState;
+	btMotionState* motionState;
 	btRigidBody* body;
 	btTransform tr;
 	btVector3 inertia;

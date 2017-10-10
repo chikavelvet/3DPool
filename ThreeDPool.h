@@ -40,6 +40,8 @@ protected:
     
     bool keyReleased(const OIS::KeyEvent &arg);
     bool mouseMoved(const OIS::MouseEvent &me);
+    bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
+    bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
 
     Simulator* physicsEngine;
     bool adjustingCamera;
@@ -47,6 +49,12 @@ protected:
     Ogre::Vector3 newLookAt;
     Ogre::Vector3 newCamPos;
     Ogre::Real mMoveSpeed;
+    bool hitBall;
+    bool LMBDown;
+    float cueStickDelta;
+    float cueStickTotal;
+    bool adjustingStick;
+
 };
 
 //---------------------------------------------------------------------------

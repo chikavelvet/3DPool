@@ -36,12 +36,7 @@ BaseApplication::BaseApplication(void)
     mInputManager(0),
     mMouse(0),
     mKeyboard(0),
-    mOverlaySystem(0),
-    hitBall(false),
-    LMBDown(false),
-    cueStickDelta(0),
-    cueStickTotal(0),
-    adjustingStick(false)
+    mOverlaySystem(0)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
     m_ResourcePath = Ogre::macBundlePath() + "/Contents/Resources/";
@@ -284,28 +279,11 @@ bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
 //---------------------------------------------------------------------------
 bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
-    using namespace std;
-    switch(id)
-    {
-        case OIS::MB_Left:
-            cout << "Left" << endl;
-            LMBDown = true;
-            break;
-        case OIS::MB_Right:
-            break;
-        case OIS::MB_Middle:
-            break;
-        default:
-            break;
-    }
     return true;
 }
 //---------------------------------------------------------------------------
 bool BaseApplication::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
-    if(cueStickTotal!=0)
-        if(id==OIS::MB_Left)
-            hitBall = true;
     return true;
 }
 //---------------------------------------------------------------------------

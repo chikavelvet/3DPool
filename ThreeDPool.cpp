@@ -32,9 +32,16 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
+
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
-mMoveSpeed(750)
+mMoveSpeed(750),
+hitBall(false),
+LMBDown(false),
+cueStickDelta(0),
+cueStickTotal(0),
+adjustingStick(false),
+adjustingCamera(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -45,8 +52,6 @@ ThreeDPool::~ThreeDPool(void)
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
-    adjustingCamera = false;
-    
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -115,6 +120,41 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
     }
 }
 
+
+bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
+{
+    if(!BaseApplication::mouseReleased(me, id))
+        return false;
+
+    if(cueStickTotal!=0)
+        if(id==OIS::MB_Left)
+            hitBall = true;
+    return true;
+}
+
+bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
+{
+    if(!BaseApplication::mousePressed(me, id))
+        return false;
+
+    using namespace std;
+    switch(id)
+    {
+        case OIS::MB_Left:
+            cout << "Left" << endl;
+            LMBDown = true;
+            break;
+        case OIS::MB_Right:
+            break;
+        case OIS::MB_Middle:
+            break;
+        default:
+            break;
+    }
+    return true;
+}
+
+
 bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
     if(mWindow->isClosed())
@@ -140,7 +180,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
         bool done = cueStickObject->readjustStickToCueball(adjustingStick);
-        if(done) cameraFollowStick();
+        // if(done) cameraFollowStick();
         // adjustingCamera = true;
     } else if(adjustingCamera){
         using namespace Ogre;
