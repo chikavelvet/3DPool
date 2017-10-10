@@ -10,12 +10,15 @@
 #include <OgreSceneManager.h>
 #include <OgreRenderWindow.h>
 #include <OgreConfigFile.h>
+// #include "BaseApplication.h"
 #include "Simulator.h"
-#include "BulletContactCallback.h"
-#include "OgreMotionState.h"
+
+class Simulator;
+class CollisionContext;
+class BulletContactCallback;
 
 class GameObject {
-protected:
+protected:    
 	Ogre::String name;
 	Ogre::SceneManager* sceneMgr;
 	Simulator* simulator;

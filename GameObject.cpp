@@ -1,6 +1,5 @@
 #include "GameObject.h"
 
-
 //Add the game object to the simulator
 void GameObject::addToSimulator() {
 	
@@ -15,12 +14,13 @@ void GameObject::addToSimulator() {
 	rbInfo.m_friction = friction;
 	body = new btRigidBody(rbInfo);
 	body->setUserPointer(rootNode);
-    body->setDamping(linearDamping, angularDamping);
+        body->setDamping(linearDamping, angularDamping);
 	
 	if (kinematic) {
 		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 		body->setActivationState(DISABLE_DEACTIVATION);
 	}
+        
 	simulator->addObject(this);
 }
 

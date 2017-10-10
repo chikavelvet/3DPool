@@ -1,8 +1,10 @@
 #ifndef __Room_h_
 #define __Room_h_
 
-#include "BaseApplication.h"
+#include "GameObject.h"
+#include <OgreMeshManager.h>
 
+class Simulator;
 
 class Room {
 

@@ -1,12 +1,11 @@
 #ifndef __Stick_h_
 #define __Stick_h_
 
-#include "BaseApplication.h"
 #include "GameObject.h"
 
-// class GameObject;
+class GameObject;
 
-class Stick: public GameObject {
+class Stick : public GameObject {
 
 private:
     float cueStickMax;
@@ -15,75 +14,15 @@ private:
     btRigidBody* cueBall;
 
 public:
-	~Stick();
-	Stick();
+    ~Stick() = default;
 
-	Stick(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, btScalar x, btScalar y, btScalar z, std::string _name, float _cueStickMax, float _cueStickMin, float _powerMultiplier, btRigidBody* _cueBall) {
-        kinematic = false;
-        simulator = _simulator;
-        name = _name;
-        sceneMgr = _sceneMgr;
-        needsUpdates = false;
+    Stick(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
+            btScalar x, btScalar y, btScalar z, 
+            std::string _name, 
+            float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
+            btRigidBody* _cueBall);
 
-        geom = sceneMgr->createEntity("cube.mesh"); 
-        rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-        rootNode->attachObject(geom);
-        rootNode->setPosition(x, y, z);
-        rootNode->scale(0.01, 0.01, 0.5);
-         
-        //create the new shape, and tell the physics that is a sphere
-        shape = new btBoxShape(btVector3(1, 1, 23));
-        simulator->getCollisionShapes().push_back(shape);
-        tr.setIdentity();
-        tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-         
-        //set the mass of the object. a mass of "0" means that it is an immovable object
-        mass = 10;
-        inertia = btVector3(0,0,0);
-         
-        btVector3 initialPosition(x, y, z);
-        tr.setOrigin(initialPosition);
-        shape->calculateLocalInertia(mass, inertia);
-         
-        //actually contruvc the body and add it to the dynamics world
-        // motionState = new OgreMotionState(tr, rootNode); 
-        motionState = new btDefaultMotionState(tr); 
-        restitution = 1.0;
-        friction = 1.0;
-        linearDamping = 0.1;
-        angularDamping = 1;
-        addToSimulator();
-        // simulator->getDynamicsWorld()->addRigidBody(body);
-
-        cueStickMax = _cueStickMax;
-        cueStickMin = _cueStickMin;
-        powerMultiplier = _powerMultiplier;
-        cueBall = _cueBall;
-    }
-
-    bool readjustStickToCueball(bool& adjustingStick){
-        bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.05f) && (fabs(body->getTotalForce().length()) < 0.05f);        
-        bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.01f) && (fabs(cueBall->getTotalForce().length()) < 0.01f);
-
-        if(cueStickStopped){
-            simulator->getDynamicsWorld()->removeRigidBody(body);
-            // body->activate(false);
-            geom->setVisible(false);
-        }
-
-        bool turnIsOver = cueBallStopped && cueStickStopped;
-        if(!turnIsOver) return false;
-        // std::cout << turnIsOver << std::boolalpha << std::endl;
-
-        btVector3 ballPos = cueBall->getCenterOfMassPosition();
-        btTransform newTransform (btQuaternion(0, 0, 0, 1), btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
-        body->setCenterOfMassTransform(newTransform);
-        adjustingStick = false;
-        // body->activate(true);
-        simulator->getDynamicsWorld()->addRigidBody(body);
-        geom->setVisible(true);
-        return true;
-    }
+    bool readjustStickToCueball (bool& adjustingStick);
 
     void chargeStick(bool adjustingStick, float& cueStickTotal, float& cueStickDelta, bool LMBDown){
         if(adjustingStick)

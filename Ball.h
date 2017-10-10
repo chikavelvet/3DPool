@@ -1,8 +1,9 @@
 #ifndef __Ball_h_
 #define __Ball_h_
 
-#include "BaseApplication.h"
+#include "GameObject.h"
 
+class Simulator;
 
 class Ball {
 

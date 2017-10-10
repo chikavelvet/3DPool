@@ -1,7 +1,8 @@
 #ifndef __OgreMotionState_h_
 #define __OgreMotionState_h_
 
-#include "BaseApplication.h"
+// #include "BaseApplication.h"
+#include "GameObject.h"
 
 class OgreMotionState : public btMotionState { 
 

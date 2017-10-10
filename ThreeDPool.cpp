@@ -18,9 +18,6 @@ http://www.ogre3d.org/wiki/
 #include <OGRE/OgreMeshManager.h>
 
 #include "ThreeDPool.h"
-#include "Ball.h"
-#include "Stick.h"
-#include "Room.h"
 
 Ogre::Vector3 cameraOffset;
 Stick* cueStickObject;

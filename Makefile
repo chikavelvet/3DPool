@@ -112,7 +112,7 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-PlayingField.$(OBJEXT) \
 	ThreeDPool-Simulator.$(OBJEXT) ThreeDPool-Wall.$(OBJEXT) \
 	ThreeDPool-BaseApplication.$(OBJEXT) \
-	ThreeDPool-ThreeDPool.$(OBJEXT)
+	ThreeDPool-ThreeDPool.$(OBJEXT) ThreeDPool-Stick.$(OBJEXT)
 ThreeDPool_OBJECTS = $(am_ThreeDPool_OBJECTS)
 am__DEPENDENCIES_1 =
 ThreeDPool_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -339,12 +339,12 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-noinst_HEADERS = Ball.h ControlListener.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h
+noinst_HEADERS = Ball.h ControlListener.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp
 ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS)
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS)
-ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system
+ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
 EXTRA_DIST = buildit makeit
 AUTOMAKE_OPTIONS = foreign
 all: config.h
@@ -469,6 +469,7 @@ include ./$(DEPDIR)/ThreeDPool-Player.Po
 include ./$(DEPDIR)/ThreeDPool-PlayerCamera.Po
 include ./$(DEPDIR)/ThreeDPool-PlayingField.Po
 include ./$(DEPDIR)/ThreeDPool-Simulator.Po
+include ./$(DEPDIR)/ThreeDPool-Stick.Po
 include ./$(DEPDIR)/ThreeDPool-ThreeDPool.Po
 include ./$(DEPDIR)/ThreeDPool-Wall.Po
 
@@ -646,6 +647,20 @@ ThreeDPool-ThreeDPool.obj: ThreeDPool.cpp
 #	$(AM_V_CXX)source='ThreeDPool.cpp' object='ThreeDPool-ThreeDPool.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-ThreeDPool.obj `if test -f 'ThreeDPool.cpp'; then $(CYGPATH_W) 'ThreeDPool.cpp'; else $(CYGPATH_W) '$(srcdir)/ThreeDPool.cpp'; fi`
+
+ThreeDPool-Stick.o: Stick.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Stick.o -MD -MP -MF $(DEPDIR)/ThreeDPool-Stick.Tpo -c -o ThreeDPool-Stick.o `test -f 'Stick.cpp' || echo '$(srcdir)/'`Stick.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Stick.Tpo $(DEPDIR)/ThreeDPool-Stick.Po
+#	$(AM_V_CXX)source='Stick.cpp' object='ThreeDPool-Stick.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Stick.o `test -f 'Stick.cpp' || echo '$(srcdir)/'`Stick.cpp
+
+ThreeDPool-Stick.obj: Stick.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Stick.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-Stick.Tpo -c -o ThreeDPool-Stick.obj `if test -f 'Stick.cpp'; then $(CYGPATH_W) 'Stick.cpp'; else $(CYGPATH_W) '$(srcdir)/Stick.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Stick.Tpo $(DEPDIR)/ThreeDPool-Stick.Po
+#	$(AM_V_CXX)source='Stick.cpp' object='ThreeDPool-Stick.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Stick.obj `if test -f 'Stick.cpp'; then $(CYGPATH_W) 'Stick.cpp'; else $(CYGPATH_W) '$(srcdir)/Stick.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

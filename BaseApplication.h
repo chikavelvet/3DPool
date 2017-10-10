@@ -31,7 +31,12 @@ http://www.ogre3d.org/wiki/
 #include <OgreFrameListener.h>
 #include <Overlay/OgreOverlaySystem.h>
 
+class GameObject;
 #include "Simulator.h"
+class Simulator; 
+#include "Ball.h"
+#include "Stick.h"
+#include "Room.h"
 
 #include <btBulletDynamicsCommon.h>
 
