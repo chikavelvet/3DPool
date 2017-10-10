@@ -139,7 +139,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         if(fabs(cueBall->getLinearVelocity().length())>0.f){
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
-        bool done = cueStickObject->readjustStickToCueball(adjustingStick, physicsEngine);
+        bool done = cueStickObject->readjustStickToCueball(adjustingStick);
         if(done) cameraFollowStick();
         // adjustingCamera = true;
     } else if(adjustingCamera){

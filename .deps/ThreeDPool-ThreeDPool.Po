@@ -1055,7 +1055,7 @@ ThreeDPool-ThreeDPool.o: ThreeDPool.cpp /usr/include/stdc-predef.h \
  /usr/include/ois/OISInputManager.h /usr/include/ois/OISKeyboard.h \
  /usr/include/ois/OISObject.h /usr/include/ois/OISInterface.h \
  /usr/include/ois/OISEvents.h /usr/include/ois/OISMouse.h Ball.h Stick.h \
- Room.h
+ GameObject.h Room.h
 
 /usr/include/stdc-predef.h:
 
@@ -3508,5 +3508,7 @@ OgreMotionState.h:
 Ball.h:
 
 Stick.h:
+
+GameObject.h:
 
 Room.h:

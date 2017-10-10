@@ -30,6 +30,7 @@ protected:
 
 	btScalar restitution;
 	btScalar friction;
+	btScalar linearDamping;
 	bool kinematic;
 	bool needsUpdates;
 
@@ -39,8 +40,8 @@ protected:
 public:
 	void addToSimulator();
 	void updateTransform();
-	btRigidBody* getBody(){ return body; }
 
+	btRigidBody* getBody(){ return body; }
 };
 
 #endif
