@@ -73,7 +73,7 @@ void ThreeDPool::createScene(void)
 
     room = new Room(mSceneMgr, physicsEngine);
 
-    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+//    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
     Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
@@ -203,7 +203,6 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {
-        std::cout << cueStickTotal << std::endl;
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
