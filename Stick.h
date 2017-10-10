@@ -102,9 +102,6 @@ public:
             if(LMBDown) {
 
                 btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * cueStickDelta;
-
-                std::cout << movement.length() << std::endl;
-
                 body->translate(movement);
             }
         }

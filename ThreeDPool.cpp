@@ -64,7 +64,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    float cueStickMax = 200.0f, cueStickMin = 50.0f, powerMultiplier = 3.0f;
+    float cueStickMax = 150.0f, cueStickMin = 50.0f, powerMultiplier = 5.0f;
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
     cueStick = cueStickObject->getRigidBody();
     
@@ -123,10 +123,9 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
 
 bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
-    if(!BaseApplication::mouseReleased(me, id))
-        return false;
-
-    if(cueStickTotal!=0)
+    // if(!BaseApplication::mouseReleased(me, id))
+    //     return false;
+    if(fabs(cueStickTotal) > 0.1)
         if(id==OIS::MB_Left)
             hitBall = true;
     return true;
@@ -176,7 +175,7 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
     if(adjustingStick) {
-        if(fabs(cueBall->getLinearVelocity().length())>0.f){
+        if(fabs(cueBall->getLinearVelocity().length())>0.01f){
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
         bool done = cueStickObject->readjustStickToCueball(adjustingStick);

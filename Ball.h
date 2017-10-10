@@ -50,7 +50,7 @@ public:
         body->setRollingFriction(btScalar(1.0));
         
         body->setRestitution(0.8);
-        body->setDamping(0.03, 0);
+        body->setDamping(0.1, 0);
 
         physicsEngine->getDynamicsWorld()->addRigidBody(body);
         physicsEngine->trackRigidBodyWithName(body, name);    
