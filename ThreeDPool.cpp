@@ -29,8 +29,12 @@ Ball* cueBallObject;
 btRigidBody* cueBall;
 Room* room;
 
+Ogre::Vector3 preFreeLookCameraPosition;
+Ogre::Vector3 preFreeLookCameraDirection;
+
 //---------------------------------------------------------------------------
-ThreeDPool::ThreeDPool(void)
+ThreeDPool::ThreeDPool(void) :
+mMoveSpeed(750)
 {
 }
 //---------------------------------------------------------------------------
@@ -38,30 +42,11 @@ ThreeDPool::~ThreeDPool(void)
 {
 }
 
-
-bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
-{
-    if(mWindow->isClosed())
-        return false;
-
-    if(mShutDown)
-        return false;
-
-    // Need to capture/update each device
-    mKeyboard->capture();
-    mMouse->capture();
-
-    gameLoop();
-    physicsLoop();
-
-    return true;
-}
-
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
     adjustingCamera = false;
-
+    
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -91,7 +76,64 @@ void ThreeDPool::createScene(void)
     //....etc.
 }
 
-void ThreeDPool::gameLoop()
+bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
+    if (!BaseApplication::keyReleased(arg))
+        return false;
+    
+    switch(arg.key) {
+        case OIS::KC_T :
+            if (!adjustingCamera){
+                preFreeLookCameraPosition = mCamera->getPosition();
+                preFreeLookCameraDirection = mCamera->getDirection();
+                adjustingCamera = true;
+            } else {
+                mCamera->setPosition(preFreeLookCameraPosition);
+                mCamera->setDirection(preFreeLookCameraDirection);
+                adjustingCamera = false;
+            }
+            break;
+    }
+    return true;
+}
+
+bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
+    if (!BaseApplication::mouseMoved(me))
+        return false;
+    
+    if (!adjustingCamera) {
+        if(me.state.buttonDown(OIS::MB_Left))
+        {
+            cueStickDelta = me.state.Y.rel * 0.05;
+        }
+        else{
+            cueStickRotationX = 0.01 * me.state.X.rel;
+            cueStickRotationY = 0.01 * me.state.Y.rel;
+        }
+    } else {
+       mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
+       mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
+    }
+}
+
+bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+    if(mWindow->isClosed())
+        return false;
+
+    if(mShutDown)
+        return false;
+
+    // Need to capture/update each device
+    mKeyboard->capture();
+    mMouse->capture();
+
+    gameLoop(evt);
+    physicsLoop();
+
+    return true;
+}
+
+void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
     if(adjustingStick) {
         if(fabs(cueBall->getLinearVelocity().length())>0.f){
@@ -100,9 +142,26 @@ void ThreeDPool::gameLoop()
         bool done = cueStickObject->readjustStickToCueball(adjustingStick, physicsEngine);
         if(done) cameraFollowStick();
         // adjustingCamera = true;
-    }
-    // else if(adjustingCamera){}
-    else if(hitBall) {
+    } else if(adjustingCamera){
+        using namespace Ogre;
+        Vector3 camDirVec = Vector3::ZERO;
+        Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
+            mMoveSpeed : mMoveSpeed / 2;
+    
+        if (mKeyboard->isKeyDown(OIS::KC_W))
+            camDirVec += (mCamera->getDirection() * thisMove);
+
+        if (mKeyboard->isKeyDown(OIS::KC_S))
+            camDirVec -= (mCamera->getDirection() * thisMove);
+
+        if (mKeyboard->isKeyDown(OIS::KC_A))
+            camDirVec -= (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+
+        if (mKeyboard->isKeyDown(OIS::KC_D))
+            camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+        
+        mCamera->move(camDirVec * evt.timeSinceLastFrame);
+    } else if(hitBall) {
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {

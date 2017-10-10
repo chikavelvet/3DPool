@@ -279,22 +279,7 @@ bool BaseApplication::keyReleased(const OIS::KeyEvent &arg)
 //---------------------------------------------------------------------------
 bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
 {
-
-    if(me.state.buttonDown(OIS::MB_Left))
-    {
-        cueStickDelta = me.state.Y.rel * 0.05;
-    }
-    else{
-        cueStickRotationX = 0.01 * me.state.X.rel;
-        cueStickRotationY = 0.01 * me.state.Y.rel;
-    }
-
-/*    else
-    {
-      mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
-      mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
-    }
-*/    return true;
+    return true;
 }
 //---------------------------------------------------------------------------
 bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)

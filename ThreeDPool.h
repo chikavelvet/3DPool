@@ -33,16 +33,20 @@ protected:
     virtual void createCamera(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
     
-    void gameLoop(void);
+    void gameLoop(const Ogre::FrameEvent& evt);
     void physicsLoop(void);
     void makeGround(void);
     void cameraFollowStick(void);
+    
+    bool keyReleased(const OIS::KeyEvent &arg);
+    bool mouseMoved(const OIS::MouseEvent &me);
 
     Simulator* physicsEngine;
     bool adjustingCamera;
     int cameraCounter = 0;
     Ogre::Vector3 newLookAt;
     Ogre::Vector3 newCamPos;
+    Ogre::Real mMoveSpeed;
 };
 
 //---------------------------------------------------------------------------
