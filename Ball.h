@@ -27,7 +27,7 @@ public:
         node->scale(0.05, 0.05, 0.05);
          
         //create the new shape, and tell the physics that is a sphere
-        colShape = new btSphereShape(1);
+        colShape = new btSphereShape(5);
         physicsEngine->getCollisionShapes().push_back(colShape);
         btTransform startTransform;
         startTransform.setIdentity();
