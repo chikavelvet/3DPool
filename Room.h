@@ -134,27 +134,27 @@ public:
         float offset = 0.0f;
 
         // makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_one", 426, 480, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, 0, 0, 480 - offset, physicsEngine);
-        // makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, 0, 0, 480 - offset, physicsEngine);
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, 0, 0, 480 - offset, physicsEngine);
 
         // makePlane(Ogre::Vector3::UNIT_X, "_two_one", 480, 439.5, Ogre::Vector3::UNIT_Z, -240, 0, 233.25, mSceneMgr, -240 + offset, 0, 233.25, physicsEngine);
         // makePlane(Ogre::Vector3::UNIT_X, "_two_two", 480, 439.5, Ogre::Vector3::UNIT_Z, -240, 0, -233.25, mSceneMgr, -240 + offset, 0, -233.25, physicsEngine);
-        // makePlaneWithPhysics(Ogre::Vector3::UNIT_X, "_two_three", 426, 960, Ogre::Vector3::UNIT_Z, -240, 0, 0, mSceneMgr, -240 + offset, 0, 0, physicsEngine);
+        makePlaneWithPhysics(Ogre::Vector3::UNIT_X, "_two_three", 426, 960, Ogre::Vector3::UNIT_Z, -240, 0, 0, mSceneMgr, -240 + offset, 0, 0, physicsEngine);
 
         //makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_one", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, 240, 233.25, mSceneMgr, 0, 240 - offset, 233.25, physicsEngine);
         //makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_two", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, 240, -233.25, mSceneMgr, 0, 240 - offset, -233.25, physicsEngine);
-        // makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_three", 426, 960, Ogre::Vector3::UNIT_Z, 0, 240, 0, mSceneMgr, 0, 240, 0 - offset, physicsEngine);
+        makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_three", 426, 960, Ogre::Vector3::UNIT_Z, 0, 240, 0, mSceneMgr, 0, 240, 0 - offset, physicsEngine);
 
         //makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_one", 480, 439.5, Ogre::Vector3::UNIT_Z, 240, 0, 233.25, mSceneMgr, 240 - offset, 0, 233.25, physicsEngine);
         //makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_two", 480, 439.5, Ogre::Vector3::UNIT_Z, 240, 0, -233.25, mSceneMgr, 240 - offset, 0, -233.25, physicsEngine);
-        // makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_three", 426, 960, Ogre::Vector3::UNIT_Z, 240, 0, 0, mSceneMgr, 240 - offset, 0, 0, physicsEngine);
+        makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_three", 426, 960, Ogre::Vector3::UNIT_Z, 240, 0, 0, mSceneMgr, 240 - offset, 0, 0, physicsEngine);
 
 
         //makePlane(Ogre::Vector3::UNIT_Y, "_five_one", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, -240, 233.25, mSceneMgr, 0, -240 + offset, 233.25, physicsEngine);
         //makePlane(Ogre::Vector3::UNIT_Y, "_five_two", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, -240, -233.25, mSceneMgr, 0, -240 + offset, -233.25, physicsEngine);
-        // makePlaneWithPhysics(Ogre::Vector3::UNIT_Y, "_five_three", 426, 960, Ogre::Vector3::UNIT_Z, 0, -240, 0, mSceneMgr, 0, -240 + offset, 0, physicsEngine);
+        makePlaneWithPhysics(Ogre::Vector3::UNIT_Y, "_five_three", 426, 960, Ogre::Vector3::UNIT_Z, 0, -240, 0, mSceneMgr, 0, -240 + offset, 0, physicsEngine);
         
         //makePlane(Ogre::Vector3::UNIT_Z, "_six_one", 426, 480, Ogre::Vector3::UNIT_Y, 0, 0, -480, mSceneMgr, 0, 0, -480 + offset, physicsEngine);
-        // makePlaneWithPhysics(Ogre::Vector3::UNIT_Z, "_six_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, -480 - offset, mSceneMgr, 0, 0, -480 - offset, physicsEngine);
+        makePlaneWithPhysics(Ogre::Vector3::UNIT_Z, "_six_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, -480 - offset, mSceneMgr, 0, 0, -480 - offset, physicsEngine);
     }
 };
 
