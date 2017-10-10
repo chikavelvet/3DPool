@@ -29,6 +29,7 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
+const float STICK_POWER_MAX = 150.0f, STICK_POWER_MIN = 50.0f, STICK_POWER_MULT = 5.0f;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
@@ -36,7 +37,7 @@ mMoveSpeed(750),
 hitBall(false),
 LMBDown(false),
 cueStickDelta(0),
-cueStickTotal(0),
+cueStickTotal(STICK_POWER_MIN),
 adjustingStick(false),
 adjustingCamera(false)
 {
@@ -61,8 +62,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
     cueBall = cueBallObject->getRigidBody();
 
-    float cueStickMax = 150.0f, cueStickMin = 50.0f, powerMultiplier = 5.0f;
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + cueStickMin, "cueStick", cueStickMax, cueStickMin, powerMultiplier, cueBall);
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + STICK_POWER_MIN, "cueStick", STICK_POWER_MAX, STICK_POWER_MIN, STICK_POWER_MULT, cueBall);
     cueStick = cueStickObject->getRigidBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
@@ -73,6 +73,8 @@ void ThreeDPool::createScene(void)
 
     room = new Room(mSceneMgr, physicsEngine);
 
+    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+    
     //----------MAKE MORE BALLS AS DESIRED-----------//
     Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
     //....etc.
@@ -201,6 +203,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     }
     else {
+        std::cout << cueStickTotal << std::endl;
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }

@@ -24,31 +24,7 @@ public:
 
     bool readjustStickToCueball (bool& adjustingStick);
 
-    void chargeStick(bool adjustingStick, float& cueStickTotal, float& cueStickDelta, bool LMBDown){
-        if(adjustingStick)
-            return;
-
-        body->activate(true);
-        
-        if(cueStickTotal < cueStickMax && cueStickTotal > cueStickMin) {
-            if(cueStickTotal + cueStickDelta > cueStickMax)
-                cueStickDelta = cueStickMax - cueStickTotal;
-            if(cueStickTotal + cueStickDelta < cueStickMin){
-                cueStickTotal = cueStickMin;
-                cueStickDelta = 0.0f;
-                return;
-            }
-            if(LMBDown) {
-
-                btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * cueStickDelta;
-                body->translate(movement);
-            }
-        }
-
-        cueStickTotal += cueStickDelta;
-        cueStickDelta = 0;
-    }
-
+    void chargeStick (bool adjustingStick, float& cueStickTotal, float& cueStickDelta, bool LMBDown);
 
     void releaseStick(bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
         if(cueStickTotal >= cueStickMin){
@@ -56,7 +32,7 @@ public:
             btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * -powerMultiplier * cueStickTotal;    
             body->applyCentralImpulse(movement);
         }
-        cueStickTotal = 0;
+        cueStickTotal = cueStickMin;
         cueStickDelta = 0;
         adjustingStick = true;
         hitBall = false;

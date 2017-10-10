@@ -43,6 +43,8 @@ protected:
     bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
     bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
 
+    CEGUI::OgreRenderer* mRenderer;
+    
     Simulator* physicsEngine;
     bool adjustingCamera;
     int cameraCounter = 0;

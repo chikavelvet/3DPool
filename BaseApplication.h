@@ -38,6 +38,9 @@ class Simulator;
 #include "Stick.h"
 #include "Room.h"
 
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/Renderer.h>
+
 #include <btBulletDynamicsCommon.h>
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
