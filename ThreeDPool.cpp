@@ -77,7 +77,7 @@ void ThreeDPool::createScene(void)
     room = new Room(mSceneMgr, physicsEngine);
 
     //----------MAKE MORE BALLS AS DESIRED-----------//
-    //Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 100, 500, 300, "otherBall1");
+    Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
     //....etc.
 }
 
@@ -313,8 +313,8 @@ void ThreeDPool::cameraFollowStick(void)
 {
     btVector3 btPos = cueStick->getCenterOfMassPosition();
     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
-    mCamera->lookAt(cueStickPos);
     mCamera->setPosition(cueStickPos + cameraOffset);
+    mCamera->lookAt(cueStickPos);
 }
 
 //---------------------------------------------------------------------------

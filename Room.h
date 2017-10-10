@@ -34,7 +34,7 @@ private:
 //     btScalar groundMass(0.);
 //     btVector3 localGroundInertia(0, 0, 0);
     
-//     btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(1500.), btScalar(20.), btScalar(1500.)));
+//     btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(1500.), btScalar(0.1), btScalar(1500.)));
 //     btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
     
 //     groundShape->calculateLocalInertia(groundMass, localGroundInertia);
@@ -95,11 +95,13 @@ private:
         btTransform groundTransform;
         groundTransform.setIdentity();
         groundTransform.setOrigin(btVector3(btx, bty, btz));
+
+        // groundTransform.setRotation(btQuaternion(normal.x, normal.y, normal.z, 1));
         
         btScalar groundMass(0);
         btVector3 localGroundInertia(0, 0, 0);
         
-        btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(d2), btScalar(20.)));
+        btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(d2), btScalar(0.1)));
         btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
         
         groundShape->calculateLocalInertia(groundMass, localGroundInertia);
