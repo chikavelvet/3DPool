@@ -32,6 +32,7 @@ protected:
 	btScalar restitution;
 	btScalar friction;
 	btScalar linearDamping;
+	btScalar angularDamping;
 	bool kinematic;
 	bool needsUpdates;
 

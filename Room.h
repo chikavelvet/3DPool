@@ -101,7 +101,16 @@ private:
         btScalar groundMass(0);
         btVector3 localGroundInertia(0, 0, 0);
         
-        btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(d2), btScalar(0.1)));
+        btCollisionShape* groundShape;
+
+        if(normal == Ogre::Vector3::UNIT_Z || normal == Ogre::Vector3::NEGATIVE_UNIT_Z)
+            groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(d2), btScalar(20.)));
+        else if (normal == Ogre::Vector3::UNIT_Y || normal == Ogre::Vector3::NEGATIVE_UNIT_Y)
+            groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(20.), btScalar(d2)));        
+        else if (normal == Ogre::Vector3::UNIT_X || normal == Ogre::Vector3::NEGATIVE_UNIT_X)
+            groundShape = new btBoxShape(btVector3(btScalar(20.), btScalar(d2), btScalar(d1)));        
+
+
         btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
         
         groundShape->calculateLocalInertia(groundMass, localGroundInertia);
@@ -124,7 +133,7 @@ public:
     Room(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine) {
         float offset = 0.0f;
 
-        makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_one", 426, 480, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, 0, 0, 480 - offset, physicsEngine);
+        // makePlaneWithPhysics(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_one", 426, 480, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, 0, 0, 480 - offset, physicsEngine);
         // makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, 0, 0, 480 - offset, physicsEngine);
 
         // makePlane(Ogre::Vector3::UNIT_X, "_two_one", 480, 439.5, Ogre::Vector3::UNIT_Z, -240, 0, 233.25, mSceneMgr, -240 + offset, 0, 233.25, physicsEngine);
@@ -145,7 +154,7 @@ public:
         // makePlaneWithPhysics(Ogre::Vector3::UNIT_Y, "_five_three", 426, 960, Ogre::Vector3::UNIT_Z, 0, -240, 0, mSceneMgr, 0, -240 + offset, 0, physicsEngine);
         
         //makePlane(Ogre::Vector3::UNIT_Z, "_six_one", 426, 480, Ogre::Vector3::UNIT_Y, 0, 0, -480, mSceneMgr, 0, 0, -480 + offset, physicsEngine);
-        makePlaneWithPhysics(Ogre::Vector3::UNIT_Z, "_six_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, -480 - offset, mSceneMgr, 0, 0, -480 - offset, physicsEngine);
+        // makePlaneWithPhysics(Ogre::Vector3::UNIT_Z, "_six_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, -480 - offset, mSceneMgr, 0, 0, -480 - offset, physicsEngine);
     }
 };
 

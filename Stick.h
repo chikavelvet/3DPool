@@ -50,7 +50,8 @@ public:
         motionState = new btDefaultMotionState(tr); 
         restitution = 1.0;
         friction = 1.0;
-        linearDamping = 0;
+        linearDamping = 0.1;
+        angularDamping = 1;
         addToSimulator();
         // simulator->getDynamicsWorld()->addRigidBody(body);
 
@@ -61,8 +62,8 @@ public:
     }
 
     bool readjustStickToCueball(bool& adjustingStick){
-        bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.5f) && (fabs(body->getTotalForce().length()) < 0.5f);        
-        bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.5f) && (fabs(cueBall->getTotalForce().length()) < 0.5f);
+        bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.05f) && (fabs(body->getTotalForce().length()) < 0.05f);        
+        bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.01f) && (fabs(cueBall->getTotalForce().length()) < 0.01f);
 
         if(cueStickStopped){
             simulator->getDynamicsWorld()->removeRigidBody(body);
