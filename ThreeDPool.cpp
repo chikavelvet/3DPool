@@ -74,14 +74,69 @@ void ThreeDPool::createScene(void)
 
     room = new Room(mSceneMgr, physicsEngine);
 
+    //----Set up CEGUI----//
+    
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+    CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
+    CEGUI::Font::setDefaultResourceGroup("Fonts");
+    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
+    
+    CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
+    
+    // This will set up a sheet to show the cursor
+    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
+    CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(sheet);
+    
+    //--------------------//
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
     Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
     //....etc.
 }
 
+void ThreeDPool::createFrameListener() {
+    Ogre::LogManager::getSingletonPtr()->logMessage("*** Initializing OIS ***");
+    OIS::ParamList pl;
+    size_t windowHnd = 0;
+    std::ostringstream windowHndStr;
+ 
+    mWindow->getCustomAttribute("WINDOW", &windowHnd);
+    windowHndStr << windowHnd;
+    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+ 
+    mInputManager = OIS::InputManager::createInputSystem( pl );
+ 
+    mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, true ));
+    mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject( OIS::OISMouse, true ));
+ 
+    mMouse->setEventCallback(this);
+    mKeyboard->setEventCallback(this);
+ 
+    //Set initial mouse clipping size
+    windowResized(mWindow);
+ 
+    //Register as a Window listener
+    Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
+ 
+    mRoot->addFrameListener(this);
+}
+
+bool ThreeDPool::keyPressed(const OIS::KeyEvent& arg) {
+    // CEGUI Injection
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    context.injectKeyDown((CEGUI::Key::Scan)arg.key);
+    context.injectChar((CEGUI::Key::Scan)arg.text);
+    return true;
+}
+
 bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
+    // CEGUI Injection
+    CEGUI::System::getSingleton().getDefaultGUIContext().injectKeyUp((CEGUI::Key::Scan)arg.key);
+    
     if (!BaseApplication::keyReleased(arg))
         return false;
     
@@ -102,6 +157,13 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
 }
 
 bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
+    // CEGUI Injection
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    context.injectMouseMove(me.state.X.rel, me.state.Y.rel);
+    // Scroll wheel.
+    if (me.state.Z.rel)
+        context.injectMouseWheelChange(me.state.Z.rel / 120.0f);
+
     if (!BaseApplication::mouseMoved(me))
         return false;
     
@@ -120,9 +182,29 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
     }
 }
 
+CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID)
+{
+    switch (buttonID)
+    {
+    case OIS::MB_Left:
+        return CEGUI::LeftButton;
+ 
+    case OIS::MB_Right:
+        return CEGUI::RightButton;
+ 
+    case OIS::MB_Middle:
+        return CEGUI::MiddleButton;
+ 
+    default:
+        return CEGUI::LeftButton;
+    }
+}
 
 bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
+    // CEGUI Injection
+    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertButton(id));
+    
     // if(!BaseApplication::mouseReleased(me, id))
     //     return false;
     if(fabs(cueStickTotal) > 0.1)
@@ -133,6 +215,9 @@ bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 
 bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
+    // CEGUI Injection
+    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(convertButton(id));
+    
     if(!BaseApplication::mousePressed(me, id))
         return false;
 
@@ -166,6 +251,9 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     mKeyboard->capture();
     mMouse->capture();
 
+    //Need to inject timestamps to CEGUI System.
+    CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
+    
     gameLoop(evt);
     physicsLoop();
 
@@ -232,6 +320,10 @@ void ThreeDPool::physicsLoop()
             }
         }
     }
+}
+
+bool ThreeDPool::quit (const CEGUI::EventArgs& e) {
+    return true;
 }
 
 // void ThreeDPool::makeGround(void)

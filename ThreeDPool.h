@@ -39,10 +39,15 @@ protected:
     void makeGround(void);
     void cameraFollowStick(void);
     
+    bool keyPressed(const OIS::KeyEvent &arg);
     bool keyReleased(const OIS::KeyEvent &arg);
     bool mouseMoved(const OIS::MouseEvent &me);
     bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
     bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
+    
+    void createFrameListener(void);
+    
+    bool quit (const CEGUI::EventArgs& e);
 
     CEGUI::OgreRenderer* mRenderer;
         
