@@ -45,6 +45,7 @@ adjustingCamera(false)
 //---------------------------------------------------------------------------
 ThreeDPool::~ThreeDPool(void)
 {
+    delete pCamera;
 }
 
 //---------------------------------------------------------------------------
@@ -204,6 +205,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
     }
     else {
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
+        
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
 }
@@ -274,7 +276,8 @@ void ThreeDPool::physicsLoop()
 
 //--------Camera Section-------//
 void ThreeDPool::createCamera(void){
-    mCamera = mSceneMgr->createCamera("PlayerCam");
+    pCamera = new PlayerCamera(mSceneMgr->createCamera("PlayerCam"));
+    mCamera = pCamera->getCamera();
     mCamera->setPosition(Ogre::Vector3(200, 200, 200));
     mCamera->setNearClipDistance(1);
 

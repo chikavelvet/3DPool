@@ -37,6 +37,7 @@ class Simulator;
 #include "Ball.h"
 #include "Stick.h"
 #include "Room.h"
+#include "PlayerCamera.h"
 
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/Renderer.h>

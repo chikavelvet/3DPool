@@ -20,6 +20,7 @@ http://www.ogre3d.org/wiki/
 
 #include "BaseApplication.h"
 
+class PlayerCamera;
 //---------------------------------------------------------------------------
 
 class ThreeDPool : public BaseApplication
@@ -32,7 +33,7 @@ protected:
     virtual void createScene(void);
     virtual void createCamera(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
-    
+
     void gameLoop(const Ogre::FrameEvent& evt);
     void physicsLoop(void);
     void makeGround(void);
@@ -44,7 +45,8 @@ protected:
     bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
 
     CEGUI::OgreRenderer* mRenderer;
-    
+        
+    PlayerCamera* pCamera;
     Simulator* physicsEngine;
     bool adjustingCamera;
     int cameraCounter = 0;
