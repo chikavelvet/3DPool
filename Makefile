@@ -221,8 +221,8 @@ CC = gcc
 CCDEPMODE = depmode=gcc3
 CEGUI_0_OGRE_CFLAGS = -pthread -I/lusr/opt/cegui-0.8.7/include/cegui-0 -I/usr/include/OGRE
 CEGUI_0_OGRE_LIBS = -L/lusr/opt/cegui-0.8.7/lib -lCEGUIOgreRenderer-0 -lOgreMain -lpthread -lCEGUIBase-0
-CEGUI_CFLAGS = -pthread -I/lusr/opt/cegui-0.8.4/include/cegui-0 -I/usr/include/OGRE
-CEGUI_LIBS = -L/lusr/opt/cegui-0.8.4/lib -lCEGUIOgreRenderer-0 -lOgreMain -lpthread -lCEGUIBase-0
+CEGUI_CFLAGS = -pthread -I/lusr/opt/cegui-0.8.7/include/cegui-0 -I/usr/include/OGRE
+CEGUI_LIBS = -L/lusr/opt/cegui-0.8.7/lib -lCEGUIOgreRenderer-0 -lOgreMain -lpthread -lCEGUIBase-0
 CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
