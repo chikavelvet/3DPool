@@ -379,7 +379,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
     }
     else {
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
-        
+        pCamera->moveCameraToStick(cueStickObject);
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
 }
