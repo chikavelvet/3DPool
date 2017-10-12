@@ -33,13 +33,14 @@ const float STICK_POWER_MAX = 150.0f, STICK_POWER_MIN = 50.0f, STICK_POWER_MULT 
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
-mMoveSpeed(750),
-hitBall(false),
-LMBDown(false),
-cueStickDelta(0),
-cueStickTotal(STICK_POWER_MIN),
-adjustingStick(false),
-adjustingCamera(false)
+    mMoveSpeed(750),
+    hitBall(false),
+    LMBDown(false),
+    cueStickDelta(0),
+    cueStickTotal(STICK_POWER_MIN),
+    adjustingStick(false),
+    adjustingCamera(false),
+    cursorDisplaying(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -100,7 +101,17 @@ void ThreeDPool::createScene(void)
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.setRootWindow(sheet);
     
+    CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
+    quit->setText("Quit");    
+        
+    // In UDim, only set one of the two params, the other should be 0
+    quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+    
+    sheet->addChild(quit);
+    
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
+    quit->hide();
     
     //--------------------//
     
@@ -109,21 +120,22 @@ void ThreeDPool::createScene(void)
     //....etc.
 }
 
-void ThreeDPool::displayQuitCursor (void) {
+void ThreeDPool::displayQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* quit = sheet->getChild("QuitButton");
+    
     context.getMouseCursor().show();
+    quit->show();
+}
+
+void ThreeDPool::hideQuitCursor () {
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* quit = sheet->getChild("QuitButton");
     
-    CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "ThreeDPool/QuitButton");
-    quit->setText("Quit");
-    
-    // In UDim, only set one of the two params, the other should be 0
-    quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    
-    sheet->addChild(quit);
-    
-    quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+    context.getMouseCursor().hide();
+    quit->hide();
 }
 
 void ThreeDPool::createFrameListener() {
@@ -173,15 +185,18 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             if (!adjustingCamera){
                 preFreeLookCameraPosition = mCamera->getPosition();
                 preFreeLookCameraDirection = mCamera->getDirection();
-                adjustingCamera = true;
             } else {
                 mCamera->setPosition(preFreeLookCameraPosition);
                 mCamera->setDirection(preFreeLookCameraDirection);
-                adjustingCamera = false;
             }
+            adjustingCamera = !adjustingCamera;
             break;
         case OIS::KC_ESCAPE :
-            displayQuitCursor();
+            if (!cursorDisplaying)
+                displayQuitCursor();
+            else 
+                hideQuitCursor();
+            cursorDisplaying = !cursorDisplaying;
             break;
     }
     return true;

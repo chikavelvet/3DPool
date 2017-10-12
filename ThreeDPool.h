@@ -46,6 +46,7 @@ protected:
     bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
     
     void displayQuitCursor(void);
+    void hideQuitCursor(void);
     
     void createFrameListener(void);
     
@@ -65,6 +66,7 @@ protected:
     float cueStickDelta;
     float cueStickTotal;
     bool adjustingStick;
+    bool cursorDisplaying;
 
 };
 
