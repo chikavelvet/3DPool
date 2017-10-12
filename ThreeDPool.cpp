@@ -86,16 +86,44 @@ void ThreeDPool::createScene(void)
     CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
     
-    // This will set up a sheet to show the cursor
+    // This will set up a default sheet to show the cursor
+    //    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+    //    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
+    //    CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(sheet);
+    
+    // This will show a demo GUI window
+    //    CEGUI::Window *guiRoot = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("TextDemo.layout"); 
+    //    CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(guiRoot);
+    
     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
-    CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(sheet);
+    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    context.setRootWindow(sheet);
+    
+    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
     
     //--------------------//
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
     Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
     //....etc.
+}
+
+void ThreeDPool::displayQuitCursor (void) {
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window* sheet = context.getRootWindow();
+    context.getMouseCursor().show();
+    
+    CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "ThreeDPool/QuitButton");
+    quit->setText("Quit");
+    
+    // In UDim, only set one of the two params, the other should be 0
+    quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    
+    sheet->addChild(quit);
+    
+    quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
 }
 
 void ThreeDPool::createFrameListener() {
@@ -151,6 +179,9 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
                 mCamera->setDirection(preFreeLookCameraDirection);
                 adjustingCamera = false;
             }
+            break;
+        case OIS::KC_ESCAPE :
+            displayQuitCursor();
             break;
     }
     return true;
@@ -323,6 +354,7 @@ void ThreeDPool::physicsLoop()
 }
 
 bool ThreeDPool::quit (const CEGUI::EventArgs& e) {
+    mShutDown = true;
     return true;
 }
 

@@ -45,6 +45,8 @@ protected:
     bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
     bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
     
+    void displayQuitCursor(void);
+    
     void createFrameListener(void);
     
     bool quit (const CEGUI::EventArgs& e);
