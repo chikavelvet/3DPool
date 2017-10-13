@@ -75,7 +75,7 @@ protected:
     Mix_Chunk* stick_ball;
     Mix_Chunk* pocket;
 
-    std::map<btCollisionShape*, objType> typeMap;
+    std::map<size_t, objType> typeMap;
 };
 
 //---------------------------------------------------------------------------

@@ -61,7 +61,7 @@ void ThreeDPool::createScene(void)
 
     // makeGround();
 
-    typeMap = std::map<btCollisionShape*, objType>();
+    typeMap = std::map<size_t, objType>();
 
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap);
@@ -392,8 +392,8 @@ void ThreeDPool::physicsLoop()
 
         const btCollisionShape* shapeA = obA->getCollisionShape();
         const btCollisionShape* shapeB = obB->getCollisionShape();
-        const void* ptrA = (void *)shapeA;
-        const void* ptrB = (void *)shapeB;
+        size_t ptrA = (size_t)shapeA;
+        size_t ptrB = (size_t)shapeB;
 
         objType obAType = typeMap[ptrA];
         objType obBType = typeMap[ptrB];

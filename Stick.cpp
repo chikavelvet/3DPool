@@ -5,7 +5,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
              btScalar x, btScalar y, btScalar z,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
-             btRigidBody* _cueBall, std::map<btCollisionShape*, objType> &typeMap) :
+             btRigidBody* _cueBall, std::map<size_t, objType> &typeMap) :
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
@@ -33,7 +33,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     // Create the new shape, and tell the physics that is a sphere
     shape = new btBoxShape(btVector3(1, 1, 23));
     
-    typeMap[shape] = stickType;
+    typeMap[((size_t)shape)] = stickType;
 
     // TODO: make sure this isn't causing a double addition to the simulator
     simulator->getCollisionShapes().push_back(shape);

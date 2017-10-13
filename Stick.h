@@ -20,7 +20,7 @@ public:
             btScalar x, btScalar y, btScalar z, 
             std::string _name, 
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
-            btRigidBody* _cueBall, std::map<btCollisionShape*, objType> &typeMap);
+            btRigidBody* _cueBall, std::map<size_t, objType> &typeMap);
 
     bool readjustStickToCueball (bool& adjustingStick);
 
