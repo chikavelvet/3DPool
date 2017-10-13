@@ -19,7 +19,7 @@ public:
 	~Ball();
 	Ball();
 
-	Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, btScalar x, btScalar y, btScalar z, std::string name) {
+	Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, btScalar x, btScalar y, btScalar z, std::string name, std::map<btCollisionShape*, objType> &typeMap) {
         //----------------make a cube-------------------//
         entity = mSceneMgr->createEntity("sphere.mesh"); 
         node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
@@ -29,6 +29,9 @@ public:
          
         //create the new shape, and tell the physics that is a sphere
         colShape = new btSphereShape(5);
+
+        typeMap[colShape] = ballType;
+
         physicsEngine->getCollisionShapes().push_back(colShape);
         btTransform startTransform;
         startTransform.setIdentity();

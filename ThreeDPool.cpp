@@ -61,10 +61,13 @@ void ThreeDPool::createScene(void)
 
     // makeGround();
 
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall");
+    typeMap = std::map<btCollisionShape*, objType>();
+
+
+    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap);
     cueBall = cueBallObject->getRigidBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + STICK_POWER_MIN, "cueStick", STICK_POWER_MAX, STICK_POWER_MIN, STICK_POWER_MULT, cueBall);
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + STICK_POWER_MIN, "cueStick", STICK_POWER_MAX, STICK_POWER_MIN, STICK_POWER_MULT, cueBall, typeMap);
     cueStick = cueStickObject->getRigidBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
@@ -116,7 +119,7 @@ void ThreeDPool::createScene(void)
     //--------------------//
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
-    Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
+    Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1", typeMap);
     //....etc.
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -387,7 +390,18 @@ void ThreeDPool::physicsLoop()
         const btCollisionObject* obA = contactManifold->getBody0();
         const btCollisionObject* obB = contactManifold->getBody1();
 
-        Mix_PlayChannel(-1, stick_ball, 0);
+        const btCollisionShape* shapeA = obA->getCollisionShape();
+        const btCollisionShape* shapeB = obB->getCollisionShape();
+        const void* ptrA = (void *)shapeA;
+        const void* ptrB = (void *)shapeB;
+
+        objType obAType = typeMap[ptrA];
+        objType obBType = typeMap[ptrB];
+
+        if((obAType == stickType && obBType == ballType) || (obBType == stickType && obAType == ballType))
+            Mix_PlayChannel(-1, stick_ball, 0);
+        else if(obAType == ballType && obBType == ballType)
+            Mix_PlayChannel(-1, ball_ball, 0);
     }
 }
 

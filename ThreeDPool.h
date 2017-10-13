@@ -21,6 +21,7 @@ http://www.ogre3d.org/wiki/
 #include "BaseApplication.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+#include <map>
 
 class PlayerCamera;
 //---------------------------------------------------------------------------
@@ -73,6 +74,8 @@ protected:
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;
     Mix_Chunk* pocket;
+
+    std::map<btCollisionShape*, objType> typeMap;
 };
 
 //---------------------------------------------------------------------------

@@ -17,6 +17,12 @@ class Simulator;
 class CollisionContext;
 class BulletContactCallback;
 
+enum objType
+{
+    ballType, roomType, stickType
+};
+
+
 class GameObject {
 protected:    
 	Ogre::String name;
