@@ -19,6 +19,8 @@ http://www.ogre3d.org/wiki/
 #define __ThreeDPool_h_
 
 #include "BaseApplication.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 
 class PlayerCamera;
 //---------------------------------------------------------------------------
@@ -68,6 +70,9 @@ protected:
     bool adjustingStick;
     bool cursorDisplaying;
 
+    Mix_Chunk* ball_ball;
+    Mix_Chunk* stick_ball;
+    Mix_Chunk* pocket;
 };
 
 //---------------------------------------------------------------------------

@@ -118,6 +118,19 @@ void ThreeDPool::createScene(void)
     //----------MAKE MORE BALLS AS DESIRED-----------//
     Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1");
     //....etc.
+
+    SDL_Init(SDL_INIT_VIDEO);
+    int audio_rate = 22050;
+    Uint16 audio_format = AUDIO_S16SYS;
+    int audio_channels = 2;
+    int audio_buffers = 4096; 
+    
+    Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
+
+    assert(0 < Mix_AllocateChannels(1));
+    ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
+    stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
+    pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
 }
 
 void ThreeDPool::displayQuitCursor () {
@@ -365,6 +378,17 @@ void ThreeDPool::physicsLoop()
                 sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));
             }
         }
+    }
+
+    int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
+    for (int i = 0; i < numManifolds; i++)
+    {
+        btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
+        const btCollisionObject* obA = contactManifold->getBody0();
+        const btCollisionObject* obB = contactManifold->getBody1();
+
+        assert(0 < Mix_AllocateChannels(16));
+        assert(-1 != Mix_PlayChannel(-1, stick_ball, 0));
     }
 }
 
