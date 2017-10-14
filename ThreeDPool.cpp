@@ -29,7 +29,7 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float STICK_POWER_MAX = 150.0f, STICK_POWER_MIN = 50.0f, STICK_POWER_MULT = 5.0f;
+const float STICK_POWER_MAX = 150.0f, STICK_POWER_MIN = 50.0f, STICK_POWER_MULT = 10.0f;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
@@ -41,6 +41,7 @@ ThreeDPool::ThreeDPool(void) :
     adjustingStick(false),
     adjustingCamera(false),
     cursorDisplaying(false),
+    soundOn(true),
     strokes(0),
     cameraCounter(0)
 {
@@ -237,6 +238,9 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
                 hideQuitCursor();
             cursorDisplaying = !cursorDisplaying;
             break;
+        case OIS::KC_Y:
+            soundOn = !soundOn;
+            break;
     }
     return true;
 }
@@ -407,25 +411,27 @@ void ThreeDPool::physicsLoop()
         }
     }
 
-    int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
-    for (int i = 0; i < numManifolds; i++)
-    {
-        btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
-        const btCollisionObject* obA = contactManifold->getBody0();
-        const btCollisionObject* obB = contactManifold->getBody1();
+    if (soundOn) {
+        int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
+        for (int i = 0; i < numManifolds; i++)
+        {
+            btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
+            const btCollisionObject* obA = contactManifold->getBody0();
+            const btCollisionObject* obB = contactManifold->getBody1();
 
-        const btCollisionShape* shapeA = obA->getCollisionShape();
-        const btCollisionShape* shapeB = obB->getCollisionShape();
-        size_t ptrA = (size_t)shapeA;
-        size_t ptrB = (size_t)shapeB;
+            const btCollisionShape* shapeA = obA->getCollisionShape();
+            const btCollisionShape* shapeB = obB->getCollisionShape();
+            size_t ptrA = (size_t)shapeA;
+            size_t ptrB = (size_t)shapeB;
 
-        objType obAType = typeMap[ptrA];
-        objType obBType = typeMap[ptrB];
+            objType obAType = typeMap[ptrA];
+            objType obBType = typeMap[ptrB];
 
-        if((obAType == stickType && obBType == ballType) || (obBType == stickType && obAType == ballType))
-            Mix_PlayChannel(-1, stick_ball, 0);
-        else if(obAType == ballType && obBType == ballType)
-            Mix_PlayChannel(-1, ball_ball, 0);
+            if((obAType == stickType && obBType == ballType) || (obBType == stickType && obAType == ballType))
+                Mix_PlayChannel(-1, stick_ball, 0);
+            else if(obAType == ballType && obBType == ballType)
+                Mix_PlayChannel(-1, ball_ball, 0);
+        }
     }
 }
 

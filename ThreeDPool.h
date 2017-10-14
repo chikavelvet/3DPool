@@ -72,6 +72,7 @@ protected:
     float cueStickTotal;
     bool adjustingStick;
     bool cursorDisplaying;
+    bool soundOn;
     
     int strokes;
 
