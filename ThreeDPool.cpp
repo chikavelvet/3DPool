@@ -405,8 +405,25 @@ void ThreeDPool::physicsLoop()
             if (userPointer) {
                 btQuaternion orientation = trans.getRotation();
                 Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode *>(userPointer);
-                sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-                sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));
+                
+                objType type = typeMap[(size_t) sceneNode];
+                sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));                
+
+                if(type == stickType){
+                    btVector3 defaultZAxis(0.0, 0.0, 1.0);
+                    btQuaternion q = body->getCenterOfMassTransform().getRotation();
+                    btVector3 bodyZAxis = btMatrix3x3(q) * defaultZAxis;
+                    Ogre::Vector3 ogreZAxis(bodyZAxis.getX(), bodyZAxis.getY(), bodyZAxis.getZ());
+
+                    Ogre::Vector3 newStickPosition(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+                    newStickPosition += (ogreZAxis * 30);
+                        
+                    sceneNode->setPosition(newStickPosition);
+                }
+                else{
+                    sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+                }
+
             }
         }
     }

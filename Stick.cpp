@@ -32,7 +32,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 //    body->setUserIndex(5);
 
     // Create the new shape, and tell the physics that is a sphere
-    shape = new btBoxShape(btVector3(0.000001, 0.000001, 0.000001));
+    shape = new btBoxShape(btVector3(1, 1, 0.000001));
     
     typeMap[((size_t) rootNode)] = stickType;
 
@@ -42,7 +42,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     
     tr.setIdentity();
     tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-    tr.setOrigin(btVector3(x, y, z-11.5));
+    tr.setOrigin(btVector3(x, y, z));
     
     shape->calculateLocalInertia(mass, inertia);
     
@@ -178,6 +178,5 @@ void Stick::rotateToMouseYInput (float& deltaRotationY) {
 }
 
 Ogre::Vector3 Stick::getPosition() {
-    btVector3 btPos = body->getCenterOfMassPosition();
-    return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
+    return rootNode->getPosition();
 }

@@ -106,11 +106,11 @@ private:
         btCollisionShape* groundShape;
 
         if(normal == Ogre::Vector3::UNIT_Z || normal == Ogre::Vector3::NEGATIVE_UNIT_Z)
-            groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(d2), btScalar(20.)));
+            groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(d2), btScalar(1.)));
         else if (normal == Ogre::Vector3::UNIT_Y || normal == Ogre::Vector3::NEGATIVE_UNIT_Y)
-            groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(20.), btScalar(d2)));        
+            groundShape = new btBoxShape(btVector3(btScalar(d1), btScalar(1.), btScalar(d2)));        
         else if (normal == Ogre::Vector3::UNIT_X || normal == Ogre::Vector3::NEGATIVE_UNIT_X)
-            groundShape = new btBoxShape(btVector3(btScalar(20.), btScalar(d2), btScalar(d1)));        
+            groundShape = new btBoxShape(btVector3(btScalar(1.), btScalar(d2), btScalar(d1)));        
 
 
         btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
