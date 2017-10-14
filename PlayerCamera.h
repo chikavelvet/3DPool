@@ -8,7 +8,7 @@ class PlayerCamera : GameObject {
 protected:
     Ogre::Camera* cam;
     
-    int cameraOffsetFromStick = 100;
+//    int cameraOffsetFromStick = 100;
     
 public:
     PlayerCamera (Ogre::Camera* const cam);

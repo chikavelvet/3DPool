@@ -7,7 +7,7 @@ class Simulator;
 
 class Ball : public GameObject {
 
-private:
+protected:
     Ogre::Entity* entity;
     Ogre::SceneNode* node;
     btCollisionShape* colShape;
