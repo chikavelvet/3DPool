@@ -34,7 +34,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 //    body->setUserIndex(5);
 
     // Create the new shape, and tell the physics that is a sphere
-    shape = new btBoxShape(btVector3(1, 1, 0.000001));
+    shape = new btBoxShape(btVector3(1, 1, 23));
     
     typeMap[((size_t) rootNode)] = stickType;
 

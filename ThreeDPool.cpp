@@ -29,7 +29,7 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float CUE_STICK_MAX = 110.0f, CUE_STICK_MIN = 10.0f, STICK_POWER_MULT = 0.1f;
+const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.1f;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
@@ -409,20 +409,20 @@ void ThreeDPool::physicsLoop()
                 objType type = typeMap[(size_t) sceneNode];
                 sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));                
 
-                if(type == stickType){
-                    btVector3 defaultZAxis(0.0, 0.0, 1.0);
-                    btQuaternion q = body->getCenterOfMassTransform().getRotation();
-                    btVector3 bodyZAxis = btMatrix3x3(q) * defaultZAxis;
-                    Ogre::Vector3 ogreZAxis(bodyZAxis.getX(), bodyZAxis.getY(), bodyZAxis.getZ());
-
-                    Ogre::Vector3 newStickPosition(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
-                    newStickPosition += (ogreZAxis * 30);
-                        
-                    sceneNode->setPosition(newStickPosition);
-                }
-                else{
+//                if(type == stickType){
+//                    btVector3 defaultZAxis(0.0, 0.0, 1.0);
+//                    btQuaternion q = body->getCenterOfMassTransform().getRotation();
+//                    btVector3 bodyZAxis = btMatrix3x3(q) * defaultZAxis;
+//                    Ogre::Vector3 ogreZAxis(bodyZAxis.getX(), bodyZAxis.getY(), bodyZAxis.getZ());
+//
+//                    Ogre::Vector3 newStickPosition(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+//                    newStickPosition += (ogreZAxis * 30);
+//                        
+//                    sceneNode->setPosition(newStickPosition);
+//                }
+//                else{
                     sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-                }
+//                }
 
             }
         }
