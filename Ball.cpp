@@ -3,17 +3,17 @@
 Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, 
         btScalar x, btScalar y, btScalar z, 
         std::string name, 
-        std::map<size_t,objType>& typeMap) 
+        std::map<size_t,objType>& typeMap) :
+    colShape(new btSphereShape(5)),
+    mass(5),
+    localInertia(btVector3(0, 0, 0))
 {
-    //----------------make a cube-------------------//
+    //----------------make a sphere-------------------//
     entity = mSceneMgr->createEntity("sphere.mesh"); 
     node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
     node->attachObject(entity);
     node->setPosition(x, y, z);
     node->scale(0.05, 0.05, 0.05);
-
-    //create the new shape, and tell the physics that is a sphere
-    colShape = new btSphereShape(5);
 
     typeMap[((size_t) colShape)] = ballType;
 
@@ -22,15 +22,11 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     startTransform.setIdentity();
     startTransform.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
 
-    //set the mass of the object. a mass of "0" means that it is an immovable object
-    mass = 5;
-    localInertia = btVector3(0,0,0);
-
     btVector3 initialPosition(x, y, z);
     startTransform.setOrigin(initialPosition);
     colShape->calculateLocalInertia(mass, localInertia);
 
-    //actually contruvc the body and add it to the dynamics world
+    //actually contruct the body and add it to the dynamics world
     btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform); 
     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
     body = new btRigidBody(rbInfo);

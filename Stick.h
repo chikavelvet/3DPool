@@ -13,8 +13,6 @@ private:
     btRigidBody* cueBall;
 
 public:
-    ~Stick() = default;
-
     Stick(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
             btScalar x, btScalar y, btScalar z, 
             std::string _name, 

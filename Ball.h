@@ -13,12 +13,9 @@ private:
     btCollisionShape* colShape;
     btScalar mass;
     btVector3 localInertia;
-    btRigidBody *body;
+    btRigidBody* body;
 
 public:
-    ~Ball();
-    Ball();
-
     Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, 
         btScalar x, btScalar y, btScalar z, 
         std::string name, 
