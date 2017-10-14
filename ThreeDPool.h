@@ -55,6 +55,8 @@ protected:
     
     void createFrameListener(void);
     
+    void addPockets(void);
+    
     bool quit (const CEGUI::EventArgs& e);
 
     CEGUI::OgreRenderer* mRenderer;

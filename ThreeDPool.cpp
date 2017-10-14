@@ -66,7 +66,6 @@ void ThreeDPool::createScene(void)
 
     typeMap = std::map<size_t, objType>();
 
-
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap, true);
     cueBall = cueBallObject->getRigidBody();
 
@@ -80,6 +79,8 @@ void ThreeDPool::createScene(void)
     mCamera->setPosition(cueStickPos + cameraOffset);
 
     room = new Room(mSceneMgr, physicsEngine);
+    
+    addPockets();
 
     //----Set up CEGUI----//
     
@@ -147,6 +148,47 @@ void ThreeDPool::createScene(void)
     ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
     stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
     pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
+}
+
+void ThreeDPool::addPockets() {
+    // 12 Pockets
+    Pocket* p1 = new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, 480,
+            "p1", typeMap);
+    Pocket* p2 = new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, 0,
+            "p2", typeMap);
+    Pocket* p3 = new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, -480,
+            "p3", typeMap);
+    Pocket* p4 = new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, 480,
+            "p4", typeMap);
+    Pocket* p5 = new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, 0,
+            "p5", typeMap);
+    Pocket* p6 = new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, -480,
+            "p6", typeMap);
+    Pocket* p7 = new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, 480,
+            "p7", typeMap);
+    Pocket* p8 = new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, 0,
+            "p8", typeMap);
+    Pocket* p9 = new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, -480,
+            "p9", typeMap);
+    Pocket* p10 = new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, 480,
+            "p10", typeMap);
+    Pocket* p11 = new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, 0,
+            "p11", typeMap);
+    Pocket* p12 = new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, -480,
+            "p12", typeMap);
+    
 }
 
 void ThreeDPool::incrementStrokeCount() {    
