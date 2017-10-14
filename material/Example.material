@@ -1,0 +1,143 @@
+material Example/Green
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+ 
+         ambient 0.10 0.43 0.09 1
+         diffuse 0.10 0.43 0.09 1
+	 specular 0.0 0.0 0.0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Wood
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+ 
+         ambient 0.57 0.46 0.2 1
+         diffuse 0.57 0.46 0.2 1
+	 specular 0.0 0.0 0.0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Stick
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 0.97 0.78 0.33 1
+         diffuse 0.97 0.78 0.33 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Blue
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 0.02 0.37 0.84 1
+         diffuse 0.02 0.37 0.84 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Red
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 0.84 0.11 0.02 1
+         diffuse 0.84 0.11 0.02 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Yellow
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 1.00 1.00 0.00 1
+         diffuse 1.00 1.00 0.00 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Purple
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 0.46 0.02 0.72 1
+         diffuse 0.46 0.02 0.72 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Orange
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 0.91 0.48 0.00 1
+         diffuse 0.91 0.48 0.00 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/GreenOther
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 0.02 0.70 0.00 1
+         diffuse 0.02 0.70 0.00 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}

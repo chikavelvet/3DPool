@@ -51,8 +51,7 @@ private:
 
 
 
-    void makePlane(Ogre::Vector3 normal, std::string name, float d1, float d2, Ogre::Vector3 up, float posx, float posy, float posz, Ogre::SceneManager* mSceneMgr, float btx, float bty, float btz,
-        Simulator* physicsEngine)
+    void makePlane(Ogre::Vector3 normal, std::string name, float d1, float d2, Ogre::Vector3 up, float posx, float posy, float posz, Ogre::SceneManager* mSceneMgr, std::string color)
     {
         Ogre::Plane p(normal, 0);
         Ogre::MeshManager::getSingleton().createPlane(name,
@@ -67,14 +66,14 @@ private:
         node->attachObject(entity);
         node->setPosition(posx, posy, posz);
         entity->setCastShadows(false);
-        entity->setMaterialName("Examples/Rockwall");       
+        entity->setMaterialName(color);       
     }
 
 
     void makePlaneWithPhysics(Ogre::Vector3 normal, std::string name, float d1, float d2, Ogre::Vector3 up, float posx, float posy, float posz, Ogre::SceneManager* mSceneMgr, float btx, float bty, float btz,
         Simulator* physicsEngine)
     {
-        Ogre::Plane p(normal, 0);
+        /*Ogre::Plane p(normal, 0);
         Ogre::MeshManager::getSingleton().createPlane(name,
             Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             p,
@@ -87,8 +86,7 @@ private:
         node->attachObject(entity);
         node->setPosition(posx, posy, posz);
         entity->setCastShadows(false);
-        entity->setMaterialName("Examples/Rockwall");       
-
+        entity->setMaterialName("Examples/Rockwall");       */
 
         // btTransform groundTransform;
         // groundTransform.setIdentity();
@@ -157,6 +155,48 @@ public:
         
         makePlaneWithPhysics(Ogre::Vector3::UNIT_Z, "_six_one", 426, 480, Ogre::Vector3::UNIT_Y, 0, 0, -479, mSceneMgr, 0, 0, -480 + offset, physicsEngine);
         makePlaneWithPhysics(Ogre::Vector3::UNIT_Z, "_six_two", 480, 426, Ogre::Vector3::UNIT_Y, 0, 0, -480 - offset, mSceneMgr, 0, 0, -480 - offset, physicsEngine);
+    
+        //ONE
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_one", 426, 426, Ogre::Vector3::UNIT_Y, 0, 0, 480, mSceneMgr, "Example/Green");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_two", 27, 426, Ogre::Vector3::UNIT_Y, 226.5, 0, 480, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_three", 27, 426, Ogre::Vector3::UNIT_Y, -226.5, 0, 480, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_four", 426, 27, Ogre::Vector3::UNIT_Y, 0, 226.5, 480, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Z, "_one_five", 426, 27, Ogre::Vector3::UNIT_Y, 0, -226.5, 480, mSceneMgr, "Example/Wood");
+
+        //TWO
+        makePlane(Ogre::Vector3::UNIT_X, "_two_one", 906, 426, Ogre::Vector3::UNIT_Y, -239, 0, 0, mSceneMgr, "Example/Green");
+        makePlane(Ogre::Vector3::UNIT_X, "_two_two", 439.5, 480, Ogre::Vector3::UNIT_Y, -240, 0, 233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_X, "_two_three", 439.5, 480, Ogre::Vector3::UNIT_Y, -240, 0, -233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_X, "_two_four", 27, 426, Ogre::Vector3::UNIT_Y, -240, 0, 466.5, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_X, "_two_five", 27, 426, Ogre::Vector3::UNIT_Y, -240, 0, -466.5, mSceneMgr, "Example/Wood");        
+
+        //THREE
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_one", 426, 906, Ogre::Vector3::UNIT_Z, 0, 239, 0, mSceneMgr, "Example/Green");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_two", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, 240, 233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_three", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, 240, -233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_four", 426, 27, Ogre::Vector3::UNIT_Z, 0, 240, 466.5, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_Y, "_three_five", 426, 27, Ogre::Vector3::UNIT_Z, 0, 240, -466.5, mSceneMgr, "Example/Wood");        
+
+        //FOUR
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_one", 906, 426, Ogre::Vector3::UNIT_Y, 239, 0, 0, mSceneMgr, "Example/Green");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_two", 439.5, 480, Ogre::Vector3::UNIT_Y, 240, 0, 233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_three", 439.5, 480, Ogre::Vector3::UNIT_Y, 240, 0, -233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_four", 27, 426, Ogre::Vector3::UNIT_Y, 240, 0, 466.5, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::NEGATIVE_UNIT_X, "_four_five", 27, 426, Ogre::Vector3::UNIT_Y, 240, 0, -466.5, mSceneMgr, "Example/Wood");
+
+        //FIVE       
+        makePlane(Ogre::Vector3::UNIT_Y, "_five_one", 426, 906, Ogre::Vector3::UNIT_Z, 0, -239, 0, mSceneMgr, "Example/Green");
+        makePlane(Ogre::Vector3::UNIT_Y, "_five_two", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, -240, 233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_Y, "_five_three", 480, 439.5, Ogre::Vector3::UNIT_Z, 0, -240, -233.25, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_Y, "_five_four", 426, 27, Ogre::Vector3::UNIT_Z, 0, -240, 466.5, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_Y, "_five_five", 426, 27, Ogre::Vector3::UNIT_Z, 0, -240, -466.5, mSceneMgr, "Example/Wood");
+
+        //SIX
+        makePlane(Ogre::Vector3::UNIT_Z, "_six_one", 426, 426, Ogre::Vector3::UNIT_Y, 0, 0, -480, mSceneMgr, "Example/Green");
+        makePlane(Ogre::Vector3::UNIT_Z, "_six_two", 27, 426, Ogre::Vector3::UNIT_Y, 226.5, 0, -480, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_Z, "_six_three", 27, 426, Ogre::Vector3::UNIT_Y, -226.5, 0, -480, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_Z, "_six_four", 426, 27, Ogre::Vector3::UNIT_Y, 0, 226.5, -480, mSceneMgr, "Example/Wood");
+        makePlane(Ogre::Vector3::UNIT_Z, "_six_five", 426, 27, Ogre::Vector3::UNIT_Y, 0, -226.5, -480, mSceneMgr, "Example/Wood"); 
     }
 };
 

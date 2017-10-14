@@ -30,6 +30,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
     rootNode->attachObject(geom);
     rootNode->setPosition(x, y, z);
+    geom->setMaterialName("Example/Stick");
     rootNode->scale(0.01, 0.01, 0.5);
 //    body->setUserIndex(5);
 
