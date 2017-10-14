@@ -32,6 +32,8 @@ Pocket::Pocket(Ogre::SceneManager* mSceneMgr,
     rootNode->setPosition(x, y, z);
     rootNode->scale(0.27, 0.27, 0.27);
     geom->setMaterialName("Example/Purple");
+    
+    rootNode->setVisible(false);
        
     typeMap[((size_t) rootNode)] = pocketType;
     
