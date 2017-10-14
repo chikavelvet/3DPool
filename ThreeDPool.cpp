@@ -40,7 +40,8 @@ ThreeDPool::ThreeDPool(void) :
     cueStickTotal(STICK_POWER_MIN),
     adjustingStick(false),
     adjustingCamera(false),
-    cursorDisplaying(false)
+    cursorDisplaying(false),
+    strokes(0)
 {
 }
 //---------------------------------------------------------------------------
@@ -116,6 +117,16 @@ void ThreeDPool::createScene(void)
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
     quit->hide();
     
+    // Stroke counter
+    CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
+    std::stringstream ss;
+    ss << strokes;
+    strokesWin->setText(ss.str());
+    strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
+    strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.9, 0)));
+    
+    sheet->addChild(strokesWin);
+    
     //--------------------//
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
@@ -134,6 +145,17 @@ void ThreeDPool::createScene(void)
     ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
     stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
     pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
+}
+
+void ThreeDPool::incrementStrokeCount() {    
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* strokesWin = sheet->getChild("StrokeCount");
+    std::stringstream ss;
+    
+    ++strokes;
+    ss << strokes;
+    strokesWin->setText(ss.str());
 }
 
 void ThreeDPool::displayQuitCursor () {
@@ -352,6 +374,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         mCamera->move(camDirVec * evt.timeSinceLastFrame);
     } else if(hitBall) {
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
+        incrementStrokeCount();
     }
     else {
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);

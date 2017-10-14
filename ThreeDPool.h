@@ -51,6 +51,8 @@ protected:
     void displayQuitCursor(void);
     void hideQuitCursor(void);
     
+    void incrementStrokeCount(void);
+    
     void createFrameListener(void);
     
     bool quit (const CEGUI::EventArgs& e);
@@ -70,6 +72,8 @@ protected:
     float cueStickTotal;
     bool adjustingStick;
     bool cursorDisplaying;
+    
+    int strokes;
 
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;
