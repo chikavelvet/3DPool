@@ -15,7 +15,7 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     node->setPosition(x, y, z);
     node->scale(0.05, 0.05, 0.05);
 
-    typeMap[((size_t) colShape)] = ballType;
+    typeMap[((size_t) node)] = ballType;
 
     physicsEngine->getCollisionShapes().push_back(colShape);
     btTransform startTransform;
@@ -37,6 +37,8 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     body->setRestitution(0.8);
     body->setDamping(0.1, 0);
 
+//    body->setUserIndex(ballType);
+    
     physicsEngine->getDynamicsWorld()->addRigidBody(body);
     physicsEngine->trackRigidBodyWithName(body, name); 
 }
@@ -46,3 +48,6 @@ Ogre::Vector3 Ball::getPosition() {
     return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
 }
 
+void Ball::setAsCue (void) {
+    body->setUserIndex(cueBallType);
+} 

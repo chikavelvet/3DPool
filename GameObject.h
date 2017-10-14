@@ -19,13 +19,18 @@ class BulletContactCallback;
 
 enum objType
 {
-    ballType, roomType, stickType
+    cueBallType, ballType, roomType, pocketType, stickType
 };
 
+//const int cueBallType = 0,
+//          ballType    = 1,
+//          roomType    = 2, 
+//          pocketType  = 4, 
+//          stickType   = 5;
 
 class GameObject {
-protected:    
-	Ogre::String name;
+protected:        
+        Ogre::String name;
 	Ogre::SceneManager* sceneMgr;
 	Simulator* simulator;
 	Ogre::SceneNode* rootNode;

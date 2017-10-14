@@ -29,11 +29,12 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     rootNode->attachObject(geom);
     rootNode->setPosition(x, y, z);
     rootNode->scale(0.01, 0.01, 0.5);
-    
+//    body->setUserIndex(5);
+
     // Create the new shape, and tell the physics that is a sphere
-    shape = new btBoxShape(btVector3(1, 1, 23));
+    shape = new btBoxShape(btVector3(0.000001, 0.000001, 0.000001));
     
-    typeMap[((size_t)shape)] = stickType;
+    typeMap[((size_t) rootNode)] = stickType;
 
     // TODO: make sure this isn't causing a double addition to the simulator
     simulator->getCollisionShapes().push_back(shape);
@@ -41,7 +42,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     
     tr.setIdentity();
     tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-    tr.setOrigin(btVector3(x, y, z));
+    tr.setOrigin(btVector3(x, y, z-11.5));
     
     shape->calculateLocalInertia(mass, inertia);
     
@@ -55,8 +56,8 @@ bool Stick::readjustStickToCueball (bool& adjustingStick) {
     bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.05f)
                         && (fabs(body->getTotalForce().length()) < 0.05f);
     
-    bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.01f)
-                       && (fabs(cueBall->getTotalForce().length()) < 0.01f);
+    bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.03f)
+                       && (fabs(cueBall->getTotalForce().length()) < 0.03f);
     
     if (cueStickStopped) {
         simulator->getDynamicsWorld()->removeRigidBody(body);
@@ -73,6 +74,10 @@ bool Stick::readjustStickToCueball (bool& adjustingStick) {
             btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
     body->setCenterOfMassTransform(newTransform);
     adjustingStick = false;
+    
+    std::cout << "Node: " << rootNode->getPosition() << std::endl;
+    std::cout << "Body: " << body->getCenterOfMassPosition();
+    
     simulator->getDynamicsWorld()->addRigidBody(body);
     geom->setVisible(true);
     return true;
@@ -110,7 +115,7 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
 void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
     if(cueStickTotal >= cueStickMin){
         body->activate(true);
-        btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * -powerMultiplier * cueStickTotal;    
+        btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * -powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
         body->applyCentralImpulse(movement);
     }
     cueStickTotal = cueStickMin;

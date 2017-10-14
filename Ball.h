@@ -28,6 +28,8 @@ public:
     Ogre::Entity* getOgreEntity(){ return entity; }
 
     Ogre::SceneNode* getOgreSceneNode(){ return node; }
+    
+    void setAsCue (void);
 };
 
 #endif

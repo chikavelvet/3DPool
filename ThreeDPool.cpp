@@ -29,7 +29,7 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float STICK_POWER_MAX = 150.0f, STICK_POWER_MIN = 50.0f, STICK_POWER_MULT = 10.0f;
+const float CUE_STICK_MAX = 110.0f, CUE_STICK_MIN = 10.0f, STICK_POWER_MULT = 0.1f;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
@@ -37,7 +37,7 @@ ThreeDPool::ThreeDPool(void) :
     hitBall(false),
     LMBDown(false),
     cueStickDelta(0),
-    cueStickTotal(STICK_POWER_MIN),
+    cueStickTotal(CUE_STICK_MIN),
     adjustingStick(false),
     adjustingCamera(false),
     cursorDisplaying(false),
@@ -70,7 +70,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap);
     cueBall = cueBallObject->getRigidBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + STICK_POWER_MIN, "cueStick", STICK_POWER_MAX, STICK_POWER_MIN, STICK_POWER_MULT, cueBall, typeMap);
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
     cueStick = cueStickObject->getRigidBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
@@ -418,14 +418,14 @@ void ThreeDPool::physicsLoop()
             btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
             const btCollisionObject* obA = contactManifold->getBody0();
             const btCollisionObject* obB = contactManifold->getBody1();
+           
+//            const btCollisionShape* shapeA = obA->getCollisionShape();
+//            const btCollisionShape* shapeB = obB->getCollisionShape();
+//            size_t ptrA = (size_t)shapeA;
+//            size_t ptrB = (size_t)shapeB;
 
-            const btCollisionShape* shapeA = obA->getCollisionShape();
-            const btCollisionShape* shapeB = obB->getCollisionShape();
-            size_t ptrA = (size_t)shapeA;
-            size_t ptrB = (size_t)shapeB;
-
-            objType obAType = typeMap[ptrA];
-            objType obBType = typeMap[ptrB];
+            objType obAType = typeMap[(size_t) (obA->getUserPointer())];
+            objType obBType = typeMap[(size_t) (obB->getUserPointer())];
 
             if((obAType == stickType && obBType == ballType) || (obBType == stickType && obAType == ballType))
                 Mix_PlayChannel(-1, stick_ball, 0);
