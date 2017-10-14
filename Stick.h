@@ -6,7 +6,6 @@
 class GameObject;
 
 class Stick : public GameObject {
-
 private:
     float cueStickMax;
     float cueStickMin;
@@ -26,78 +25,21 @@ public:
 
     void chargeStick (bool adjustingStick, float& cueStickTotal, float& cueStickDelta, bool LMBDown);
 
-    void releaseStick(bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
-        if(cueStickTotal >= cueStickMin){
-            body->activate(true);
-            btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * -powerMultiplier * cueStickTotal;    
-            body->applyCentralImpulse(movement);
-        }
-        cueStickTotal = cueStickMin;
-        cueStickDelta = 0;
-        adjustingStick = true;
-        hitBall = false;
-    }
+    void releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta);
 
+    void rotateToMouseInput (float& deltaRotationX, float& deltaRotationY);
 
-    void rotateToMouseInput(float& deltaRotationX, float& deltaRotationY){
-        rotateToMouseXInput(deltaRotationX);
-        rotateToMouseYInput(deltaRotationY);
-    }
+    void rotateToMouseXInput(float& deltaRotationX);
 
-    void rotateToMouseXInput(float& deltaRotationX){
-        btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
-        body->translate(difference);
+    void rotateToMouseYInput(float& deltaRotationY);
 
-         //make X rotation
-        btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
-        rotation *= body->getOrientation();
-       
-        //actually apply the rotations
-        body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
-        
-        btVector3 invDifference = difference;
-        invDifference = invDifference.rotate(btVector3(0, 1, 0),btRadians(deltaRotationX));
-        body->translate(-invDifference);
+    btRigidBody* getRigidBody() { return body; }
 
-        //reset delta rotations
-        deltaRotationX = 0.0f;
-    }
+    Ogre::Entity* getOgreEntity(){ return geom; }
 
-    void rotateToMouseYInput(float& deltaRotationY){
-        btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
-        body->translate(difference);
-
-        //make Y rotation
-        btQuaternion rotation(btVector3(1, 0, 0),btRadians(deltaRotationY));
-        rotation *= body->getOrientation();
-       
-        //actually apply the rotations
-        body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
-        
-        btVector3 invDifference = difference;
-        invDifference = invDifference.rotate(btVector3(1, 0, 0), btRadians(deltaRotationY));
-        body->translate(-invDifference);
-
-        //reset delta rotations
-        deltaRotationY = 0.0f;
-    }
-
-    btRigidBody* getRigidBody(){ return body; }
-    Ogre::Vector3 getPosition(){
-            btVector3 btPos = body->getCenterOfMassPosition();
-            return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
-    }
-
-    Ogre::Entity* getOgreEntity(){
-        return geom;
-    }
-
-    Ogre::SceneNode* getOgreSceneNode(){
-        return rootNode;
-    }
-
-
-
+    Ogre::SceneNode* getOgreSceneNode(){ return rootNode; }
+    
+    Ogre::Vector3 getPosition();
 };
 
-#endif
+#endif // ifndef __Stick_h_

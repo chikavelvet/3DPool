@@ -106,3 +106,63 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
         cueStickDelta = 0;
     }
 }
+
+void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
+    if(cueStickTotal >= cueStickMin){
+        body->activate(true);
+        btVector3 movement = btVector3(body->getCenterOfMassPosition()-cueBall->getCenterOfMassPosition()).normalize() * -powerMultiplier * cueStickTotal;    
+        body->applyCentralImpulse(movement);
+    }
+    cueStickTotal = cueStickMin;
+    cueStickDelta = 0;
+    adjustingStick = true;
+    hitBall = false;
+}
+
+void Stick::rotateToMouseInput (float& deltaRotationX, float& deltaRotationY) {
+    rotateToMouseXInput(deltaRotationX);
+    rotateToMouseYInput(deltaRotationY);
+}
+
+void Stick::rotateToMouseXInput (float& deltaRotationX) {
+    btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
+    body->translate(difference);
+
+     //make X rotation
+    btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
+    rotation *= body->getOrientation();
+
+    //actually apply the rotations
+    body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
+
+    btVector3 invDifference = difference;
+    invDifference = invDifference.rotate(btVector3(0, 1, 0),btRadians(deltaRotationX));
+    body->translate(-invDifference);
+
+    //reset delta rotations
+    deltaRotationX = 0.0f;
+}
+
+void Stick::rotateToMouseYInput (float& deltaRotationY) {
+    btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
+    body->translate(difference);
+
+    //make Y rotation
+    btQuaternion rotation(btVector3(1, 0, 0),btRadians(deltaRotationY));
+    rotation *= body->getOrientation();
+
+    //actually apply the rotations
+    body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
+
+    btVector3 invDifference = difference;
+    invDifference = invDifference.rotate(btVector3(1, 0, 0), btRadians(deltaRotationY));
+    body->translate(-invDifference);
+
+    //reset delta rotations
+    deltaRotationY = 0.0f;
+}
+
+Ogre::Vector3 Stick::getPosition() {
+    btVector3 btPos = body->getCenterOfMassPosition();
+    return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
+}
