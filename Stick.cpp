@@ -14,6 +14,8 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     simulator = _simulator;
     name = _name;
     sceneMgr = _sceneMgr;
+    coltype = COL_STICK;
+    collidesWith = COL_CUEBALL;
     
     kinematic = false;
     needsUpdates = false;

@@ -1,4 +1,4 @@
-noinst_HEADERS = Ball.h ControlListener.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h
 
 
 CEGUI_CFLAGS = -pthread -I/lusr/opt/cegui-0.8.7/include/cegui-0 -I/usr/include/OGRE

@@ -3,7 +3,7 @@
 Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, 
         btScalar x, btScalar y, btScalar z, 
         std::string name, 
-        std::map<size_t,objType>& typeMap) :
+        std::map<size_t,objType>& typeMap, bool isCue) :
     colShape(new btSphereShape(5)),
     mass(5),
     localInertia(btVector3(0, 0, 0))
@@ -14,8 +14,11 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     node->attachObject(entity);
     node->setPosition(x, y, z);
     node->scale(0.05, 0.05, 0.05);
+            
+    int collidesWith = COL_CUEBALL | COL_BALL | COL_WALL;
 
-    typeMap[((size_t) node)] = ballType;
+    typeMap[((size_t) node)] = isCue ? cueBallType : ballType;
+    coltype = isCue ? COL_CUEBALL : COL_BALL;
 
     physicsEngine->getCollisionShapes().push_back(colShape);
     btTransform startTransform;
@@ -38,16 +41,10 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     body->setDamping(0.1, 0);
 
 //    body->setUserIndex(ballType);
-    
-    physicsEngine->getDynamicsWorld()->addRigidBody(body);
-    physicsEngine->trackRigidBodyWithName(body, name); 
+    physicsEngine->getDynamicsWorld()->addRigidBody(body, coltype, collidesWith);
 }
 
 Ogre::Vector3 Ball::getPosition() {
     btVector3 btPos = body->getCenterOfMassPosition();
     return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
 }
-
-void Ball::setAsCue (void) {
-    body->setUserIndex(cueBallType);
-} 

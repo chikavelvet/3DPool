@@ -14,10 +14,7 @@ void Simulator::initObjects() {
     dynamicsWorld->setGravity(btVector3(0, 0, 0));
 }
 
-void Simulator::addObject (GameObject* o) { 
+void Simulator::addObject (GameObject* o, collisionType coltype, int collidesWith) { 
 	objList.push_back(o); 
-	dynamicsWorld->addRigidBody(o->getBody());       
-}
-
-void Simulator::trackRigidBodyWithName(btRigidBody* body, std::string name){
+	dynamicsWorld->addRigidBody(o->getBody(), coltype, collidesWith);       
 }

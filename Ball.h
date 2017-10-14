@@ -5,7 +5,7 @@
 
 class Simulator;
 
-class Ball {
+class Ball : public GameObject {
 
 private:
     Ogre::Entity* entity;
@@ -19,7 +19,8 @@ public:
     Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, 
         btScalar x, btScalar y, btScalar z, 
         std::string name, 
-        std::map<size_t, objType> &typeMap);
+        std::map<size_t, objType> &typeMap,
+        bool isCue = false);
 
     Ogre::Vector3 getPosition();
 

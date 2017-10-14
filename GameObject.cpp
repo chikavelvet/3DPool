@@ -21,7 +21,7 @@ void GameObject::addToSimulator() {
 		body->setActivationState(DISABLE_DEACTIVATION);
 	}
         
-	simulator->addObject(this);
+	simulator->addObject(this, coltype, collidesWith);
 }
 
 /*using motionstate is recommended, it provides interpolation capabilities, 

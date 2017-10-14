@@ -67,7 +67,7 @@ void ThreeDPool::createScene(void)
     typeMap = std::map<size_t, objType>();
 
 
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap);
+    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap, true);
     cueBall = cueBallObject->getRigidBody();
 
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);

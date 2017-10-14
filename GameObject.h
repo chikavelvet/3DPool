@@ -12,15 +12,12 @@
 #include <OgreConfigFile.h>
 // #include "BaseApplication.h"
 #include "Simulator.h"
+#include "Enums.h"
 
 class Simulator;
 class CollisionContext;
 class BulletContactCallback;
 
-enum objType
-{
-    cueBallType, ballType, roomType, pocketType, stickType
-};
 
 //const int cueBallType = 0,
 //          ballType    = 1,
@@ -52,7 +49,9 @@ protected:
 
 	CollisionContext* context;
 	BulletContactCallback* cCallBack;
-
+        
+        int collidesWith;
+        collisionType coltype;
 public:
 	void addToSimulator();
 	void updateTransform();

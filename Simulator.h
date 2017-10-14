@@ -7,8 +7,10 @@
 #include <string>
 #include "BulletContactCallback.h"
 #include "OgreMotionState.h"
+//#include "GameObject.h"
+#include "Enums.h"
 
-class GameObject;
+//class GameObject;
 
 class Simulator { 
 protected: 
@@ -31,7 +33,7 @@ public:
 		return objList.at(index);
 	}
 
-	void addObject(GameObject* o); 
+	void addObject(GameObject* o, collisionType coltype, int collidesWith); 
 	bool removeObject(GameObject* o); 
 	btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld; }
 	void stepSimulation(const Ogre::Real elapsedTime, 
@@ -39,7 +41,6 @@ public:
 	btAlignedObjectArray<btCollisionShape*> & getCollisionShapes(){
 		return collisionShapes;
 	}
-	void trackRigidBodyWithName(btRigidBody* body, std::string name);
 };
 
 #endif
