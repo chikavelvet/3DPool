@@ -128,15 +128,20 @@ void Stick::rotateToMouseXInput (float& deltaRotationX) {
     btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
     body->translate(difference);
 
+    btVector3 yAxis(0.0, 1.0, 0.0);
+    btQuaternion q = body->getCenterOfMassTransform().getRotation();
+    btVector3 bodyAxis = btMatrix3x3(q) * yAxis;
+
+    
      //make X rotation
-    btQuaternion rotation(btVector3(0, 1, 0),btRadians(deltaRotationX));
+    btQuaternion rotation(bodyAxis,btRadians(deltaRotationX));
     rotation *= body->getOrientation();
 
     //actually apply the rotations
     body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
 
     btVector3 invDifference = difference;
-    invDifference = invDifference.rotate(btVector3(0, 1, 0),btRadians(deltaRotationX));
+    invDifference = invDifference.rotate(bodyAxis,btRadians(deltaRotationX));
     body->translate(-invDifference);
 
     //reset delta rotations
@@ -147,15 +152,20 @@ void Stick::rotateToMouseYInput (float& deltaRotationY) {
     btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
     body->translate(difference);
 
+    btVector3 xAxis(1.0, 0.0, 0.0);
+    btQuaternion q = body->getCenterOfMassTransform().getRotation();
+    btVector3 bodyAxis = btMatrix3x3(q) * xAxis;
+
+    
     //make Y rotation
-    btQuaternion rotation(btVector3(1, 0, 0),btRadians(deltaRotationY));
+    btQuaternion rotation(bodyAxis,btRadians(deltaRotationY));
     rotation *= body->getOrientation();
 
     //actually apply the rotations
     body->setCenterOfMassTransform(btTransform(rotation, body->getCenterOfMassPosition()));
 
     btVector3 invDifference = difference;
-    invDifference = invDifference.rotate(btVector3(1, 0, 0), btRadians(deltaRotationY));
+    invDifference = invDifference.rotate(bodyAxis, btRadians(deltaRotationY));
     body->translate(-invDifference);
 
     //reset delta rotations

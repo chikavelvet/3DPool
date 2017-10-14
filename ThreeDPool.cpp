@@ -121,7 +121,7 @@ void ThreeDPool::createScene(void)
     // Stroke counter
     CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
     std::stringstream ss;
-    ss << strokes;
+    ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
     strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
     strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.9, 0)));
@@ -155,7 +155,7 @@ void ThreeDPool::incrementStrokeCount() {
     std::stringstream ss;
     
     ++strokes;
-    ss << strokes;
+    ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
 }
 
