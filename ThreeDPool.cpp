@@ -41,7 +41,8 @@ ThreeDPool::ThreeDPool(void) :
     adjustingStick(false),
     adjustingCamera(false),
     cursorDisplaying(false),
-    strokes(0)
+    strokes(0),
+    cameraCounter(0)
 {
 }
 //---------------------------------------------------------------------------

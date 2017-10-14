@@ -62,7 +62,7 @@ protected:
     PlayerCamera* pCamera;
     Simulator* physicsEngine;
     bool adjustingCamera;
-    int cameraCounter = 0;
+    int cameraCounter;
     Ogre::Vector3 newLookAt;
     Ogre::Vector3 newCamPos;
     Ogre::Real mMoveSpeed;
