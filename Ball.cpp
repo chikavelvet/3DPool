@@ -15,7 +15,8 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     node->setPosition(x, y, z);
     node->scale(0.05, 0.05, 0.05);
             
-    int collidesWith = COL_CUEBALL | COL_BALL | COL_WALL;
+    int collidesWith = isCue ? (COL_STICK | COL_BALL | COL_WALL) 
+                             : (COL_CUEBALL | COL_BALL | COL_WALL);
 
     typeMap[((size_t) node)] = isCue ? cueBallType : ballType;
     coltype = isCue ? COL_CUEBALL : COL_BALL;
