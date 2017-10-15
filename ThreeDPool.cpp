@@ -31,6 +31,8 @@ Ogre::Vector3 preFreeLookCameraDirection;
 
 const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.1f;
 
+std::vector<Ball*> balls;
+
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
     mMoveSpeed(750),
@@ -133,7 +135,14 @@ void ThreeDPool::createScene(void)
     //--------------------//
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
-    Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1", typeMap, pocketMap);
+    for (int i = 0; i < 100; ++i) {
+        std::stringstream ss;
+        ss << "b" << i;
+        std::string bname = ss.str();
+        std::cout << bname << std::endl;
+        balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -200, bname, typeMap, pocketMap));
+    }
+    
     //....etc.
 
     SDL_Init(SDL_INIT_VIDEO);
