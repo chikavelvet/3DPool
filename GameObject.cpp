@@ -23,7 +23,8 @@ GameObject::GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
     
 }
 
-GameObject::GameObject () {
+GameObject::GameObject ()
+{
     
 }
 

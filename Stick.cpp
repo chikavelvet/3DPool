@@ -6,7 +6,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
              btRigidBody* _cueBall, std::map<size_t, objType> &typeMap) :
-        GameObject(_name, _sceneMgr, 
+    GameObject(_name, _sceneMgr, 
             _simulator, 10, btVector3(0, 0, 0),
             1.0, 1.0, 
             0.1, 1.0,
@@ -18,13 +18,13 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
         cueBall(_cueBall)
 {
     geom = sceneMgr->createEntity("cube.mesh");
+    geom->setMaterialName("Example/Stick");
+    
     rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
     rootNode->attachObject(geom);
     rootNode->setPosition(x, y, z);
-    geom->setMaterialName("Example/Stick");
     rootNode->scale(0.01, 0.01, 0.5);
 
-    // Create the new shape
     shape = new btBoxShape(btVector3(1, 1, 23));
     
     typeMap[((size_t) rootNode)] = stickType;
@@ -32,9 +32,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     tr.setIdentity();
     tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
     tr.setOrigin(btVector3(x, y, z));
-    
-    shape->calculateLocalInertia(mass, inertia);
-    
+        
     // motionState = new OgreMotionState(tr, rootNode);
     motionState = new btDefaultMotionState(tr);
     

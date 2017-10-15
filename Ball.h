@@ -6,15 +6,6 @@
 class Simulator;
 
 class Ball : public GameObject {
-
-protected:
-    Ogre::Entity* entity;
-    Ogre::SceneNode* rootNode;
-    btCollisionShape* colShape;
-    btScalar mass;
-    btVector3 localInertia;
-    btRigidBody* body;
-
 public:
     Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, 
         btScalar x, btScalar y, btScalar z, 
@@ -26,7 +17,7 @@ public:
 
     btRigidBody* getRigidBody(){ return body; }
 
-    Ogre::Entity* getOgreEntity(){ return entity; }
+    Ogre::Entity* getOgreEntity(){ return geom; }
 
     Ogre::SceneNode* getOgreSceneNode(){ return rootNode; }
     
