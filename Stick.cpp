@@ -6,43 +6,29 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
              btRigidBody* _cueBall, std::map<size_t, objType> &typeMap) :
+        GameObject(_name, _sceneMgr, 
+            _simulator, 10, btVector3(0, 0, 0),
+            1.0, 1.0, 
+            0.1, 1.0,
+            false, false,
+            COL_STICK, COL_CUEBALL),
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
         cueBall(_cueBall)
 {
-    simulator = _simulator;
-    name = _name;
-    sceneMgr = _sceneMgr;
-    coltype = COL_STICK;
-    collidesWith = COL_CUEBALL;
-    
-    kinematic = false;
-    needsUpdates = false;
-    mass = 10;
-    inertia = btVector3(0, 0, 0);
-    restitution = 1.0;
-    friction = 1.0;
-    linearDamping = 0.1;
-    angularDamping = 1;
-    
     geom = sceneMgr->createEntity("cube.mesh");
     rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
     rootNode->attachObject(geom);
     rootNode->setPosition(x, y, z);
     geom->setMaterialName("Example/Stick");
     rootNode->scale(0.01, 0.01, 0.5);
-//    body->setUserIndex(5);
 
     // Create the new shape
     shape = new btBoxShape(btVector3(1, 1, 23));
     
     typeMap[((size_t) rootNode)] = stickType;
 
-    // TODO: make sure this isn't causing a double addition to the simulator
-    simulator->getCollisionShapes().push_back(shape);
-    //----------------------------------------------------------------------
-    
     tr.setIdentity();
     tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
     tr.setOrigin(btVector3(x, y, z));

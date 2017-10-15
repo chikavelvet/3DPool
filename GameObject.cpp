@@ -1,5 +1,32 @@
 #include "GameObject.h"
 
+GameObject::GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
+            Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
+            btScalar _restitution, btScalar _friction, 
+            btScalar _linearDamping, btScalar _angularDamping,
+            bool _kinematic, bool _needsUpdates,
+            collisionType _coltype, int _collidesWith) : 
+        name(_name),
+        sceneMgr(_sceneMgr),
+        simulator(_simulator),
+        mass(_mass),
+        inertia(_inertia),
+        restitution(_restitution),
+        friction(_friction),
+        linearDamping(_linearDamping),
+        angularDamping(_angularDamping),
+        kinematic(_kinematic),
+        needsUpdates(_needsUpdates),
+        coltype(_coltype),
+        collidesWith(_collidesWith)
+{
+    
+}
+
+GameObject::GameObject () {
+    
+}
+
 //Add the game object to the simulator
 void GameObject::addToSimulator() {
 	

@@ -27,38 +27,47 @@ class BulletContactCallback;
 
 class GameObject {
 protected:        
-        Ogre::String name;
-	Ogre::SceneManager* sceneMgr;
-	Simulator* simulator;
-	Ogre::SceneNode* rootNode;
-	Ogre::Entity* geom;
-	btCollisionShape* shape;
-	btScalar mass;
-	// OgreMotionState* motionState;
-	btMotionState* motionState;
-	btRigidBody* body;
-	btTransform tr;
-	btVector3 inertia;
+    GameObject ();
+    
+    GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
+            Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
+            btScalar _restitution, btScalar _friction, 
+            btScalar _linearDamping, btScalar _angularDamping,
+            bool _kinematic, bool _needsUpdates,
+            collisionType _coltype, int _collidesWith);
+    
+    Ogre::String name;
+    Ogre::SceneManager* sceneMgr;
+    Simulator* simulator;
+    Ogre::SceneNode* rootNode;
+    Ogre::Entity* geom;
+    btCollisionShape* shape;
+    btScalar mass;
+    // OgreMotionState* motionState;
+    btMotionState* motionState;
+    btRigidBody* body;
+    btTransform tr;
+    btVector3 inertia;
 
-	btScalar restitution;
-	btScalar friction;
-	btScalar linearDamping;
-	btScalar angularDamping;
-	bool kinematic;
-	bool needsUpdates;
+    btScalar restitution;
+    btScalar friction;
+    btScalar linearDamping;
+    btScalar angularDamping;
+    bool kinematic;
+    bool needsUpdates;
 
-	CollisionContext* context;
-	BulletContactCallback* cCallBack;
-        
-        int collidesWith;
-        collisionType coltype;
+    CollisionContext* context;
+    BulletContactCallback* cCallBack;
+
+    int collidesWith;
+    collisionType coltype;
 public:
-	void addToSimulator();
-	void updateTransform();
+    void addToSimulator();
+    void updateTransform();
 
-	btRigidBody* getBody(){ return body; }
-        Ogre::SceneNode* getNode() { return rootNode; }
-        void removeObject(void);
+    btRigidBody* getBody(){ return body; }
+    Ogre::SceneNode* getNode() { return rootNode; }
+    void removeObject(void);
 };
 
 #endif
