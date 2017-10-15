@@ -9,8 +9,8 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         bool isCue) :
     GameObject(_name, _sceneMgr, _simulator,
             5, btVector3(0, 0, 0),
-            0.8, 1.0,
-            0.1, 0.0,
+            1.0, 1.0,
+            0.05, 0.0,
             false, false,
             isCue ? COL_CUEBALL : COL_BALL,
             isCue ? COL_STICK   | COL_BALL | COL_WALL | COL_POCKET 
