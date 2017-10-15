@@ -33,6 +33,8 @@ const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.
 
 std::vector<Ball*> balls;
 
+int remainingBalls;
+
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
     mMoveSpeed(750),
@@ -134,14 +136,18 @@ void ThreeDPool::createScene(void)
     
     //--------------------//
     
+    // 0. 0. -200
+    
     //----------MAKE MORE BALLS AS DESIRED-----------//
     for (int i = 0; i < 100; ++i) {
         std::stringstream ss;
         ss << "b" << i;
         std::string bname = ss.str();
         std::cout << bname << std::endl;
-        balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -200, bname, typeMap, pocketMap));
+        balls.push_back(new Ball(mSceneMgr, physicsEngine, i % 10, i % 50 , i, bname, typeMap, pocketMap));
     }
+    
+    remainingBalls = balls.size();
     
     //....etc.
 
@@ -488,6 +494,9 @@ void ThreeDPool::physicsLoop()
             Ball* ball = pocketMap[node];
             
             ball->removeFromWorld();
+            
+            --remainingBalls;
+            std::cout << remainingBalls << std::endl;
         }
         
             
