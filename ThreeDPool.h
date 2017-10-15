@@ -52,6 +52,7 @@ protected:
     void hideQuitCursor(void);
     
     void incrementStrokeCount(void);
+    void decrementRemainingBallCount(void);
     
     void createFrameListener(void);
     

@@ -70,10 +70,10 @@ void ThreeDPool::createScene(void)
 
     // makeGround();
 
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap, pocketMap, true);
+    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, true);
     cueBall = cueBallObject->getRigidBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
     cueStick = cueStickObject->getRigidBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
@@ -133,21 +133,40 @@ void ThreeDPool::createScene(void)
     strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.9, 0)));
     
     sheet->addChild(strokesWin);
+        
+    //----------MAKE MORE BALLS AS DESIRED-----------//
+//    for (int i = 0; i < 100; ++i) {
+//        std::stringstream ss;
+//        ss << "b" << i;
+//        std::string bname = ss.str();
+//        std::cout << bname << std::endl;
+//        balls.push_back(new Ball(mSceneMgr, physicsEngine, i % 10, i % 50 , i, bname, typeMap, pocketMap));
+//    }
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, 200, 400, "ball1", typeMap, pocketMap));
     
+    remainingBalls = balls.size();
+    
+    // Remaining Ball Counter
+    CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
+    std::stringstream ss2;
+    ss2 << "Remaining: " << remainingBalls;
+    remainingBallWin->setText(ss2.str());
+    remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
+    sheet->addChild(remainingBallWin);
+    
+    CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
+    youWin->setText("You Win!");
+    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
+    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
+
+    sheet->addChild(youWin);
+    
+    youWin->hide();
     //--------------------//
     
     // 0. 0. -200
-    
-    //----------MAKE MORE BALLS AS DESIRED-----------//
-    for (int i = 0; i < 100; ++i) {
-        std::stringstream ss;
-        ss << "b" << i;
-        std::string bname = ss.str();
-        std::cout << bname << std::endl;
-        balls.push_back(new Ball(mSceneMgr, physicsEngine, i % 10, i % 50 , i, bname, typeMap, pocketMap));
-    }
-    
-    remainingBalls = balls.size();
+
     
     //....etc.
 
@@ -215,6 +234,22 @@ void ThreeDPool::incrementStrokeCount() {
     ++strokes;
     ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
+}
+
+void ThreeDPool::decrementRemainingBallCount() {
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* remainingBallWin = sheet->getChild("RemainingBalls");
+    std::stringstream ss;
+    
+    --remainingBalls;
+    ss << "Remaining: " << remainingBalls;
+    remainingBallWin->setText(ss.str());
+    
+    if (remainingBalls < 1) {
+        CEGUI::Window* youWin = sheet->getChild("YouWin");
+        youWin->show();
+    }
 }
 
 void ThreeDPool::displayQuitCursor () {
@@ -495,8 +530,7 @@ void ThreeDPool::physicsLoop()
             
             ball->removeFromWorld();
             
-            --remainingBalls;
-            std::cout << remainingBalls << std::endl;
+            decrementRemainingBallCount();
         }
         
             
