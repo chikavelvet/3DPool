@@ -242,6 +242,8 @@ void ThreeDPool::decrementRemainingBallCount() {
     CEGUI::Window* remainingBallWin = sheet->getChild("RemainingBalls");
     std::stringstream ss;
     
+    Mix_PlayChannel(-1, pocket, 0);
+    
     --remainingBalls;
     ss << "Remaining: " << remainingBalls;
     remainingBallWin->setText(ss.str());
@@ -516,9 +518,11 @@ void ThreeDPool::physicsLoop()
         objType obBType = typeMap[(size_t) (obB->getUserPointer())];
  
         if (soundOn) {
-            if((obAType == stickType && obBType == ballType) || (obBType == stickType && obAType == ballType))
+            if((obAType == stickType && obBType == cueBallType) || (obBType == stickType && obAType == cueBallType))
                 Mix_PlayChannel(-1, stick_ball, 0);
             else if(obAType == ballType && obBType == ballType)
+                Mix_PlayChannel(-1, ball_ball, 0);
+            else if((obAType == ballType && obBType == cueBallType) || (obBType == ballType && obAType == cueBallType))
                 Mix_PlayChannel(-1, ball_ball, 0);
         }
         
