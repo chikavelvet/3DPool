@@ -29,7 +29,7 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.05f;
+const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 5.f;
 
 std::vector<Ball*> balls;
 
@@ -64,6 +64,11 @@ void ThreeDPool::createScene(void)
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    Ogre::Light* pointLight = mSceneMgr->createLight("PointLight");
+    pointLight->setType(Ogre::Light::LT_POINT);
+    pointLight->setDiffuseColour(1, 0.3, 0.3);
+    pointLight->setSpecularColour(0.3, 0.3, 1);
+    pointLight->setPosition(0, 0, 0);
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
