@@ -5,45 +5,37 @@
  */
 #include "Pocket.h"
 
-Pocket::Pocket(Ogre::SceneManager* mSceneMgr, 
+Pocket::Pocket(Ogre::SceneManager* _sceneMgr, 
         Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
         std::string _name, 
-        std::map<size_t,objType>& typeMap)
-{
-    simulator = _simulator;
-    name = _name;
-    sceneMgr = mSceneMgr;
-    coltype = COL_POCKET;
-    collidesWith = COL_CUEBALL | COL_BALL;
-    
-    kinematic = false;
-    needsUpdates = false;
-    mass = 0;
-    inertia = btVector3(0, 0, 0);
-    restitution = 0.0;
-    friction = 0.0;
-    linearDamping = 0.0;
-    angularDamping = 0.0;
-    
+        std::map<size_t,objType>& typeMap) :
+GameObject(_name, _sceneMgr, _simulator,
+            0, btVector3(0, 0, 0),
+            0.0, 0.0,
+            0.0, 0.0,
+            false, false,
+            COL_POCKET, COL_CUEBALL | COL_BALL)
+{    
     geom = sceneMgr->createEntity("sphere.mesh"); 
+    geom->setMaterialName("Example/Purple");
+    
     rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
     rootNode->attachObject(geom);
     rootNode->setPosition(x, y, z);
     rootNode->scale(0.27, 0.27, 0.27);
-    geom->setMaterialName("Example/Purple");
     
     rootNode->setVisible(false);
-       
-    typeMap[((size_t) rootNode)] = pocketType;
     
     shape = new btSphereShape(27);
-    shape->calculateLocalInertia(mass, inertia);
-    
+       
+    typeMap[((size_t) rootNode)] = pocketType;
+        
     tr.setIdentity();
     tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
     tr.setOrigin(btVector3(x, y, z));
     
+    // motionState = new OgreMotionState(tr, rootNode);
     motionState = new btDefaultMotionState(tr);
     
     addToSimulator();
