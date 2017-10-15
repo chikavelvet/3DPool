@@ -30,3 +30,8 @@ void GameObject::updateTransform()
 {
 	
 }
+
+void GameObject::removeObject (void) {
+    simulator->getDynamicsWorld()->removeRigidBody(body);
+    geom->setVisible(false);
+}

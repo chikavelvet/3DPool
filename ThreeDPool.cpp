@@ -446,51 +446,38 @@ void ThreeDPool::physicsLoop()
             void *userPointer = body->getUserPointer();
             if (userPointer) {
                 btQuaternion orientation = trans.getRotation();
-                Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode *>(userPointer);
+                Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode*>(userPointer);
                 
-                objType type = typeMap[(size_t) sceneNode];
                 sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));                
-
-//                if(type == stickType){
-//                    btVector3 defaultZAxis(0.0, 0.0, 1.0);
-//                    btQuaternion q = body->getCenterOfMassTransform().getRotation();
-//                    btVector3 bodyZAxis = btMatrix3x3(q) * defaultZAxis;
-//                    Ogre::Vector3 ogreZAxis(bodyZAxis.getX(), bodyZAxis.getY(), bodyZAxis.getZ());
-//
-//                    Ogre::Vector3 newStickPosition(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
-//                    newStickPosition += (ogreZAxis * 30);
-//                        
-//                    sceneNode->setPosition(newStickPosition);
-//                }
-//                else{
-                    sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-//                }
-
+                sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
             }
         }
     }
 
-    if (soundOn) {
-        int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
-        for (int i = 0; i < numManifolds; i++)
-        {
-            btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
-            const btCollisionObject* obA = contactManifold->getBody0();
-            const btCollisionObject* obB = contactManifold->getBody1();
-           
-//            const btCollisionShape* shapeA = obA->getCollisionShape();
-//            const btCollisionShape* shapeB = obB->getCollisionShape();
-//            size_t ptrA = (size_t)shapeA;
-//            size_t ptrB = (size_t)shapeB;
+   
+    int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
+    for (int i = 0; i < numManifolds; i++)
+    {
+        btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
+        const btCollisionObject* obA = contactManifold->getBody0();
+        const btCollisionObject* obB = contactManifold->getBody1();
 
-            objType obAType = typeMap[(size_t) (obA->getUserPointer())];
-            objType obBType = typeMap[(size_t) (obB->getUserPointer())];
-
+        objType obAType = typeMap[(size_t) (obA->getUserPointer())];
+        objType obBType = typeMap[(size_t) (obB->getUserPointer())];
+ 
+        if (soundOn) {
             if((obAType == stickType && obBType == ballType) || (obBType == stickType && obAType == ballType))
                 Mix_PlayChannel(-1, stick_ball, 0);
             else if(obAType == ballType && obBType == ballType)
                 Mix_PlayChannel(-1, ball_ball, 0);
         }
+        
+//        if((obAType == pocketType && obBType == ballType) || (obBType == pocketType && obAType == ballType)) {
+//            void* usr = obAType == ballType ? obA->getUserPointer() : obB->getUserPointer();
+//            GameObject* gameObj = static_cast<GameObject*>(usr);
+//            
+//            gameObj->removeObject();
+//        }
     }
 }
 

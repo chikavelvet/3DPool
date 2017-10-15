@@ -57,6 +57,8 @@ public:
 	void updateTransform();
 
 	btRigidBody* getBody(){ return body; }
+        Ogre::SceneNode* getNode() { return rootNode; }
+        void removeObject(void);
 };
 
 #endif

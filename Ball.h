@@ -9,7 +9,7 @@ class Ball : public GameObject {
 
 protected:
     Ogre::Entity* entity;
-    Ogre::SceneNode* node;
+    Ogre::SceneNode* rootNode;
     btCollisionShape* colShape;
     btScalar mass;
     btVector3 localInertia;
@@ -28,7 +28,7 @@ public:
 
     Ogre::Entity* getOgreEntity(){ return entity; }
 
-    Ogre::SceneNode* getOgreSceneNode(){ return node; }
+    Ogre::SceneNode* getOgreSceneNode(){ return rootNode; }
     
     void setAsCue (void);
 };

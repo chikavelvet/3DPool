@@ -10,15 +10,16 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
 {
     //----------------make a sphere-------------------//
     entity = mSceneMgr->createEntity("sphere.mesh"); 
-    node = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
-    node->attachObject(entity);
-    node->setPosition(x, y, z);
-    node->scale(0.05, 0.05, 0.05);
+    rootNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+    rootNode->attachObject(entity);
+    rootNode->setPosition(x, y, z);
+    rootNode->scale(0.05, 0.05, 0.05);
             
     int collidesWith = isCue ? (COL_STICK | COL_BALL | COL_WALL) 
                              : (COL_CUEBALL | COL_BALL | COL_WALL);
 
-    typeMap[((size_t) node)] = isCue ? cueBallType : ballType;
+    typeMap[((size_t) rootNode)] = isCue ? cueBallType : ballType;
+    
     coltype = isCue ? COL_CUEBALL : COL_BALL;
 
     physicsEngine->getCollisionShapes().push_back(colShape);
@@ -34,7 +35,7 @@ Ball::Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine,
     btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform); 
     btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
     body = new btRigidBody(rbInfo);
-    body->setUserPointer(node);
+    body->setUserPointer(rootNode);
     body->setFriction(btScalar(1.0));
     body->setRollingFriction(btScalar(1.0));
 
