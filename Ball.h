@@ -7,10 +7,11 @@ class Simulator;
 
 class Ball : public GameObject {
 public:
-    Ball(Ogre::SceneManager* mSceneMgr, Simulator* physicsEngine, 
+    Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
-        std::string name, 
+        std::string _name, 
         std::map<size_t, objType> &typeMap,
+        std::map<Ogre::SceneNode*, Ball*>& pocketMap,
         bool isCue = false);
 
     Ogre::Vector3 getPosition();
@@ -21,7 +22,13 @@ public:
 
     Ogre::SceneNode* getOgreSceneNode(){ return rootNode; }
     
+    void removeFromWorld (void);
+    void resetCueBall (void);
+    
     void setAsCue (void);
+    
+private:
+    btScalar initialX, initialY, initialZ;
 };
 
 #endif

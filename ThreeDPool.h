@@ -83,6 +83,7 @@ protected:
     Mix_Chunk* pocket;
 
     std::map<size_t, objType> typeMap;
+    std::map<Ogre::SceneNode*, Ball*> pocketMap;
 };
 
 //---------------------------------------------------------------------------

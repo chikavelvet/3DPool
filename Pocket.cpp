@@ -25,7 +25,7 @@ GameObject(_name, _sceneMgr, _simulator,
     rootNode->setPosition(x, y, z);
     rootNode->scale(0.27, 0.27, 0.27);
     
-    rootNode->setVisible(false);
+//    rootNode->setVisible(false);
     
     shape = new btSphereShape(27);
        

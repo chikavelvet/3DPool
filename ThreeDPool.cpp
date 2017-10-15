@@ -43,7 +43,9 @@ ThreeDPool::ThreeDPool(void) :
     cursorDisplaying(false),
     soundOn(true),
     strokes(0),
-    cameraCounter(0)
+    cameraCounter(0),
+    typeMap(),
+    pocketMap()
 {
 }
 //---------------------------------------------------------------------------
@@ -64,9 +66,7 @@ void ThreeDPool::createScene(void)
 
     // makeGround();
 
-    typeMap = std::map<size_t, objType>();
-
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap, true);
+    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 0, "cueBall", typeMap, pocketMap, true);
     cueBall = cueBallObject->getRigidBody();
 
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 0 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
@@ -133,7 +133,7 @@ void ThreeDPool::createScene(void)
     //--------------------//
     
     //----------MAKE MORE BALLS AS DESIRED-----------//
-    Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1", typeMap);
+    Ball* otherBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -200, "otherBall1", typeMap, pocketMap);
     //....etc.
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -472,12 +472,26 @@ void ThreeDPool::physicsLoop()
                 Mix_PlayChannel(-1, ball_ball, 0);
         }
         
-//        if((obAType == pocketType && obBType == ballType) || (obBType == pocketType && obAType == ballType)) {
-//            void* usr = obAType == ballType ? obA->getUserPointer() : obB->getUserPointer();
-//            GameObject* gameObj = static_cast<GameObject*>(usr);
-//            
-//            gameObj->removeObject();
-//        }
+        if((obAType == pocketType && obBType == ballType) || (obBType == pocketType && obAType == ballType)) {
+            void* usr = obAType == ballType ? obA->getUserPointer() : obB->getUserPointer();
+            Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(usr);
+                        
+            Ball* ball = pocketMap[node];
+            
+            ball->removeFromWorld();
+        }
+        
+            
+        if((obAType == pocketType && obBType == cueBallType) || (obBType == pocketType && obAType == cueBallType)) {
+            void* usr = obAType == cueBallType ? obA->getUserPointer() : obB->getUserPointer();
+            Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(usr);
+
+            Ball* cueBall = pocketMap[node];
+            
+            incrementStrokeCount();
+            
+            cueBall->resetCueBall();
+        }
     }
 }
 

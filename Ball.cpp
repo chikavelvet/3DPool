@@ -3,15 +3,17 @@
 Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
         std::string _name, 
-        std::map<size_t,objType>& typeMap, bool isCue) :
+        std::map<size_t,objType>& typeMap, 
+        std::map<Ogre::SceneNode*, Ball*>& pocketMap, bool isCue) :
     GameObject(_name, _sceneMgr, _simulator,
             5, btVector3(0, 0, 0),
             0.8, 1.0,
             0.1, 0.0,
             false, false,
             isCue ? COL_CUEBALL : COL_BALL,
-            isCue ? COL_STICK   | COL_BALL | COL_WALL 
-                  : COL_CUEBALL | COL_BALL | COL_WALL)
+            isCue ? COL_STICK   | COL_BALL | COL_WALL | COL_POCKET 
+                  : COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET),
+        initialX(x), initialY(y), initialZ(z)
 {
     //----------------make a sphere-------------------//
     geom = sceneMgr->createEntity("sphere.mesh");
@@ -35,9 +37,31 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
     addToSimulator();
     
     body->setRollingFriction(btScalar(1.0));
+    
+    pocketMap[rootNode] = this;
 }
 
 Ogre::Vector3 Ball::getPosition() {
     btVector3 btPos = body->getCenterOfMassPosition();
     return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
+}
+
+void Ball::removeFromWorld() {
+    body->clearForces();
+    body->setLinearVelocity(btVector3(0, 0, 0));
+    simulator->getDynamicsWorld()->removeRigidBody(body);
+    geom->setVisible(false);
+}
+
+void Ball::resetCueBall() {        
+    body->clearForces();
+    body->setLinearVelocity(btVector3(0, 0, 0));
+
+    simulator->getDynamicsWorld()->removeRigidBody(body);
+    
+    btTransform newTransform(btQuaternion(0, 0, 0, 1), 
+        btVector3(initialX, initialY, initialZ));
+    body->setCenterOfMassTransform(newTransform);
+    
+    simulator->getDynamicsWorld()->addRigidBody(body, coltype, collidesWith);
 }
