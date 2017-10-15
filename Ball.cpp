@@ -4,7 +4,9 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         btScalar x, btScalar y, btScalar z, 
         std::string _name, 
         std::map<size_t,objType>& typeMap, 
-        std::map<Ogre::SceneNode*, Ball*>& pocketMap, bool isCue) :
+        std::map<Ogre::SceneNode*, Ball*>& pocketMap,
+        std::string color,
+        bool isCue) :
     GameObject(_name, _sceneMgr, _simulator,
             5, btVector3(0, 0, 0),
             0.8, 1.0,
@@ -17,6 +19,7 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
 {
     //----------------make a sphere-------------------//
     geom = sceneMgr->createEntity("sphere.mesh");
+    geom->setMaterialName(color);
     
     rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
     rootNode->attachObject(geom);

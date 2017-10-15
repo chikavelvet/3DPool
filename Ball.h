@@ -12,6 +12,7 @@ public:
         std::string _name, 
         std::map<size_t, objType> &typeMap,
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
+        std::string color,
         bool isCue = false);
 
     Ogre::Vector3 getPosition();

@@ -70,7 +70,7 @@ void ThreeDPool::createScene(void)
 
     // makeGround();
 
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, true);
+    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
     cueBall = cueBallObject->getRigidBody();
 
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
@@ -142,7 +142,7 @@ void ThreeDPool::createScene(void)
 //        std::cout << bname << std::endl;
 //        balls.push_back(new Ball(mSceneMgr, physicsEngine, i % 10, i % 50 , i, bname, typeMap, pocketMap));
 //    }
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, 200, 400, "ball1", typeMap, pocketMap));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, 200, 400, "ball1", typeMap, pocketMap, "Example/Red"));
     
     remainingBalls = balls.size();
     

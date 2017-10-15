@@ -141,3 +141,19 @@ material Example/GreenOther
       }
    }
 }
+
+material Example/White
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient 1 1 1 1
+         diffuse 1 1 1 1
+         specular 0 0 0 1
+         emissive 0 0 0 1
+      }
+   }
+}
