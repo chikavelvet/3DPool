@@ -247,7 +247,8 @@ void ThreeDPool::decrementRemainingBallCount() {
     CEGUI::Window* remainingBallWin = sheet->getChild("RemainingBalls");
     std::stringstream ss;
     
-    Mix_PlayChannel(-1, pocket, 0);
+    if (soundOn)
+        Mix_PlayChannel(-1, pocket, 0);
     
     --remainingBalls;
     ss << "Remaining: " << remainingBalls;
