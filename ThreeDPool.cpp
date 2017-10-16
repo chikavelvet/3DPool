@@ -29,7 +29,7 @@ Room* room;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 5.f;
+const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.15f;
 
 std::vector<Ball*> balls;
 
@@ -187,6 +187,12 @@ void ThreeDPool::createScene(void)
     ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
     stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
     pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
+    bgMusic = Mix_LoadWAV("Elevator-music.wav");
+    playBGM();
+}
+
+void ThreeDPool::playBGM() {
+    Mix_PlayChannel(-1, bgMusic, -1);
 }
 
 void ThreeDPool::addBallPyramid() {
@@ -379,6 +385,11 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             cursorDisplaying = !cursorDisplaying;
             break;
         case OIS::KC_Y:
+            if (!soundOn) {
+                playBGM();
+            } else {
+                Mix_HaltChannel(-1);
+            }
             soundOn = !soundOn;
             break;
     }

@@ -57,6 +57,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick) {
         return false;
     
     cueBall->setLinearVelocity(btVector3(0, 0, 0));
+    cueBall->clearForces();
     
     btVector3 ballPos = cueBall->getCenterOfMassPosition();
     btTransform newTransform(btQuaternion(0, 0, 0, 1), 
@@ -102,9 +103,10 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
 }
 
 void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
-    if(cueStickTotal >= cueStickMin){
+    if(cueStickTotal > cueStickMin){
         body->activate(true);
-        btVector3 movement = btVector3(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition()).normalize() * powerMultiplier * cueStickTotal;    
+        btVector3 movement = btVector3(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition())
+                .normalize() * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
         body->applyCentralImpulse(movement);
     }
     cueStickTotal = cueStickMin;

@@ -58,6 +58,7 @@ protected:
     
     void addPockets(void);
     void addBallPyramid(void);
+    void playBGM(void);
     
     bool quit (const CEGUI::EventArgs& e);
 
@@ -83,6 +84,7 @@ protected:
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;
     Mix_Chunk* pocket;
+    Mix_Chunk* bgMusic;
 
     std::map<size_t, objType> typeMap;
     std::map<Ogre::SceneNode*, Ball*> pocketMap;
