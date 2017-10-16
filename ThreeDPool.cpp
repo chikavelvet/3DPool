@@ -147,7 +147,7 @@ void ThreeDPool::createScene(void)
 //        std::cout << bname << std::endl;
 //        balls.push_back(new Ball(mSceneMgr, physicsEngine, i % 10, i % 50 , i, bname, typeMap, pocketMap));
 //    }
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, 200, 400, "ball1", typeMap, pocketMap, "Example/Red"));
+    addBallPyramid();
     
     remainingBalls = balls.size();
     
@@ -190,7 +190,43 @@ void ThreeDPool::createScene(void)
 }
 
 void ThreeDPool::addBallPyramid() {
+    // 1st Layer
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  -5, -255, "b2",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,   5, -255, "b3",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  15, -255, "b4",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5, -15, -255, "b5",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,  -5, -255, "b6",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,   5, -255, "b7",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,  15, -255, "b8",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5, -15, -255, "b9",  typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,  -5, -255, "b10", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,   5, -255, "b11", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,  15, -255, "b12", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15, -15, -255, "b13", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,  -5, -255, "b14", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,   5, -255, "b15", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,  15, -255, "b16", typeMap, pocketMap, "Example/Red"));
     
+    // 2nd Layer
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10, -10, -245, "b17", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10,   0, -245, "b18", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10,  10, -245, "b19", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0, -10, -245, "b20", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0,   0, -245, "b21", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0,  10, -245, "b22", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10, -10, -245, "b23", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10,   0, -245, "b24", typeMap, pocketMap, "Example/Purple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10,  10, -245, "b25", typeMap, pocketMap, "Example/Purple"));
+    
+    // 3rd Layer
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, -5, -235, "b26", typeMap, pocketMap, "Example/Orange"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5,  5, -235, "b27", typeMap, pocketMap, "Example/Orange"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  5, -5, -235, "b28", typeMap, pocketMap, "Example/Orange"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine,  5,  5, -235, "b29", typeMap, pocketMap, "Example/Orange"));
+    
+    // 4th Layer
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
 }
 
 void ThreeDPool::addPockets() {
