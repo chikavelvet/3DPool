@@ -56,6 +56,8 @@ bool Stick::readjustStickToCueball (bool& adjustingStick) {
     if (!turnIsOver)
         return false;
     
+    cueBall->setLinearVelocity(btVector3(0, 0, 0));
+    
     btVector3 ballPos = cueBall->getCenterOfMassPosition();
     btTransform newTransform(btQuaternion(0, 0, 0, 1), 
             btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));

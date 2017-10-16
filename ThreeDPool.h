@@ -57,6 +57,7 @@ protected:
     void createFrameListener(void);
     
     void addPockets(void);
+    void addBallPyramid(void);
     
     bool quit (const CEGUI::EventArgs& e);
 

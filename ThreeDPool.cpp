@@ -189,6 +189,10 @@ void ThreeDPool::createScene(void)
     pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
 }
 
+void ThreeDPool::addBallPyramid() {
+    
+}
+
 void ThreeDPool::addPockets() {
     // 12 Pockets
     Pocket* p1 = new Pocket(mSceneMgr, physicsEngine, 
