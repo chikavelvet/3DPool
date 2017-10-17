@@ -19,7 +19,7 @@ public:
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
             btRigidBody* _cueBall, std::map<size_t, objType> &typeMap);
 
-    bool readjustStickToCueball (bool& adjustingStick);
+    bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped);
 
     void chargeStick (bool adjustingStick, float& cueStickTotal, float& cueStickDelta, bool LMBDown);
 

@@ -183,7 +183,7 @@ void ThreeDPool::createScene(void)
     
     Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
 
-    Mix_AllocateChannels(64);
+    Mix_AllocateChannels(6);
     ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
     stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
     pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
@@ -506,8 +506,12 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         if(fabs(cueBall->getLinearVelocity().length())>0.01f){
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
-        bool done = cueStickObject->readjustStickToCueball(adjustingStick);
-        if(done) cameraFollowStick();
+        
+        bool ballsStopped = true;
+        
+        bool done = cueStickObject->readjustStickToCueball(adjustingStick, ballsStopped);
+        if (done) cameraFollowStick();
+
         // adjustingCamera = true;
     } else if(adjustingCamera){
         using namespace Ogre;
@@ -563,8 +567,10 @@ void ThreeDPool::physicsLoop()
         }
     }
 
-   
     int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
+    
+    int soundsToPlay = 1;
+    
     for (int i = 0; i < numManifolds; i++)
     {
         btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
@@ -575,12 +581,26 @@ void ThreeDPool::physicsLoop()
         objType obBType = typeMap[(size_t) (obB->getUserPointer())];
  
         if (soundOn) {
-            if((obAType == stickType && obBType == cueBallType) || (obBType == stickType && obAType == cueBallType))
+            if((obAType == stickType && obBType == cueBallType) || (obBType == stickType && obAType == cueBallType)) {
                 Mix_PlayChannel(-1, stick_ball, 0);
-            else if(obAType == ballType && obBType == ballType)
-                Mix_PlayChannel(-1, ball_ball, 0);
-            else if((obAType == ballType && obBType == cueBallType) || (obBType == ballType && obAType == cueBallType))
-                Mix_PlayChannel(-1, ball_ball, 0);
+            }
+            else if(obAType == ballType && obBType == ballType) {
+                const btRigidBody* body1 = btRigidBody::upcast(obA);
+                const btRigidBody* body2 = btRigidBody::upcast(obB);
+                if (body1->getLinearVelocity().length() > 0.6f || body2->getLinearVelocity().length() > 0.6f) {
+                    if (soundsToPlay-- > 0)
+                        if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
+                            std::cout << "Audio Error" << std::endl;
+                }
+            }
+            else if((obAType == ballType && obBType == cueBallType) || (obBType == ballType && obAType == cueBallType)) {
+                const btRigidBody* body1 = btRigidBody::upcast(obA);
+                const btRigidBody* body2 = btRigidBody::upcast(obB);
+                if (body1->getLinearVelocity().length() > 0.6f || body2->getLinearVelocity().length() > 0.6f)
+                    if (soundsToPlay-- > 0)
+                        if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
+                            std::cout << "Audio Error" << std::endl;
+            }
         }
         
         if((obAType == pocketType && obBType == ballType) || (obBType == pocketType && obAType == ballType)) {

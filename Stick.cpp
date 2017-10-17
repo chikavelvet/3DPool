@@ -39,7 +39,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     addToSimulator();
 }
 
-bool Stick::readjustStickToCueball (bool& adjustingStick) {
+bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
     bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.05f)
                         && (fabs(body->getTotalForce().length()) < 0.05f);
     
@@ -51,7 +51,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick) {
         geom->setVisible(false);
     }
     
-    bool turnIsOver = cueBallStopped && cueStickStopped;
+    bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped;
     
     if (!turnIsOver)
         return false;
