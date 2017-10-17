@@ -139,14 +139,6 @@ void ThreeDPool::createScene(void)
     
     sheet->addChild(strokesWin);
         
-    //----------MAKE MORE BALLS AS DESIRED-----------//
-//    for (int i = 0; i < 100; ++i) {
-//        std::stringstream ss;
-//        ss << "b" << i;
-//        std::string bname = ss.str();
-//        std::cout << bname << std::endl;
-//        balls.push_back(new Ball(mSceneMgr, physicsEngine, i % 10, i % 50 , i, bname, typeMap, pocketMap));
-//    }
     addBallPyramid();
     
     remainingBalls = balls.size();
@@ -168,12 +160,6 @@ void ThreeDPool::createScene(void)
     sheet->addChild(youWin);
     
     youWin->hide();
-    //--------------------//
-    
-    // 0. 0. -200
-
-    
-    //....etc.
 
     SDL_Init(SDL_INIT_VIDEO);
     int audio_rate = 22050;
@@ -575,7 +561,7 @@ void ThreeDPool::physicsLoop()
     
     int soundsToPlay = 1;
     
-    const float ballSoundThreshold = 1.f;
+    const float ballSoundThreshold = 5.f;
     
     for (int i = 0; i < numManifolds; i++)
     {
@@ -639,46 +625,6 @@ bool ThreeDPool::quit (const CEGUI::EventArgs& e) {
     return true;
 }
 
-// void ThreeDPool::makeGround(void)
-// {
-//     //---------------make a ground plane------------------------//
-//     Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);//blueprint
-//     Ogre::MeshManager::getSingleton().createPlane(
-//         "plane1",
-//         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-//         Ogre::Plane(Ogre::Vector3::UNIT_Y, 0),
-//         1500, 1500, 20, 20,
-//         true,
-//         1, 5, 5,
-//         Ogre::Vector3::UNIT_Z);
-//     Ogre::Entity* plane1 = mSceneMgr->createEntity("plane1");
-//     Ogre::SceneNode* node1 = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-//     node1->attachObject(plane1);
-//     node1->setPosition(0, 0, 0);
-//     plane1->setCastShadows(false); //obviously we don't want the ground to cast shadows
-//     plane1->setMaterialName("Examples/Rockwall");//give the ground a material
-    
-//     btTransform groundTransform;
-//     groundTransform.setIdentity();
-//     groundTransform.setOrigin(btVector3(0, 10, 0));
-    
-//     btScalar groundMass(0.);
-//     btVector3 localGroundInertia(0, 0, 0);
-    
-//     btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(1500.), btScalar(20.), btScalar(1500.)));
-//     btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
-    
-//     groundShape->calculateLocalInertia(groundMass, localGroundInertia);
-    
-//     btRigidBody::btRigidBodyConstructionInfo groundRBInfo(groundMass, groundMotionState, groundShape, localGroundInertia);
-//     btRigidBody* groundBody = new btRigidBody(groundRBInfo);
-//     groundBody->setRestitution(1.0);
-//     groundBody->setFriction(btScalar(1.0));
-//     groundBody->setRollingFriction(btScalar(1.0));
-//     physicsEngine->getDynamicsWorld()->addRigidBody(groundBody);
-// }
-
-
 //--------Camera Section-------//
 void ThreeDPool::createCamera(void){
     pCamera = new PlayerCamera(mSceneMgr->createCamera("PlayerCam"));
@@ -688,32 +634,6 @@ void ThreeDPool::createCamera(void){
 
     // mCamera->lookAt(Ogre::Vector3(50, 300, 300));
 }
-
-// void ThreeDPool::startCameraAdjust(){
-//     cameraCounter = 30;
-//     btVector3 btPos = cueStick->getCenterOfMassPosition();
-//     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
-
-//     newLookAt = cueStickPos;
-//     newCamPos = cueStickPos + cameraOffset;
-// }
-
-// void ThreeDPool::cameraAdjust(){
-//     assert(cameraCounter >= 0);
-//     if(cameraCounter==0){
-//         adjustingCamera = false;
-//         return;
-//     }
-//     --cameraCounter;
-
-//     mCamera->lookAt()
-
-//     btVector3 btPos = cueStick->getCenterOfMassPosition();
-//     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
-//     mCamera->lookAt(cueStickPos);
-//     mCamera->setPosition(cueStickPos + cameraOffset);
-
-// }
 
 void ThreeDPool::cameraFollowStick(void)
 {
