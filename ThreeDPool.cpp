@@ -234,7 +234,7 @@ void ThreeDPool::addBallPyramid() {
     // 4th Layer
     balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
 
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 0, "b31", typeMap, pocketMap, "Example/GreenOther"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));
 }
 
 void ThreeDPool::addPockets() {
