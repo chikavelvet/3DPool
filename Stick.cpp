@@ -43,8 +43,8 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
     bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.05f)
                         && (fabs(body->getTotalForce().length()) < 0.05f);
     
-    bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 0.03f)
-                       && (fabs(cueBall->getTotalForce().length()) < 0.03f);
+    bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 1.f)
+                       && (fabs(cueBall->getTotalForce().length()) < 1.f);
     
     if (cueStickStopped) {
         simulator->getDynamicsWorld()->removeRigidBody(body);

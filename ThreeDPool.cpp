@@ -183,7 +183,7 @@ void ThreeDPool::createScene(void)
     
     Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
 
-    Mix_AllocateChannels(6);
+    Mix_AllocateChannels(64);
     ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
     stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
     pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
@@ -233,6 +233,8 @@ void ThreeDPool::addBallPyramid() {
     
     // 4th Layer
     balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
+
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 0, "b31", typeMap, pocketMap, "Example/GreenOther"));
 }
 
 void ThreeDPool::addPockets() {
@@ -571,6 +573,8 @@ void ThreeDPool::physicsLoop()
     
     int soundsToPlay = 1;
     
+    const float ballSoundThreshold = 1.f;
+    
     for (int i = 0; i < numManifolds; i++)
     {
         btPersistentManifold* contactManifold =  physicsEngine->getDynamicsWorld()->getDispatcher()->getManifoldByIndexInternal(i);
@@ -587,19 +591,19 @@ void ThreeDPool::physicsLoop()
             else if(obAType == ballType && obBType == ballType) {
                 const btRigidBody* body1 = btRigidBody::upcast(obA);
                 const btRigidBody* body2 = btRigidBody::upcast(obB);
-                if (body1->getLinearVelocity().length() > 0.6f || body2->getLinearVelocity().length() > 0.6f) {
+                if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold) {
                     if (soundsToPlay-- > 0)
                         if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
-                            std::cout << "Audio Error" << std::endl;
+                            std::cout << "No channels" << std::endl;
                 }
             }
             else if((obAType == ballType && obBType == cueBallType) || (obBType == ballType && obAType == cueBallType)) {
                 const btRigidBody* body1 = btRigidBody::upcast(obA);
                 const btRigidBody* body2 = btRigidBody::upcast(obB);
-                if (body1->getLinearVelocity().length() > 0.6f || body2->getLinearVelocity().length() > 0.6f)
+                if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold)
                     if (soundsToPlay-- > 0)
                         if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
-                            std::cout << "Audio Error" << std::endl;
+                            std::cout << "No channels" << std::endl;
             }
         }
         

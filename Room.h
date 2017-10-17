@@ -77,8 +77,7 @@ private:
         groundBody->setRestitution(1);
         groundBody->setFriction(btScalar(1.0));
         groundBody->setRollingFriction(btScalar(1.0));
-
-
+        
         physicsEngine->getCollisionShapes().push_back(groundShape);
         physicsEngine->getDynamicsWorld()->addRigidBody(groundBody, COL_WALL, COL_BALL | COL_CUEBALL);
     }

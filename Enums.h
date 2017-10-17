@@ -18,7 +18,7 @@
 
 enum objType
 {
-    cueBallType, ballType, roomType, pocketType, stickType, wallType
+   wallType, cueBallType, ballType, roomType, pocketType, stickType
 };
 
 enum collisionType {
