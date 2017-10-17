@@ -534,9 +534,11 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
         
         mCamera->move(camDirVec * evt.timeSinceLastFrame);
-    } else if(hitBall) {
+    } else if(hitBall) {        
+        if (cueStickTotal > CUE_STICK_MIN) 
+            incrementStrokeCount();
         cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
-        incrementStrokeCount();
+
     }
     else {
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);

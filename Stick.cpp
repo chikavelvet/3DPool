@@ -108,10 +108,10 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
         btVector3 movement = btVector3(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition())
                 .normalize() * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
         body->applyCentralImpulse(movement);
+        adjustingStick = true;
     }
     cueStickTotal = cueStickMin;
     cueStickDelta = 0;
-    adjustingStick = true;
     hitBall = false;
 }
 
