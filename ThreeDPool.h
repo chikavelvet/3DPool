@@ -37,6 +37,9 @@ protected:
     virtual void createCamera(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
+    void setUpGUI(void);
+    void setUpSounds(void);
+
     void gameLoop(const Ogre::FrameEvent& evt);
     void physicsLoop(void);
     void makeGround(void);

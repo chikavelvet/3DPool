@@ -73,7 +73,6 @@ void ThreeDPool::createScene(void)
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
 
-    // makeGround();
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
     cueBall = cueBallObject->getRigidBody();
@@ -90,9 +89,30 @@ void ThreeDPool::createScene(void)
     room = new Room(mSceneMgr, physicsEngine);
     
     addPockets();
+    addBallPyramid();
+    remainingBalls = balls.size();
+    setUpGUI();
+    setUpSounds();
+}
 
-    //----Set up CEGUI----//
+void ThreeDPool::setUpSounds(void){
+    SDL_Init(SDL_INIT_VIDEO);
+    int audio_rate = 22050;
+    Uint16 audio_format = AUDIO_S16SYS;
+    int audio_channels = 2;
+    int audio_buffers = 4096; 
     
+    Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
+
+    Mix_AllocateChannels(64);
+    ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
+    stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
+    pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
+    bgMusic = Mix_LoadWAV("Elevator-music.wav");
+    playBGM();
+}
+
+void ThreeDPool::setUpGUI(void){
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
     CEGUI::Font::setDefaultResourceGroup("Fonts");
@@ -102,16 +122,7 @@ void ThreeDPool::createScene(void)
     
     CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
-    
-    // This will set up a default sheet to show the cursor
-    //    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    //    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
-    //    CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(sheet);
-    
-    // This will show a demo GUI window
-    //    CEGUI::Window *guiRoot = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("TextDemo.layout"); 
-    //    CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(guiRoot);
-    
+        
     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
@@ -138,11 +149,7 @@ void ThreeDPool::createScene(void)
     strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.9, 0)));
     
     sheet->addChild(strokesWin);
-        
-    addBallPyramid();
-    
-    remainingBalls = balls.size();
-    
+            
     // Remaining Ball Counter
     CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
     std::stringstream ss2;
@@ -160,26 +167,12 @@ void ThreeDPool::createScene(void)
     sheet->addChild(youWin);
     
     youWin->hide();
-
-    SDL_Init(SDL_INIT_VIDEO);
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096; 
-    
-    Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers);
-
-    Mix_AllocateChannels(64);
-    ball_ball = Mix_LoadWAV("cueball_hit_other.wav");
-    stick_ball = Mix_LoadWAV("cue_strike_ball.wav");
-    pocket = Mix_LoadWAV("pool_ball_into_pocket.wav");
-    bgMusic = Mix_LoadWAV("Elevator-music.wav");
-    playBGM();
 }
 
 void ThreeDPool::playBGM() {
     Mix_PlayChannel(-1, bgMusic, -1);
 }
+
 
 void ThreeDPool::addBallPyramid() {
     // 1st Layer
