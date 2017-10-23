@@ -19,7 +19,11 @@ http://www.ogre3d.org/wiki/
 #define __ThreeDPool_h_
 
 #include "BaseApplication.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
+#include <map>
 
+class PlayerCamera;
 //---------------------------------------------------------------------------
 
 class ThreeDPool : public BaseApplication
@@ -30,6 +34,63 @@ public:
 
 protected:
     virtual void createScene(void);
+    virtual void createCamera(void);
+    virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
+    void setUpGUI(void);
+    void setUpSounds(void);
+
+    void gameLoop(const Ogre::FrameEvent& evt);
+    void physicsLoop(void);
+    void makeGround(void);
+    void cameraFollowStick(void);
+    
+    bool keyPressed(const OIS::KeyEvent &arg);
+    bool keyReleased(const OIS::KeyEvent &arg);
+    bool mouseMoved(const OIS::MouseEvent &me);
+    bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
+    bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
+    
+    void displayQuitCursor(void);
+    void hideQuitCursor(void);
+    
+    void incrementStrokeCount(void);
+    void decrementRemainingBallCount(void);
+    
+    void createFrameListener(void);
+    
+    void addPockets(void);
+    void addBallPyramid(void);
+    void playBGM(void);
+    
+    bool quit (const CEGUI::EventArgs& e);
+
+    CEGUI::OgreRenderer* mRenderer;
+        
+    PlayerCamera* pCamera;
+    Simulator* physicsEngine;
+    bool adjustingCamera;
+    int cameraCounter;
+    Ogre::Vector3 newLookAt;
+    Ogre::Vector3 newCamPos;
+    Ogre::Real mMoveSpeed;
+    bool hitBall;
+    bool LMBDown;
+    float cueStickDelta;
+    float cueStickTotal;
+    bool adjustingStick;
+    bool cursorDisplaying;
+    bool soundOn;
+    
+    int strokes;
+
+    Mix_Chunk* ball_ball;
+    Mix_Chunk* stick_ball;
+    Mix_Chunk* pocket;
+    Mix_Chunk* bgMusic;
+
+    std::map<size_t, objType> typeMap;
+    std::map<Ogre::SceneNode*, Ball*> pocketMap;
 };
 
 //---------------------------------------------------------------------------

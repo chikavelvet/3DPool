@@ -254,6 +254,9 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
     return true;
 }
+
+
+
 //---------------------------------------------------------------------------
 bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
 {
@@ -269,17 +272,17 @@ bool BaseApplication::keyReleased(const OIS::KeyEvent &arg)
     return true;
 }
 //---------------------------------------------------------------------------
-bool BaseApplication::mouseMoved(const OIS::MouseEvent &arg)
+bool BaseApplication::mouseMoved(const OIS::MouseEvent &me)
 {
     return true;
 }
 //---------------------------------------------------------------------------
-bool BaseApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool BaseApplication::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
     return true;
 }
 //---------------------------------------------------------------------------
-bool BaseApplication::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool BaseApplication::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 {
     return true;
 }
