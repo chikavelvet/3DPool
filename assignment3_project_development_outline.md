@@ -21,11 +21,21 @@ As we did on assignment 2, we will generally use pair programming principles and
 **Roles**:
 
 - Casey:
-	- Something
+	- Integrating Networking
+	- Implementing Networking
+	- Lobby Networking
+	- Refactoring
+	- Implement Multiplayer
 - Rishi:
-	- Something else
+	- Integrating Networking
+	- Implementing Networking
+	- Lobby Networking
+	- Implement Multiplayer
 - Trey:
-	- A third thing
+	- Integrating Networking
+	- Main Menu GUI 
+	- Lobby GUI
+	- Refactoring
 
 ### Order of Attack
 Our first goal is to get the networking libraries connected and working (including some basic functionality testing). Then, we plan to spend a considerable amount of effort refactoring our existing code to improve it in a number of ways: clean it up, separate unrelated things into their respective classes, and use component mentality, as well as reconsider the structure from a higher level. After that, we can get to work on the basic requirements, i.e., the networking. Finally, after all the main requirements are completed, we can work on extra features.
