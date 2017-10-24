@@ -113,7 +113,7 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-Simulator.$(OBJEXT) ThreeDPool-Wall.$(OBJEXT) \
 	ThreeDPool-BaseApplication.$(OBJEXT) \
 	ThreeDPool-ThreeDPool.$(OBJEXT) ThreeDPool-Stick.$(OBJEXT) \
-	ThreeDPool-Pocket.$(OBJEXT)
+	ThreeDPool-Pocket.$(OBJEXT) ThreeDPool-NetManager.$(OBJEXT)
 ThreeDPool_OBJECTS = $(am_ThreeDPool_OBJECTS)
 am__DEPENDENCIES_1 =
 ThreeDPool_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -347,10 +347,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp
-ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp
+ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer -lSDL_net
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS)
 ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
 EXTRA_DIST = buildit makeit
@@ -472,6 +472,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-BaseApplication.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-ControlListener.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-GameObject.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-NetManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Overlay.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Player.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-PlayerCamera.Po@am__quote@
@@ -684,6 +685,20 @@ ThreeDPool-Pocket.obj: Pocket.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Pocket.cpp' object='ThreeDPool-Pocket.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Pocket.obj `if test -f 'Pocket.cpp'; then $(CYGPATH_W) 'Pocket.cpp'; else $(CYGPATH_W) '$(srcdir)/Pocket.cpp'; fi`
+
+ThreeDPool-NetManager.o: NetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-NetManager.o -MD -MP -MF $(DEPDIR)/ThreeDPool-NetManager.Tpo -c -o ThreeDPool-NetManager.o `test -f 'NetManager.cpp' || echo '$(srcdir)/'`NetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-NetManager.Tpo $(DEPDIR)/ThreeDPool-NetManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NetManager.cpp' object='ThreeDPool-NetManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-NetManager.o `test -f 'NetManager.cpp' || echo '$(srcdir)/'`NetManager.cpp
+
+ThreeDPool-NetManager.obj: NetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-NetManager.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-NetManager.Tpo -c -o ThreeDPool-NetManager.obj `if test -f 'NetManager.cpp'; then $(CYGPATH_W) 'NetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/NetManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-NetManager.Tpo $(DEPDIR)/ThreeDPool-NetManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NetManager.cpp' object='ThreeDPool-NetManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-NetManager.obj `if test -f 'NetManager.cpp'; then $(CYGPATH_W) 'NetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/NetManager.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

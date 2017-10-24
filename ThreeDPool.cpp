@@ -61,6 +61,12 @@ ThreeDPool::~ThreeDPool(void)
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
+    //----Network Test Stuff----//
+//    NetManager* nm = new NetManager();
+//    nm->initNetManager();
+//    nm->addNetworkInfo(PROTOCOL_TCP, NULL, 51515);
+//    nm->startServer();
+        
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
