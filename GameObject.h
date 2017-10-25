@@ -18,7 +18,6 @@ class Simulator;
 class CollisionContext;
 class BulletContactCallback;
 
-
 //const int cueBallType = 0,
 //          ballType    = 1,
 //          roomType    = 2, 

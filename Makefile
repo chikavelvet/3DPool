@@ -114,7 +114,8 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-BaseApplication.$(OBJEXT) \
 	ThreeDPool-ThreeDPool.$(OBJEXT) ThreeDPool-Stick.$(OBJEXT) \
 	ThreeDPool-Pocket.$(OBJEXT) ThreeDPool-NetManager.$(OBJEXT) \
-	ThreeDPool-Component.$(OBJEXT)
+	ThreeDPool-Component.$(OBJEXT) \
+	ThreeDPool-PhysicsComponent.$(OBJEXT)
 ThreeDPool_OBJECTS = $(am_ThreeDPool_OBJECTS)
 am__DEPENDENCIES_1 =
 ThreeDPool_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -218,8 +219,6 @@ AUTOCONF = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing autoconf
 AUTOHEADER = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing autoheader
 AUTOMAKE = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing automake-1.15
 AWK = gawk
-BULLET_CFLAGS = 
-BULLET_LIBS = 
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CEGUI_0_OGRE_CFLAGS = -pthread -I/lusr/opt/cegui-0.8.7/include/cegui-0 -I/usr/include/OGRE
@@ -348,9 +347,9 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp
 ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer -lSDL_net
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS)
 ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
@@ -476,6 +475,7 @@ include ./$(DEPDIR)/ThreeDPool-ControlListener.Po
 include ./$(DEPDIR)/ThreeDPool-GameObject.Po
 include ./$(DEPDIR)/ThreeDPool-NetManager.Po
 include ./$(DEPDIR)/ThreeDPool-Overlay.Po
+include ./$(DEPDIR)/ThreeDPool-PhysicsComponent.Po
 include ./$(DEPDIR)/ThreeDPool-Player.Po
 include ./$(DEPDIR)/ThreeDPool-PlayerCamera.Po
 include ./$(DEPDIR)/ThreeDPool-PlayingField.Po
@@ -715,6 +715,20 @@ ThreeDPool-Component.obj: Component.cpp
 #	$(AM_V_CXX)source='Component.cpp' object='ThreeDPool-Component.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Component.obj `if test -f 'Component.cpp'; then $(CYGPATH_W) 'Component.cpp'; else $(CYGPATH_W) '$(srcdir)/Component.cpp'; fi`
+
+ThreeDPool-PhysicsComponent.o: PhysicsComponent.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-PhysicsComponent.o -MD -MP -MF $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo -c -o ThreeDPool-PhysicsComponent.o `test -f 'PhysicsComponent.cpp' || echo '$(srcdir)/'`PhysicsComponent.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo $(DEPDIR)/ThreeDPool-PhysicsComponent.Po
+#	$(AM_V_CXX)source='PhysicsComponent.cpp' object='ThreeDPool-PhysicsComponent.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-PhysicsComponent.o `test -f 'PhysicsComponent.cpp' || echo '$(srcdir)/'`PhysicsComponent.cpp
+
+ThreeDPool-PhysicsComponent.obj: PhysicsComponent.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-PhysicsComponent.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo -c -o ThreeDPool-PhysicsComponent.obj `if test -f 'PhysicsComponent.cpp'; then $(CYGPATH_W) 'PhysicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/PhysicsComponent.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo $(DEPDIR)/ThreeDPool-PhysicsComponent.Po
+#	$(AM_V_CXX)source='PhysicsComponent.cpp' object='ThreeDPool-PhysicsComponent.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-PhysicsComponent.obj `if test -f 'PhysicsComponent.cpp'; then $(CYGPATH_W) 'PhysicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/PhysicsComponent.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

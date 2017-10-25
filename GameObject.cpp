@@ -29,8 +29,7 @@ GameObject::GameObject ()
 }
 
 //Add the game object to the simulator
-void GameObject::addToSimulator() {
-	
+void GameObject::addToSimulator() {	
 	updateTransform();
 	
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
