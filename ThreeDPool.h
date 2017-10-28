@@ -69,6 +69,7 @@ protected:
     CEGUI::OgreRenderer* mRenderer;
         
     PlayerCamera* pCamera;
+    NetManager* nm;
     Simulator* physicsEngine;
     bool adjustingCamera;
     int cameraCounter;

@@ -70,7 +70,7 @@ void ThreeDPool::createScene(void)
     configFile >> isServer >> host >> port;
     std::cout << isServer << std::endl << host << std::endl << port << std::endl;
 
-    NetManager* nm = new NetManager();
+    nm = new NetManager();
         
     if (isServer) {
         nm->initNetManager();
@@ -85,6 +85,7 @@ void ThreeDPool::createScene(void)
         nm->initNetManager();
         nm->addNetworkInfo(PROTOCOL_ALL, host.c_str(), port);
         nm->startClient();
+        std::cout << "Received Message: " << nm->tcpServerData.output << std::endl;
     }
                
     //-------------basic setup stuff-----------------//
