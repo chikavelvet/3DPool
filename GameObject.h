@@ -13,6 +13,7 @@
 // #include "BaseApplication.h"
 #include "Simulator.h"
 #include "Enums.h"
+#include "ComponentNotFoundException.h"
 
 class CollisionContext;
 class BulletContactCallback;
@@ -66,7 +67,8 @@ protected:
 public:
     void addToSimulator();
     void updateTransform();
-
+    
+    virtual PhysicsComponent* getPhysics();
     virtual btRigidBody* getBody(){ return body; }
     virtual Ogre::SceneNode* getNode() { return rootNode; }
     void removeObject(void);

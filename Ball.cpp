@@ -1,5 +1,4 @@
 #include "Ball.h"
-#include "ComponentNotFoundException.h"
 
 Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
@@ -43,9 +42,11 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         
     // motionState = new OgreMotionState(tr, rootNode);
         
-    physics->body->setRollingFriction(btScalar(1.0));
     
     pocketMap[rootNode] = this;
+    
+    physics->addToSimulator();
+    physics->body->setRollingFriction(btScalar(1.0));
 }
 
 Ogre::Vector3 Ball::getPosition() {
@@ -83,12 +84,6 @@ void Ball::resetCueBall() {
     } catch (ComponentNotFoundException& e) {
         
     }
-}
-
-PhysicsComponent* Ball::getPhysics() {
-    if (!physics)
-        throw ComponentNotFoundException();
-    return physics;
 }
 
 btRigidBody* Ball::getBody() {

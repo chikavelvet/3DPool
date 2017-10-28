@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "PhysicsComponent.h"
+#include "ComponentNotFoundException.h"
 
 class Simulator;
 
@@ -23,8 +24,6 @@ class Ball : public GameObject {
 protected:
     btScalar initialX, initialY, initialZ;
     
-    PhysicsComponent* getPhysics();
-
 public:
     Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 

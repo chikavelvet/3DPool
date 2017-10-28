@@ -42,8 +42,6 @@ Component(owner),
     tr.setOrigin(_origin);
     
     motionState = new btDefaultMotionState(tr);
-    
-    addToSimulator();
 }
 
 void PhysicsComponent::addToSimulator() {		

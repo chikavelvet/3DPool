@@ -62,3 +62,9 @@ void GameObject::removeObject (void) {
     simulator->getDynamicsWorld()->removeRigidBody(body);
     geom->setVisible(false);
 }
+
+PhysicsComponent* GameObject::getPhysics() {
+    if (!physics)
+        throw ComponentNotFoundException();
+    return physics;
+}
