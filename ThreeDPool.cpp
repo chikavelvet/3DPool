@@ -326,6 +326,13 @@ void ThreeDPool::incrementStrokeCount() {
     ++strokes;
     ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
+    
+    if (isServer) {
+        ss.clear();
+        ss << "strokes " << strokes;
+        std::string msg = ss.str();
+        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
 }
 
 void ThreeDPool::decrementRemainingBallCount() {
@@ -345,6 +352,13 @@ void ThreeDPool::decrementRemainingBallCount() {
         CEGUI::Window* youWin = sheet->getChild("YouWin");
         youWin->show();
     }
+    
+    if (isServer) {
+        ss.clear();
+        ss << "remaining " << remainingBalls;
+        std::string msg = ss.str();
+        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
 }
 
 void ThreeDPool::updateOppStrokeCount(int newVal) {    
@@ -363,10 +377,7 @@ void ThreeDPool::updateOppRemainingBallCount(int newVal) {
     CEGUI::Window* sheet = context.getRootWindow();
     CEGUI::Window* remainingBallWin = sheet->getChild("OppRemainingBalls");
     std::stringstream ss;
-    
-//    if (soundOn)
-//        Mix_PlayChannel(-1, pocket, 0);
-    
+      
     oppRemainingBalls = newVal;
     ss << "Remaining: " << oppRemainingBalls;
     remainingBallWin->setText(ss.str());
@@ -599,7 +610,15 @@ void ThreeDPool::networkLoop () {
     } else {
         if (nm->scanForActivity()) {
             ClientData& data = nm->tcpServerData;
-            std::cout << data.output << std::endl;
+            std::stringstream ss(data.output);
+            std::string key;
+            int val;
+            ss >> key >> val;
+            if (key == "remaining") {
+                this->updateOppRemainingBallCount(val);
+            } else if (key == "strokes") {
+                this->updateOppStrokeCount(val);
+            }
         }
     }
 }
