@@ -57,6 +57,8 @@ protected:
     
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(void);
+    void updateOppStrokeCount(int newVal);
+    void updateOppRemainingBallCount(int newVal);
     
     void createFrameListener(void);
     
@@ -86,6 +88,7 @@ protected:
     bool yourTurn;
     
     int strokes;
+    int opponentStrokes;
 
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;

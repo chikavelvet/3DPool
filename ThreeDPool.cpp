@@ -36,6 +36,7 @@ const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.
 std::vector<Ball*> balls;
 
 int remainingBalls;
+int oppRemainingBalls;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
@@ -49,6 +50,7 @@ ThreeDPool::ThreeDPool(void) :
     cursorDisplaying(false),
     soundOn(true),
     strokes(0),
+    opponentStrokes(0),
     cameraCounter(0),
     typeMap(),
     pocketMap()
@@ -85,16 +87,13 @@ void ThreeDPool::createScene(void)
         nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
         bool started = nm->startServer();
         nm->acceptConnections();
-
-
+        
         std::cout << std::boolalpha << started << std::endl;
 //        bool success = nm->multiPlayerInit();
 //        std::cout << std::boolalpha << success << std::endl;
         std::cout << nm->getIPstring() << std::endl;
 
-        std::string msg = "test suck it blues";
         // while (!nm->getClients()) {continue;}
-        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
     } else {
 //        bool success = nm->joinMultiPlayer(host);
         nm->initNetManager();
@@ -132,6 +131,7 @@ void ThreeDPool::createScene(void)
     addPockets();
     addBallPyramid();
     remainingBalls = balls.size();
+    oppRemainingBalls = remainingBalls;
     setUpGUI();
     setUpSounds();
 }
@@ -186,19 +186,38 @@ void ThreeDPool::setUpGUI(void){
     std::stringstream ss;
     ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
-    strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
-    strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.9, 0)));
+    strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
     
     sheet->addChild(strokesWin);
+    
+    // Opponent Stroke counter
+    CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
+    std::stringstream ss2;
+    ss2 << "Opp Strokes: " << opponentStrokes;
+    oppStrokesWin->setText(ss2.str());
+    oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.9, 0)));
+    
+    sheet->addChild(oppStrokesWin);
             
     // Remaining Ball Counter
     CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
-    std::stringstream ss2;
-    ss2 << "Remaining: " << remainingBalls;
-    remainingBallWin->setText(ss2.str());
+    std::stringstream ss3;
+    ss3 << "Remaining: " << remainingBalls;
+    remainingBallWin->setText(ss3.str());
     remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
     remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
     sheet->addChild(remainingBallWin);
+    
+    // Opponent Remaining Ball Counter
+    CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
+    std::stringstream ss4;
+    ss4 << "Opp Remaining: " << oppRemainingBalls;
+    oppRemainingBallWin->setText(ss4.str());
+    oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.16, 0)));
+    sheet->addChild(oppRemainingBallWin);
     
     CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
     youWin->setText("You Win!");
@@ -324,6 +343,37 @@ void ThreeDPool::decrementRemainingBallCount() {
     
     if (remainingBalls < 1) {
         CEGUI::Window* youWin = sheet->getChild("YouWin");
+        youWin->show();
+    }
+}
+
+void ThreeDPool::updateOppStrokeCount(int newVal) {    
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* strokesWin = sheet->getChild("OppStrokeCount");
+    std::stringstream ss;
+    
+    opponentStrokes = newVal;
+    ss << "Strokes: " << opponentStrokes;
+    strokesWin->setText(ss.str());
+}
+
+void ThreeDPool::updateOppRemainingBallCount(int newVal) {
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* remainingBallWin = sheet->getChild("OppRemainingBalls");
+    std::stringstream ss;
+    
+//    if (soundOn)
+//        Mix_PlayChannel(-1, pocket, 0);
+    
+    oppRemainingBalls = newVal;
+    ss << "Remaining: " << oppRemainingBalls;
+    remainingBallWin->setText(ss.str());
+    
+    if (oppRemainingBalls < 1) {
+        CEGUI::Window* youWin = sheet->getChild("YouWin");
+        youWin->setText("You Lose!! :c");
         youWin->show();
     }
 }
