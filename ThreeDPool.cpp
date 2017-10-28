@@ -593,7 +593,8 @@ void ThreeDPool::networkLoop () {
 //        std::cout << numClients << std::endl;
         if(numClients == 0)
             if (nm->scanForActivity()) {
-                
+                ClientData* data = nm->tcpClientData[0];
+                std::cout << data->output << std::endl;
             }
     } else {
         if (nm->scanForActivity()) {
