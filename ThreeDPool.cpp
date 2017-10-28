@@ -471,6 +471,12 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
                 std::cout << "Sent " << msg << std::endl;
             }
             break;
+        case OIS::KC_M:
+            if (isServer) {
+                std::string msg = "I am a server";
+                nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+                std::cout << "Sent " << msg << std::endl;
+            }
     }
     return true;
 }
@@ -584,11 +590,16 @@ void ThreeDPool::networkLoop () {
         
     if (isServer) {
         int numClients = nm->getClients();
-        std::cout << numClients << std::endl;
+//        std::cout << numClients << std::endl;
         if(numClients == 0)
-            nm->scanForActivity();
+            if (nm->scanForActivity()) {
+                
+            }
     } else {
-        nm->scanForActivity();
+        if (nm->scanForActivity()) {
+            ClientData& data = nm->tcpServerData;
+            std::cout << data.output << std::endl;
+        }
     }
 }
 
