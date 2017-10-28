@@ -328,7 +328,7 @@ void ThreeDPool::incrementStrokeCount() {
     strokesWin->setText(ss.str());
     
     if (isServer) {
-        ss.clear();
+        ss = std::stringstream();
         ss << "strokes " << strokes;
         std::string msg = ss.str();
         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
@@ -354,7 +354,7 @@ void ThreeDPool::decrementRemainingBallCount() {
     }
     
     if (isServer) {
-        ss.clear();
+        ss = std::stringstream();
         ss << "remaining " << remainingBalls;
         std::string msg = ss.str();
         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
@@ -610,6 +610,7 @@ void ThreeDPool::networkLoop () {
     } else {
         if (nm->scanForActivity()) {
             ClientData& data = nm->tcpServerData;
+            std::cout << "Rcvd " << std::string(data.output) << std::endl;
             std::stringstream ss(data.output);
             std::string key;
             int val;
