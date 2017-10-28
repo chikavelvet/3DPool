@@ -16,6 +16,7 @@ http://www.ogre3d.org/wiki/
 */
 
 #include <OGRE/OgreMeshManager.h>
+#include <fstream>
 
 #include "ThreeDPool.h"
 
@@ -61,12 +62,28 @@ ThreeDPool::~ThreeDPool(void)
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
-    //----Network Test Stuff----//
-//    NetManager* nm = new NetManager();
-//    nm->initNetManager();
-//    nm->addNetworkInfo(PROTOCOL_TCP, NULL, 51515);
-//    nm->startServer();
+    std::ifstream configFile;
+    configFile.open ("ThreeDPool.config");
+    int isServer;
+    std::string host;
+    int port;
+    configFile >> isServer >> host >> port;
+
+    NetManager* nm = new NetManager();
         
+    if (isServer) {
+        nm->initNetManager();
+        nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
+        bool started = nm->startServer();
+        std::cout << std::boolalpha << started << std::endl;
+//        bool success = nm->multiPlayerInit();
+//        std::cout << std::boolalpha << success << std::endl;
+        std::cout << nm->getIPstring() << std::endl;
+    } else {
+        bool success = nm->joinMultiPlayer(host);
+        std::cout << std::boolalpha << success << std::endl;
+    }
+               
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -580,8 +597,7 @@ void ThreeDPool::physicsLoop()
                 const btRigidBody* body2 = btRigidBody::upcast(obB);
                 if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold) {
                     if (soundsToPlay-- > 0)
-                        if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
-                            std::cout << "No channels" << std::endl;
+                        Mix_PlayChannel(-1, ball_ball, 0);
                 }
             }
             else if((obAType == ballType && obBType == cueBallType) || (obBType == ballType && obAType == cueBallType)) {
@@ -589,8 +605,7 @@ void ThreeDPool::physicsLoop()
                 const btRigidBody* body2 = btRigidBody::upcast(obB);
                 if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold)
                     if (soundsToPlay-- > 0)
-                        if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
-                            std::cout << "No channels" << std::endl;
+                        Mix_PlayChannel(-1, ball_ball, 0);
             }
         }
         

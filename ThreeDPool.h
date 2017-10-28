@@ -82,6 +82,7 @@ protected:
     bool adjustingStick;
     bool cursorDisplaying;
     bool soundOn;
+    bool yourTurn;
     
     int strokes;
 
