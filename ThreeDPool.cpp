@@ -68,6 +68,7 @@ void ThreeDPool::createScene(void)
     std::string host;
     int port;
     configFile >> isServer >> host >> port;
+    std::cout << isServer << std::endl << host << std::endl << port << std::endl;
 
     NetManager* nm = new NetManager();
         
@@ -80,8 +81,10 @@ void ThreeDPool::createScene(void)
 //        std::cout << std::boolalpha << success << std::endl;
         std::cout << nm->getIPstring() << std::endl;
     } else {
-        bool success = nm->joinMultiPlayer(host);
-        std::cout << std::boolalpha << success << std::endl;
+//        bool success = nm->joinMultiPlayer(host);
+        nm->initNetManager();
+        nm->addNetworkInfo(PROTOCOL_ALL, host.c_str(), port);
+        nm->startClient();
     }
                
     //-------------basic setup stuff-----------------//
