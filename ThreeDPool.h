@@ -43,6 +43,7 @@ protected:
 
     void gameLoop(const Ogre::FrameEvent& evt);
     void physicsLoop(void);
+    void networkLoop (void);
     void makeGround(void);
     void cameraFollowStick(void);
     

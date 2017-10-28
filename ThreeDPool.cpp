@@ -572,17 +572,24 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
     //Need to inject timestamps to CEGUI System.
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
-    
-    int numClients = nm->getClients();
-    std::cout << numClients << std::endl;
-    if(numClients == 0)
-        nm->scanForActivity();
 
-
+    networkLoop();
     gameLoop(evt);
     physicsLoop();
 
     return true;
+}
+
+void ThreeDPool::networkLoop () {
+        
+    if (isServer) {
+        int numClients = nm->getClients();
+        std::cout << numClients << std::endl;
+        if(numClients == 0)
+            nm->scanForActivity();
+    } else {
+        nm->scanForActivity();
+    }
 }
 
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
