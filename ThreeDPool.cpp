@@ -71,15 +71,30 @@ void ThreeDPool::createScene(void)
     std::cout << isServer << std::endl << host << std::endl << port << std::endl;
 
     nm = new NetManager();
+    std::cout << "INFO" << std::endl;
+    std::cout << isServer << std::endl;
+    std::cout << host << std::endl;
+    std::cout << port << std::endl;
+    std::cout << "endINFO" << std::endl;
+    // std::cout << std::endl << std::endl;
+
+
         
     if (isServer) {
         nm->initNetManager();
         nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
         bool started = nm->startServer();
+        nm->acceptConnections();
+
+
         std::cout << std::boolalpha << started << std::endl;
 //        bool success = nm->multiPlayerInit();
 //        std::cout << std::boolalpha << success << std::endl;
         std::cout << nm->getIPstring() << std::endl;
+
+        std::string msg = "test suck it blues";
+        // while (!nm->getClients()) {continue;}
+        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
     } else {
 //        bool success = nm->joinMultiPlayer(host);
         nm->initNetManager();
@@ -502,6 +517,12 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     //Need to inject timestamps to CEGUI System.
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
     
+    int numClients = nm->getClients();
+    std::cout << numClients << std::endl;
+    if(numClients == 0)
+        nm->scanForActivity();
+
+
     gameLoop(evt);
     physicsLoop();
 
