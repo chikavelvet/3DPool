@@ -17,3 +17,8 @@ void Simulator::addObject (GameObject* o, collisionType coltype, int collidesWit
     objList.push_back(o); 
     dynamicsWorld->addRigidBody(o->getBody(), coltype, collidesWith);       
 }
+
+void Simulator::addObject (GameObject* o, collisionType coltype, int collidesWith, btRigidBody* body) {
+    objList.push_back(o);
+    dynamicsWorld->addRigidBody(body, coltype, collidesWith);
+}

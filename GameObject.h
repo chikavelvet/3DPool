@@ -67,8 +67,8 @@ public:
     void addToSimulator();
     void updateTransform();
 
-    btRigidBody* getBody(){ return body; }
-    Ogre::SceneNode* getNode() { return rootNode; }
+    virtual btRigidBody* getBody(){ return body; }
+    virtual Ogre::SceneNode* getNode() { return rootNode; }
     void removeObject(void);
 };
 
