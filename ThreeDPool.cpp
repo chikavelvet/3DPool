@@ -26,6 +26,7 @@ btRigidBody* cueStick;
 Ball* cueBallObject;
 btRigidBody* cueBall;
 Room* room;
+int isServer;
 
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
@@ -64,7 +65,6 @@ void ThreeDPool::createScene(void)
 {
     std::ifstream configFile;
     configFile.open ("ThreeDPool.config");
-    int isServer;
     std::string host;
     int port;
     configFile >> isServer >> host >> port;
@@ -85,7 +85,6 @@ void ThreeDPool::createScene(void)
         nm->initNetManager();
         nm->addNetworkInfo(PROTOCOL_ALL, host.c_str(), port);
         nm->startClient();
-        std::cout << "Received Message: " << nm->tcpServerData.output << std::endl;
     }
                
     //-------------basic setup stuff-----------------//
@@ -399,6 +398,13 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
                 Mix_HaltChannel(-1);
             }
             soundOn = !soundOn;
+            break;
+        case OIS::KC_N:
+            if (!isServer) {
+                std::string msg = "I am a client";
+                nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+                std::cout << "Sent " << msg << std::endl;
+            }
             break;
     }
     return true;
