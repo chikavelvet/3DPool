@@ -1,0 +1,10 @@
+ThreeDPool-*
+.deps/ThreeDPool-*
+CEGUI.log
+Ogre.log
+ThreeDPool
+autom4te.cache/*
+config.log
+config.status
+nbproject/*
+
