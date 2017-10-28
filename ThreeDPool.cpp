@@ -328,9 +328,9 @@ void ThreeDPool::incrementStrokeCount() {
     strokesWin->setText(ss.str());
     
     if (isServer) {
-        ss = std::stringstream();
-        ss << "strokes " << strokes;
-        std::string msg = ss.str();
+        std::stringstream ss2;
+        ss2 << "strokes " << strokes;
+        std::string msg = ss2.str();
         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
     }
 }
@@ -354,9 +354,9 @@ void ThreeDPool::decrementRemainingBallCount() {
     }
     
     if (isServer) {
-        ss = std::stringstream();
-        ss << "remaining " << remainingBalls;
-        std::string msg = ss.str();
+        std::stringstream ss2;
+        ss2 << "remaining " << remainingBalls;
+        std::string msg = ss2.str();
         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
     }
 }
@@ -368,7 +368,7 @@ void ThreeDPool::updateOppStrokeCount(int newVal) {
     std::stringstream ss;
     
     opponentStrokes = newVal;
-    ss << "Strokes: " << opponentStrokes;
+    ss << "Opp Strokes: " << opponentStrokes;
     strokesWin->setText(ss.str());
 }
 
@@ -379,7 +379,7 @@ void ThreeDPool::updateOppRemainingBallCount(int newVal) {
     std::stringstream ss;
       
     oppRemainingBalls = newVal;
-    ss << "Remaining: " << oppRemainingBalls;
+    ss << "Opp Remaining: " << oppRemainingBalls;
     remainingBallWin->setText(ss.str());
     
     if (oppRemainingBalls < 1) {
