@@ -34,11 +34,12 @@ public:
     
     void addToSimulator (void);
     
-    btRigidBody* getBody (void) { return body; }
+//    btRigidBody* getBody (void) { return body; }
+//    Simulator* getSimulator (void) { return simulator; }
     
     void removeObject (void);
 
-protected:
+//protected:
     Simulator* simulator;
     btCollisionShape* shape;
     btMotionState* motionState;

@@ -81,10 +81,10 @@ void ThreeDPool::createScene(void)
 
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
-    cueBall = cueBallObject->getRigidBody();
+    cueBall = cueBallObject->getBody();
 
     cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
-    cueStick = cueStickObject->getRigidBody();
+    cueStick = cueStickObject->getBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
     btVector3 btPos = cueStick->getCenterOfMassPosition();

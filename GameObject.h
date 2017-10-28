@@ -14,9 +14,10 @@
 #include "Simulator.h"
 #include "Enums.h"
 
-class Simulator;
 class CollisionContext;
 class BulletContactCallback;
+class PhysicsComponent;
+class Simulator;
 
 //const int cueBallType = 0,
 //          ballType    = 1,
@@ -28,7 +29,7 @@ class GameObject {
 protected:        
     GameObject ();
     
-    GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
+    GameObject (const Ogre::String& _name, Ogre::SceneManager* _sceneMgr,
             Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
             btScalar _restitution, btScalar _friction, 
             btScalar _linearDamping, btScalar _angularDamping,
@@ -60,6 +61,8 @@ protected:
 
     int collidesWith;
     collisionType coltype;
+    
+    PhysicsComponent* physics;
 public:
     void addToSimulator();
     void updateTransform();

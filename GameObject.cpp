@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
+GameObject::GameObject (const Ogre::String& _name, Ogre::SceneManager* _sceneMgr,
             Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
             btScalar _restitution, btScalar _friction, 
             btScalar _linearDamping, btScalar _angularDamping,

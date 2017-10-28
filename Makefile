@@ -115,7 +115,8 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-ThreeDPool.$(OBJEXT) ThreeDPool-Stick.$(OBJEXT) \
 	ThreeDPool-Pocket.$(OBJEXT) ThreeDPool-NetManager.$(OBJEXT) \
 	ThreeDPool-Component.$(OBJEXT) \
-	ThreeDPool-PhysicsComponent.$(OBJEXT)
+	ThreeDPool-PhysicsComponent.$(OBJEXT) \
+	ThreeDPool-ComponentNotFoundException.$(OBJEXT)
 ThreeDPool_OBJECTS = $(am_ThreeDPool_OBJECTS)
 am__DEPENDENCIES_1 =
 ThreeDPool_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -347,9 +348,9 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h ComponentNotFoundException.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp ComponentNotFoundException.cpp
 ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer -lSDL_net
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS)
 ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
@@ -471,6 +472,7 @@ distclean-compile:
 include ./$(DEPDIR)/ThreeDPool-Ball.Po
 include ./$(DEPDIR)/ThreeDPool-BaseApplication.Po
 include ./$(DEPDIR)/ThreeDPool-Component.Po
+include ./$(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po
 include ./$(DEPDIR)/ThreeDPool-ControlListener.Po
 include ./$(DEPDIR)/ThreeDPool-GameObject.Po
 include ./$(DEPDIR)/ThreeDPool-NetManager.Po
@@ -729,6 +731,20 @@ ThreeDPool-PhysicsComponent.obj: PhysicsComponent.cpp
 #	$(AM_V_CXX)source='PhysicsComponent.cpp' object='ThreeDPool-PhysicsComponent.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-PhysicsComponent.obj `if test -f 'PhysicsComponent.cpp'; then $(CYGPATH_W) 'PhysicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/PhysicsComponent.cpp'; fi`
+
+ThreeDPool-ComponentNotFoundException.o: ComponentNotFoundException.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-ComponentNotFoundException.o -MD -MP -MF $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo -c -o ThreeDPool-ComponentNotFoundException.o `test -f 'ComponentNotFoundException.cpp' || echo '$(srcdir)/'`ComponentNotFoundException.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po
+#	$(AM_V_CXX)source='ComponentNotFoundException.cpp' object='ThreeDPool-ComponentNotFoundException.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-ComponentNotFoundException.o `test -f 'ComponentNotFoundException.cpp' || echo '$(srcdir)/'`ComponentNotFoundException.cpp
+
+ThreeDPool-ComponentNotFoundException.obj: ComponentNotFoundException.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-ComponentNotFoundException.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo -c -o ThreeDPool-ComponentNotFoundException.obj `if test -f 'ComponentNotFoundException.cpp'; then $(CYGPATH_W) 'ComponentNotFoundException.cpp'; else $(CYGPATH_W) '$(srcdir)/ComponentNotFoundException.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po
+#	$(AM_V_CXX)source='ComponentNotFoundException.cpp' object='ThreeDPool-ComponentNotFoundException.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-ComponentNotFoundException.obj `if test -f 'ComponentNotFoundException.cpp'; then $(CYGPATH_W) 'ComponentNotFoundException.cpp'; else $(CYGPATH_W) '$(srcdir)/ComponentNotFoundException.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
