@@ -35,7 +35,10 @@ public:
 
 protected:
     virtual void createScene(void);
+    virtual void createMultiplayer(void);
+    virtual void createMainMenu(void);
     virtual void createCamera(void);
+    virtual bool setup(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
     void setUpGUI(void);
@@ -87,6 +90,8 @@ protected:
     bool cursorDisplaying;
     bool soundOn;
     bool yourTurn;
+    bool gameStarted;
+    bool isMultiplayer;
     
     int strokes;
     int opponentStrokes;

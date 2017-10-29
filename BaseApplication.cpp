@@ -233,7 +233,8 @@ bool BaseApplication::setup(void)
     loadResources();
 
     // Create the scene
-    createScene();
+    // createScene();
+    // createMainMenu();
 
     createFrameListener();
 
