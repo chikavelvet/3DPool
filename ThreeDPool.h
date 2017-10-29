@@ -61,6 +61,10 @@ protected:
     void displayQuitCursor(void);
     void hideQuitCursor(void);
     
+    virtual void showEnterIPWindow(void);
+    virtual void hideEnterIPWindow(void);
+    virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
+    
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(void);
     void updateOppStrokeCount(int newVal);

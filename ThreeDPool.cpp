@@ -177,6 +177,18 @@ void ThreeDPool::createMainMenu()
     }
 }
 
+void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e) 
+{
+    using namespace CEGUI;
+    
+    //Cast it to a key event
+    const KeyEventArgs& key = static_cast<const KeyEventArgs&>(e);
+    
+    if (key.scancode == Key::Return) {
+        quit(e);
+    }
+}
+
 void ThreeDPool::createMPLobby(void) 
 { 
     if (!guiInitialized)
@@ -208,7 +220,7 @@ void ThreeDPool::createMPLobby(void)
         CEGUI::Window *hostGame = wmgr.createWindow("TaharezLook/Button", "HostGameButton");
         hostGame->setText("Host Game");
         hostGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        hostGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.7, 0)));
+        hostGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.8, 0)));
         hostGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
         mpLobby->addChild(hostGame);
         
@@ -216,25 +228,34 @@ void ThreeDPool::createMPLobby(void)
         CEGUI::Window *joinGame = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
         joinGame->setText("Join Game");
         joinGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        joinGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.7, 0)));
-        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+        joinGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.8, 0)));
+        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::showEnterIPWindow, this));
         mpLobby->addChild(joinGame);
         
-        //----Info Window---------------//
-        CEGUI::Window *infoWindow = wmgr.createWindow("DefaultWindow", "InfoWindow");
-        infoWindow->setText("Join Game");
-        infoWindow->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
-        infoWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
-        infoWindow->hide();
-        mpLobby->addChild(infoWindow);
-        
         //--------Enter Server IP-------//
-        
-        //------------Information-------//
-        
+        CEGUI::FrameWindow *enterIP = static_cast<CEGUI::FrameWindow*>(wmgr.createWindow("TaharezLook/FrameWindow", "EnterIPWindow"));
+        enterIP->setText("Enter Server IP");
+        enterIP->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
+        enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        enterIP->setAlwaysOnTop(true);
+        enterIP->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::hideEnterIPWindow, this));
+        enterIP->hide();
+        mpLobby->addChild(enterIP);
+                
         //------------IP Enter Box------//
+        CEGUI::Editbox *ipEnterBox = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox", "IPEnterBox"));
+        ipEnterBox->setSize(CEGUI::USize(CEGUI::UDim(0.5, 0), CEGUI::UDim(0.2, 0)));
+        ipEnterBox->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25, 0), CEGUI::UDim(0.4, 0)));
+        ipEnterBox->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber(&ThreeDPool::onIPEnterBoxKeyPressed, this));
+        enterIP->addChild(ipEnterBox);
         
         //------------Go Button---------//
+        CEGUI::Window *goButton = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
+        goButton->setText("Go");
+        goButton->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.1, 0)));
+        goButton->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.7, 0)));
+        goButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+        enterIP->addChild(goButton);
         
         //------------Quit--------------//
         
@@ -249,6 +270,28 @@ void ThreeDPool::createMPLobby(void)
         hideAllScreens();
         sheet->getChild("MPLobbyScreen")->show();
     }
+}
+
+void ThreeDPool::showEnterIPWindow()
+{
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+    
+    CEGUI::Window* enterIP = mpLobby->getChild("EnterIPWindow");
+    
+//    mpLobby->getChild("WaitingForClientWindow")->hide();
+    enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+    enterIP->show();
+}
+
+void ThreeDPool::hideEnterIPWindow()
+{
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+    
+    mpLobby->getChild("EnterIPWindow")->hide();
 }
 
 void ThreeDPool::setUpGUI(void) {    
