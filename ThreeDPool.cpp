@@ -135,8 +135,18 @@ void ThreeDPool::createMainMenu()
         CEGUI::Window* mainMenu = wmgr.createWindow("DefaultWindow", "MainMenuScreen");
         mainMenu->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
         mainMenu->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        mainMenu->setAlwaysOnTop(true);
         
         sheet->addChild(mainMenu);
+        
+        //----Back Ground----//   
+        CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImage", "ThreeDPoolBackground.png", "Imagesets");
+        CEGUI::Window* background = wmgr.createWindow("TaharezLook/StaticImage", "Background");
+        background->setProperty("Image", "BackgroundImage");
+        background->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        background->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        background->setAlwaysOnTop(false);
+        sheet->addChild(background);
         
         //----Quit Button----//
         CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
@@ -175,6 +185,7 @@ void ThreeDPool::createMainMenu()
     } else {
         hideAllScreens();
         sheet->getChild("MainMenuScreen")->show();
+        sheet->getChild("Background")->show();
     }
 }
 
@@ -487,43 +498,29 @@ void ThreeDPool::createScene(void)
 {
     gameStarted = true;
 
-    if (isMultiplayer) {
-//        std::ifstream configFile;
-//        configFile.open ("ThreeDPool.config");
-//        configFile >> isServer >> hostName >> port;
-//        std::cout << isServer << std::endl << hostName << std::endl << port << std::endl;
-
-        nm = new NetManager();
-        std::cout << "INFO" << std::endl;
-        std::cout << isServer << std::endl;
-        std::cout << hostName << std::endl;
-        std::cout << port << std::endl;
-        std::cout << "endINFO" << std::endl;
-
-        if (isServer) {
-            nm->initNetManager();
-            nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
-            bool started = nm->startServer();
-            nm->acceptConnections();
-
-            std::cout << std::boolalpha << started << std::endl;
-            std::cout << nm->getIPstring() << std::endl;
-        } 
-//        else {
-//            nm->initNetManager();
-//            nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
-//            nm->startClient();
-//        }
-    }
-    
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
-    Ogre::Light* pointLight = mSceneMgr->createLight("PointLight");
-    pointLight->setType(Ogre::Light::LT_POINT);
-    pointLight->setDiffuseColour(1, 0.3, 0.3);
-    pointLight->setSpecularColour(0.3, 0.3, 1);
-    pointLight->setPosition(0, 0, 0);
+    Ogre::Light* pointLight1 = mSceneMgr->createLight("PointLight1");
+    pointLight1->setType(Ogre::Light::LT_POINT);
+    pointLight1->setDiffuseColour(.4, .4, .4);
+    pointLight1->setSpecularColour(.4, .4, .4);
+    pointLight1->setPosition(0, 220, 460);
+    Ogre::Light* pointLight2 = mSceneMgr->createLight("PointLIght2");
+    pointLight2->setType(Ogre::Light::LT_POINT);
+    pointLight2->setDiffuseColour(.4, .4, .4);
+    pointLight2->setSpecularColour(.4, .4, .4);
+    pointLight2->setPosition(0, -220, 460);
+    Ogre::Light* pointLight3 = mSceneMgr->createLight("PointLIght3");
+    pointLight3->setType(Ogre::Light::LT_POINT);
+    pointLight3->setDiffuseColour(.4, .4, .4);
+    pointLight3->setSpecularColour(.4, .4, .4);
+    pointLight3->setPosition(0, 220, -460);
+    Ogre::Light* pointLight4 = mSceneMgr->createLight("PointLIght4");
+    pointLight4->setType(Ogre::Light::LT_POINT);
+    pointLight4->setDiffuseColour(.4, .4, .4);
+    pointLight4->setSpecularColour(.4, .4, .4);
+    pointLight4->setPosition(0, -220, -460);
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
@@ -575,7 +572,7 @@ void ThreeDPool::playBGM() {
 
 void ThreeDPool::addBallPyramid() {
     // 1st Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
+    /*balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
     balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  -5, -255, "b2",  typeMap, pocketMap, "Example/Red"));
     balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,   5, -255, "b3",  typeMap, pocketMap, "Example/Red"));
     balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  15, -255, "b4",  typeMap, pocketMap, "Example/Red"));
@@ -612,7 +609,23 @@ void ThreeDPool::addBallPyramid() {
     // 4th Layer
     balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
 
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));*/
+    
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Blue"));
+
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -235, "b2", typeMap, pocketMap, "Example/Orange"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -235, "b3", typeMap, pocketMap, "Example/Purple"));
+    
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -245, "b4", typeMap, pocketMap, "Example/Black"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 10, -10, -245, "b5", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10, 10, -245, "b6", typeMap, pocketMap, "Example/GreenOther"));
+    
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -255, "b7", typeMap, pocketMap, "Example/Teal"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -255, "b8", typeMap, pocketMap, "Example/PinkPurple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 15, -15, -255, "b9", typeMap, pocketMap, "Example/Yellow"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, 15, -255, "b10", typeMap, pocketMap, "Example/BOrange"));
+
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "bTest", typeMap, pocketMap, "Example/GreenOther"));
 }
 
 void ThreeDPool::addPockets() {
@@ -816,7 +829,7 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             adjustingCamera = !adjustingCamera;
             break;
         case OIS::KC_ESCAPE :
-            if (gameScreenCreated) {
+            if (gameStarted) {
                 if (!cursorDisplaying)
                     displayQuitCursor();
                 else 
