@@ -100,7 +100,10 @@ protected:
     bool soundOn;
     bool yourTurn;
     bool gameStarted;
+    
     bool isMultiplayer;
+    std::string hostName;
+    int port;
     
     int strokes;
     int opponentStrokes;

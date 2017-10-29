@@ -59,7 +59,9 @@ ThreeDPool::ThreeDPool(void) :
     guiInitialized(false),
     mainMenuScreenCreated(false),
     mpLobbyScreenCreated(false),
-    gameScreenCreated(false)
+    gameScreenCreated(false),
+    hostName(""),
+    port(0)
 {
 }
 //---------------------------------------------------------------------------
@@ -197,25 +199,34 @@ void ThreeDPool::createMPLobby(void)
         //----Back to Main----//
         CEGUI::Window *back = wmgr.createWindow("TaharezLook/Button", "BackToMainButton");
         back->setText("Back");
-
-        // In UDim, only set one of the two params, the other should be 0
         back->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         back->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
         back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMainMenu, this));
-
         mpLobby->addChild(back);
         
         //----Host Game-----------------//
+        CEGUI::Window *hostGame = wmgr.createWindow("TaharezLook/Button", "HostGameButton");
+        hostGame->setText("Host Game");
+        hostGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        hostGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.7, 0)));
+        hostGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+        mpLobby->addChild(hostGame);
         
         //----Join Game-----------------//
+        CEGUI::Window *joinGame = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
+        joinGame->setText("Join Game");
+        joinGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        joinGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.7, 0)));
+        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+        mpLobby->addChild(joinGame);
         
         //----Info Window---------------//
-        
-        //--------Waiting for Client----//
-        
-        //------------Information-------//
-        
-        //------------Quit--------------//
+        CEGUI::Window *infoWindow = wmgr.createWindow("DefaultWindow", "InfoWindow");
+        infoWindow->setText("Join Game");
+        infoWindow->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
+        infoWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        infoWindow->hide();
+        mpLobby->addChild(infoWindow);
         
         //--------Enter Server IP-------//
         
@@ -224,6 +235,12 @@ void ThreeDPool::createMPLobby(void)
         //------------IP Enter Box------//
         
         //------------Go Button---------//
+        
+        //------------Quit--------------//
+        
+        //--------Waiting for Client----//
+        
+        //------------Information-------//
         
         //------------Quit--------------//
         
@@ -334,15 +351,13 @@ void ThreeDPool::createScene(void)
     if (isMultiplayer) {
         std::ifstream configFile;
         configFile.open ("ThreeDPool.config");
-        std::string host;
-        int port;
-        configFile >> isServer >> host >> port;
-        std::cout << isServer << std::endl << host << std::endl << port << std::endl;
+        configFile >> isServer >> hostName >> port;
+        std::cout << isServer << std::endl << hostName << std::endl << port << std::endl;
 
         nm = new NetManager();
         std::cout << "INFO" << std::endl;
         std::cout << isServer << std::endl;
-        std::cout << host << std::endl;
+        std::cout << hostName << std::endl;
         std::cout << port << std::endl;
         std::cout << "endINFO" << std::endl;
 
@@ -356,7 +371,7 @@ void ThreeDPool::createScene(void)
             std::cout << nm->getIPstring() << std::endl;
         } else {
             nm->initNetManager();
-            nm->addNetworkInfo(PROTOCOL_ALL, host.c_str(), port);
+            nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
             nm->startClient();
         }
     }
