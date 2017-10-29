@@ -138,42 +138,37 @@ void ThreeDPool::createMultiplayer(void)
 void ThreeDPool::createScene(void)
 {
     gameStarted = true;
-    std::ifstream configFile;
-    configFile.open ("ThreeDPool.config");
-    std::string host;
-    int port;
-    configFile >> isServer >> host >> port;
-    std::cout << isServer << std::endl << host << std::endl << port << std::endl;
 
-    nm = new NetManager();
-    std::cout << "INFO" << std::endl;
-    std::cout << isServer << std::endl;
-    std::cout << host << std::endl;
-    std::cout << port << std::endl;
-    std::cout << "endINFO" << std::endl;
-    // std::cout << std::endl << std::endl;
+    if (isMultiplayer) {
+        std::ifstream configFile;
+        configFile.open ("ThreeDPool.config");
+        std::string host;
+        int port;
+        configFile >> isServer >> host >> port;
+        std::cout << isServer << std::endl << host << std::endl << port << std::endl;
 
+        nm = new NetManager();
+        std::cout << "INFO" << std::endl;
+        std::cout << isServer << std::endl;
+        std::cout << host << std::endl;
+        std::cout << port << std::endl;
+        std::cout << "endINFO" << std::endl;
 
-        
-    if (isServer) {
-        nm->initNetManager();
-        nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
-        bool started = nm->startServer();
-        nm->acceptConnections();
-        
-        std::cout << std::boolalpha << started << std::endl;
-//        bool success = nm->multiPlayerInit();
-//        std::cout << std::boolalpha << success << std::endl;
-        std::cout << nm->getIPstring() << std::endl;
+        if (isServer) {
+            nm->initNetManager();
+            nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
+            bool started = nm->startServer();
+            nm->acceptConnections();
 
-        // while (!nm->getClients()) {continue;}
-    } else {
-//        bool success = nm->joinMultiPlayer(host);
-        nm->initNetManager();
-        nm->addNetworkInfo(PROTOCOL_ALL, host.c_str(), port);
-        nm->startClient();
+            std::cout << std::boolalpha << started << std::endl;
+            std::cout << nm->getIPstring() << std::endl;
+        } else {
+            nm->initNetManager();
+            nm->addNetworkInfo(PROTOCOL_ALL, host.c_str(), port);
+            nm->startClient();
+        }
     }
-               
+    
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
@@ -185,7 +180,6 @@ void ThreeDPool::createScene(void)
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
-
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
     cueBall = cueBallObject->getBody();
@@ -270,16 +264,6 @@ void ThreeDPool::setUpGUI(void){
     
     sheet->addChild(strokesWin);
     
-    // Opponent Stroke counter
-    CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
-    std::stringstream ss2;
-    ss2 << "Opp Strokes: " << opponentStrokes;
-    oppStrokesWin->setText(ss2.str());
-    oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.9, 0)));
-    
-    sheet->addChild(oppStrokesWin);
-            
     // Remaining Ball Counter
     CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
     std::stringstream ss3;
@@ -289,14 +273,26 @@ void ThreeDPool::setUpGUI(void){
     remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
     sheet->addChild(remainingBallWin);
     
-    // Opponent Remaining Ball Counter
-    CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
-    std::stringstream ss4;
-    ss4 << "Opp Remaining: " << oppRemainingBalls;
-    oppRemainingBallWin->setText(ss4.str());
-    oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.16, 0)));
-    sheet->addChild(oppRemainingBallWin);
+    if (isMultiplayer) {
+        // Opponent Stroke counter
+        CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
+        std::stringstream ss2;
+        ss2 << "Opp Strokes: " << opponentStrokes;
+        oppStrokesWin->setText(ss2.str());
+        oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.9, 0)));
+
+        sheet->addChild(oppStrokesWin);
+
+        // Opponent Remaining Ball Counter
+        CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
+        std::stringstream ss4;
+        ss4 << "Opp Remaining: " << oppRemainingBalls;
+        oppRemainingBallWin->setText(ss4.str());
+        oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.16, 0)));
+        sheet->addChild(oppRemainingBallWin);
+    }
     
     CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
     youWin->setText("You Win!");
@@ -406,17 +402,19 @@ void ThreeDPool::incrementStrokeCount() {
     ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
     
-    if (isServer) {
-        std::stringstream ss2;
-        ss2 << "strokes " << strokes;
-        std::string msg = ss2.str();
-        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-    }
-    else {
-        std::stringstream ss2;
-        ss2 << "strokes " << strokes;
-        std::string msg = ss2.str();
-        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    if (isMultiplayer) {
+        if (isServer) {
+            std::stringstream ss2;
+            ss2 << "strokes " << strokes;
+            std::string msg = ss2.str();
+            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
+        else {
+            std::stringstream ss2;
+            ss2 << "strokes " << strokes;
+            std::string msg = ss2.str();
+            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
     }
 }
 
@@ -438,17 +436,20 @@ void ThreeDPool::decrementRemainingBallCount() {
         youWin->show();
     }
     
-    if (isServer) {
-        std::stringstream ss2;
-        ss2 << "remaining " << remainingBalls;
-        std::string msg = ss2.str();
-        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+    if (isMultiplayer) {
+        if (isServer) {
+            std::stringstream ss2;
+            ss2 << "remaining " << remainingBalls;
+            std::string msg = ss2.str();
+            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
+        else {
+            std::stringstream ss2;
+            ss2 << "remaining " << remainingBalls;
+            std::string msg = ss2.str();
+            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
     }
-    else {
-        std::stringstream ss2;
-        ss2 << "remaining " << remainingBalls;
-        std::string msg = ss2.str();
-        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());}
 }
 
 void ThreeDPool::updateOppStrokeCount(int newVal) {    
@@ -681,7 +682,8 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
     if (gameStarted) {
-        networkLoop();
+        if (isMultiplayer)
+            networkLoop();
         gameLoop(evt);
         physicsLoop();
     }
@@ -690,14 +692,11 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 }
 
 void ThreeDPool::networkLoop () {
-        
     if (isServer) {
-        int numClients = nm->getClients();
         if (nm->scanForActivity()) {
             //ClientData& data = nm->tcpServerData;
             if (nm->getClients()){
                 ClientData* data = nm->tcpClientData.front();
-
 
                 std::cout << "Rcvd " << std::string(data->output) << std::endl;
                 std::stringstream ss(data->output);
@@ -711,7 +710,6 @@ void ThreeDPool::networkLoop () {
                 }
             }
         }
-
     } else {
         if (nm->scanForActivity()) {
             ClientData& data = nm->tcpServerData;
