@@ -55,7 +55,10 @@ ThreeDPool::ThreeDPool(void) :
     typeMap(),
     pocketMap(),
     gameStarted(false),
-    isMultiplayer(false)
+    isMultiplayer(false),
+    guiInitialized(false),
+    mainMenuCreated(false),
+    mpLobbyCreated(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -74,7 +77,7 @@ bool ThreeDPool::setup(void)
     return true;
 };
 
-void ThreeDPool::createMainMenu(void) 
+void ThreeDPool::initGUI()
 {
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
@@ -82,50 +85,107 @@ void ThreeDPool::createMainMenu(void)
     CEGUI::Scheme::setDefaultResourceGroup("Schemes");
     CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
     CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-    
+
     CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
-        
+
     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.setRootWindow(sheet);
+    
+    guiInitialized = true;
+}
 
-    //----Quit Button----//
-    CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
-    quit->setText("Quit");    
-        
-    // In UDim, only set one of the two params, the other should be 0
-    quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
-    quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+void ThreeDPool::createMainMenu() 
+{       
+    if (!guiInitialized)
+        initGUI();
     
-    sheet->addChild(quit);
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    
+    if (!mainMenuCreated) {
+        CEGUI::Window* mainMenu = wmgr.createWindow("DefaultWindow", "MainMenu");
+        mainMenu->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        mainMenu->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        
+        //----Quit Button----//
+        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
+        quit->setText("Quit");    
 
-    //----Single Player----//
-    CEGUI::Window *singlePlayer = wmgr.createWindow("TaharezLook/Button", "StartSinglePlayerButton");
-    singlePlayer->setText("Single Player");    
-        
-    // In UDim, only set one of the two params, the other should be 0
-    singlePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    singlePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.74, 0)));
-    singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, this));
-    
-    sheet->addChild(singlePlayer);
+        // In UDim, only set one of the two params, the other should be 0
+        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
+        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
 
-    //----Multi Player----//
-    CEGUI::Window *multiPlayer = wmgr.createWindow("TaharezLook/Button", "StartMultiPlayerButton");
-    multiPlayer->setText("Multi Player");    
+        sheet->addChild(quit);
+
+        //----Single Player----//
+        CEGUI::Window *singlePlayer = wmgr.createWindow("TaharezLook/Button", "StartSinglePlayerButton");
+        singlePlayer->setText("Single Player");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        singlePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        singlePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.74, 0)));
+        singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, this));
+
+        sheet->addChild(singlePlayer);
+
+        //----Multi Player----//
+        CEGUI::Window *multiPlayer = wmgr.createWindow("TaharezLook/Button", "StartMultiPlayerButton");
+        multiPlayer->setText("Multi Player");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        multiPlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        multiPlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.80, 0)));
+        multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMPLobby, this));
+
+        sheet->addChild(multiPlayer);
         
-    // In UDim, only set one of the two params, the other should be 0
-    multiPlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    multiPlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.80, 0)));
-    multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMultiplayer, this));
+        //----Back to Main----//
+        CEGUI::Window *back = wmgr.createWindow("TaharezLook/Button", "BackToMainButton");
+        back->setText("Back");
+
+        // In UDim, only set one of the two params, the other should be 0
+        back->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        back->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMainMenu, this));
+
+        sheet->addChild(back);
+        back->hide();
+        
+        mainMenuCreated = true;
+    } else {
+        sheet->getChild("StartSinglePlayerButton")->show();
+        sheet->getChild("StartMultiPlayerButton")->show();
+        sheet->getChild("BackToMainButton")->hide();
+        
+        CEGUI::Window* quit = sheet->getChild("QuitButton");
+        quit->show();
+        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
+    }
+}
+
+void ThreeDPool::createMPLobby(void) 
+{ 
+    if (!guiInitialized)
+        initGUI();
     
-    sheet->addChild(multiPlayer);
-    
-    // CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
-    // quit->hide();
+    if (!mpLobbyCreated) {
+        // Create Lobby
+    } else {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* sheet = context.getRootWindow();
+
+        sheet->getChild("StartSinglePlayerButton")->hide();
+        sheet->getChild("StartMultiPlayerButton")->hide();
+        sheet->getChild("QuitButton")->hide();
+
+        sheet->getChild("BackToMainButton")->show();
+    }
 }
 
 void ThreeDPool::createMultiplayer(void)
@@ -220,17 +280,10 @@ void ThreeDPool::setUpSounds(void){
     playBGM();
 }
 
-void ThreeDPool::setUpGUI(void){
-    // mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
-    // CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
-    // CEGUI::Font::setDefaultResourceGroup("Fonts");
-    // CEGUI::Scheme::setDefaultResourceGroup("Schemes");
-    // CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
-    // CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-    
-    // CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
-    // CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
-        
+void ThreeDPool::setUpGUI(void) {    
+    if (!guiInitialized)
+           initGUI();
+
     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
@@ -240,20 +293,11 @@ void ThreeDPool::setUpGUI(void){
     sheet->getChild("StartMultiPlayerButton")->hide();
     
     CEGUI::Window* quit = sheet->getChild("QuitButton");
-    // quit->setText("Quit");    
-        
-    // // In UDim, only set one of the two params, the other should be 0
-    // quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    // quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
-    
-    // sheet->addChild(quit);
     quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
 
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
     quit->hide();
 
-
-    
     // Stroke counter
     CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
     std::stringstream ss;
@@ -664,7 +708,6 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     }
     return true;
 }
-
 
 bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
