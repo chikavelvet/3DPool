@@ -333,6 +333,12 @@ void ThreeDPool::incrementStrokeCount() {
         std::string msg = ss2.str();
         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
     }
+    else {
+        std::stringstream ss2;
+        ss2 << "strokes " << strokes;
+        std::string msg = ss2.str();
+        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
 }
 
 void ThreeDPool::decrementRemainingBallCount() {
@@ -359,6 +365,11 @@ void ThreeDPool::decrementRemainingBallCount() {
         std::string msg = ss2.str();
         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
     }
+    else {
+        std::stringstream ss2;
+        ss2 << "remaining " << remainingBalls;
+        std::string msg = ss2.str();
+        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());}
 }
 
 void ThreeDPool::updateOppStrokeCount(int newVal) {    
@@ -601,13 +612,25 @@ void ThreeDPool::networkLoop () {
         
     if (isServer) {
         int numClients = nm->getClients();
-//        std::cout << numClients << std::endl;
-        if(numClients == 0)
-            if (nm->scanForActivity()) {
-                for (ClientData* data : nm->tcpClientData) {
-                    std::cout << data->host << " " << data->input << " " << data->output << " " << std::boolalpha << data->updated << std::endl; 
+        if (nm->scanForActivity()) {
+            //ClientData& data = nm->tcpServerData;
+            if (nm->getClients()){
+                ClientData* data = nm->tcpClientData.front();
+
+
+                std::cout << "Rcvd " << std::string(data->output) << std::endl;
+                std::stringstream ss(data->output);
+                std::string key;
+                int val;
+                ss >> key >> val;
+                if (key == "remaining") {
+                    this->updateOppRemainingBallCount(val);
+                } else if (key == "strokes") {
+                    this->updateOppStrokeCount(val);
                 }
             }
+        }
+
     } else {
         if (nm->scanForActivity()) {
             ClientData& data = nm->tcpServerData;
