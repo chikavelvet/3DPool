@@ -355,12 +355,16 @@ void ThreeDPool::joinMultiplayer ()
     nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
     nm->startClient();
     
-    createMultiplayer();
+//    std::string msg = "Client Request";
+//    nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    
+    isWaiting = true;
+    
+//    createMultiplayer();
 }
 
 void ThreeDPool::hostMultiplayer () 
 {
-    
     createMultiplayer();
 }
 
@@ -946,15 +950,18 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
                     if (std::string(data->output) == "Client Request") {
                         std::string msg = "Server Response";
                         nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-                        hostMultiplayer();
+                        isWaiting = false;
+                        createMultiplayer();
                     }
                 }
             }
         } else {
             if (nm->scanForActivity()) {
                 ClientData& data = nm->tcpServerData;
-                if (std::string(data.output) == "Server Response")
-                    joinMultiplayer();
+                if (std::string(data.output) == "Server Response") {
+                    isWaiting = false;
+                    createMultiplayer();
+                }
             } else {
                 std::string msg = "Client Request";
                 nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
