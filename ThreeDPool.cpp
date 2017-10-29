@@ -40,28 +40,29 @@ int oppRemainingBalls;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
-    mMoveSpeed(750),
-    hitBall(false),
-    LMBDown(false),
-    cueStickDelta(0),
-    cueStickTotal(CUE_STICK_MIN),
-    adjustingStick(false),
-    adjustingCamera(false),
-    cursorDisplaying(false),
-    soundOn(true),
-    strokes(0),
-    opponentStrokes(0),
-    cameraCounter(0),
-    typeMap(),
-    pocketMap(),
-    gameStarted(false),
-    isMultiplayer(false),
-    guiInitialized(false),
-    mainMenuScreenCreated(false),
-    mpLobbyScreenCreated(false),
-    gameScreenCreated(false),
-    hostName(""),
-    port(59000)
+        mMoveSpeed(750),
+        hitBall(false),
+        LMBDown(false),
+        cueStickDelta(0),
+        cueStickTotal(CUE_STICK_MIN),
+        adjustingStick(false),
+        adjustingCamera(false),
+        cursorDisplaying(false),
+        soundOn(true),
+        strokes(0),
+        opponentStrokes(0),
+        cameraCounter(0),
+        typeMap(),
+        pocketMap(),
+        gameStarted(false),
+        isMultiplayer(false),
+        guiInitialized(false),
+        mainMenuScreenCreated(false),
+        mpLobbyScreenCreated(false),
+        gameScreenCreated(false),
+        hostName(""),
+        port(59000),
+        isWaiting(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -185,7 +186,7 @@ void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e)
     const KeyEventArgs& key = static_cast<const KeyEventArgs&>(e);
     
     if (key.scancode == Key::Return) {
-        joinMultiplayer(e);
+        joinMultiplayer();
     }
 }
 
@@ -221,7 +222,7 @@ void ThreeDPool::createMPLobby(void)
         hostGame->setText("Host Game");
         hostGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         hostGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.8, 0)));
-        hostGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+        hostGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::startWaiting, this));
         mpLobby->addChild(hostGame);
         
         //----Join Game-----------------//
@@ -257,13 +258,21 @@ void ThreeDPool::createMPLobby(void)
         goButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::joinMultiplayer, this));
         enterIP->addChild(goButton);
         
-        //------------Quit--------------//
-        
         //--------Waiting for Client----//
+        CEGUI::FrameWindow *waiting = static_cast<CEGUI::FrameWindow*>(wmgr.createWindow("TaharezLook/FrameWindow", "WaitingWindow"));
+        waiting->setText("Waiting for Client...");
+        waiting->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
+        waiting->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        waiting->setAlwaysOnTop(true);
+        waiting->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::cancelWaiting, this));
+        waiting->hide();
+        mpLobby->addChild(waiting);
         
         //------------Information-------//
-        
-        //------------Quit--------------//
+        CEGUI::Window *serverInfo = wmgr.createWindow("TaharezLook/StaticText", "ServerInfo");
+        serverInfo->setSize(CEGUI::USize(CEGUI::UDim(0.4, 0), CEGUI::UDim(0.15, 0)));
+        serverInfo->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.425, 0)));
+        waiting->addChild(serverInfo);
         
         mpLobbyScreenCreated = true;
     } else {
@@ -272,7 +281,59 @@ void ThreeDPool::createMPLobby(void)
     }
 }
 
-void ThreeDPool::joinMultiplayer (const CEGUI::EventArgs& e) 
+void ThreeDPool::startWaiting() {
+    if (!isWaiting || !isServer) {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+
+        isServer = true;
+        
+        nm = new NetManager();
+        std::cout << "INFO" << std::endl;
+        std::cout << isServer << std::endl;
+        std::cout << hostName << std::endl;
+        std::cout << port << std::endl;
+        std::cout << "endINFO" << std::endl;
+
+        nm->initNetManager();
+        nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
+        bool started = nm->startServer();
+        nm->acceptConnections();
+
+        std::cout << std::boolalpha << started << std::endl;
+        std::cout << nm->getIPstring() << std::endl;
+
+        CEGUI::Window* waiting = mpLobby->getChild("WaitingWindow");
+
+        mpLobby->getChild("EnterIPWindow")->hide();
+        waiting->getChild("ServerInfo")->setText("Server IP: " + nm->getIPstring());
+        waiting->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        waiting->show();
+
+        isWaiting = true;
+    }
+}
+
+void ThreeDPool::cancelWaiting() {
+    if (isWaiting && isServer) {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+        CEGUI::Window* waiting = mpLobby->getChild("WaitingWindow");
+
+        nm->stopServer(PROTOCOL_TCP);
+        nm->stopServer(PROTOCOL_UDP);
+        delete nm;
+
+        waiting->hide();
+
+        isWaiting = false;
+        isServer = false;
+    }
+}
+
+void ThreeDPool::joinMultiplayer () 
 {
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
@@ -282,13 +343,25 @@ void ThreeDPool::joinMultiplayer (const CEGUI::EventArgs& e)
     hostName = std::string(ipEnterBox->getText().c_str());
     
     isServer = false;
-    isMultiplayer = true;
-    createScene();
+    
+    nm = new NetManager();
+    std::cout << "INFO" << std::endl;
+    std::cout << isServer << std::endl;
+    std::cout << hostName << std::endl;
+    std::cout << port << std::endl;
+    std::cout << "endINFO" << std::endl;
+
+    nm->initNetManager();
+    nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
+    nm->startClient();
+    
+    createMultiplayer();
 }
 
-void ThreeDPool::hostMultiplayer (const CEGUI::EventArgs& e) 
+void ThreeDPool::hostMultiplayer () 
 {
     
+    createMultiplayer();
 }
 
 void ThreeDPool::showEnterIPWindow()
@@ -299,7 +372,7 @@ void ThreeDPool::showEnterIPWindow()
     
     CEGUI::Window* enterIP = mpLobby->getChild("EnterIPWindow");
     
-//    mpLobby->getChild("WaitingForClientWindow")->hide();
+    cancelWaiting();
     enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
     enterIP->show();
 }
@@ -431,11 +504,12 @@ void ThreeDPool::createScene(void)
 
             std::cout << std::boolalpha << started << std::endl;
             std::cout << nm->getIPstring() << std::endl;
-        } else {
-            nm->initNetManager();
-            nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
-            nm->startClient();
-        }
+        } 
+//        else {
+//            nm->initNetManager();
+//            nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
+//            nm->startClient();
+//        }
     }
     
     //-------------basic setup stuff-----------------//
@@ -738,11 +812,15 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             adjustingCamera = !adjustingCamera;
             break;
         case OIS::KC_ESCAPE :
-            if (!cursorDisplaying)
-                displayQuitCursor();
-            else 
-                hideQuitCursor();
-            cursorDisplaying = !cursorDisplaying;
+            if (gameScreenCreated) {
+                if (!cursorDisplaying)
+                    displayQuitCursor();
+                else 
+                    hideQuitCursor();
+                cursorDisplaying = !cursorDisplaying;
+            } else {
+                mShutDown = true;
+            }
             break;
         case OIS::KC_Y:
             if (!soundOn) {
@@ -858,6 +936,32 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
     if(mShutDown)
         return false;
+    
+    if(isWaiting) {
+        if (isServer) {
+            if (nm->scanForActivity()) {
+                if (nm->getClients()){
+                    ClientData* data = nm->tcpClientData.front();
+                    
+                    if (std::string(data->output) == "Client Request") {
+                        std::string msg = "Server Response";
+                        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+                        hostMultiplayer();
+                    }
+                }
+            }
+        } else {
+            if (nm->scanForActivity()) {
+                ClientData& data = nm->tcpServerData;
+                if (std::string(data.output) == "Server Response")
+                    joinMultiplayer();
+            } else {
+                std::string msg = "Client Request";
+                nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+            }
+        }
+           
+    }
 
     // Need to capture/update each device
     mKeyboard->capture();

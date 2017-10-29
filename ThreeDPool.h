@@ -63,9 +63,11 @@ protected:
     
     virtual void showEnterIPWindow(void);
     virtual void hideEnterIPWindow(void);
+    virtual void startWaiting(void);
+    virtual void cancelWaiting(void);
     virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
-    virtual void joinMultiplayer (const CEGUI::EventArgs& e);
-    virtual void hostMultiplayer (const CEGUI::EventArgs& e);
+    virtual void joinMultiplayer ();
+    virtual void hostMultiplayer ();
     
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(void);
@@ -108,6 +110,7 @@ protected:
     bool gameStarted;
     
     bool isMultiplayer;
+    bool isWaiting;
     std::string hostName;
     int port;
     
