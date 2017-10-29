@@ -61,7 +61,7 @@ ThreeDPool::ThreeDPool(void) :
     mpLobbyScreenCreated(false),
     gameScreenCreated(false),
     hostName(""),
-    port(0)
+    port(59000)
 {
 }
 //---------------------------------------------------------------------------
@@ -185,7 +185,7 @@ void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e)
     const KeyEventArgs& key = static_cast<const KeyEventArgs&>(e);
     
     if (key.scancode == Key::Return) {
-        quit(e);
+        joinMultiplayer(e);
     }
 }
 
@@ -254,7 +254,7 @@ void ThreeDPool::createMPLobby(void)
         goButton->setText("Go");
         goButton->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.1, 0)));
         goButton->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.7, 0)));
-        goButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+        goButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::joinMultiplayer, this));
         enterIP->addChild(goButton);
         
         //------------Quit--------------//
@@ -270,6 +270,25 @@ void ThreeDPool::createMPLobby(void)
         hideAllScreens();
         sheet->getChild("MPLobbyScreen")->show();
     }
+}
+
+void ThreeDPool::joinMultiplayer (const CEGUI::EventArgs& e) 
+{
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Editbox* ipEnterBox = static_cast<CEGUI::Editbox*>
+            (context.getRootWindow()->getChild("MPLobbyScreen/EnterIPWindow/IPEnterBox"));
+    
+    hostName = std::string(ipEnterBox->getText().c_str());
+    
+    isServer = false;
+    isMultiplayer = true;
+    createScene();
+}
+
+void ThreeDPool::hostMultiplayer (const CEGUI::EventArgs& e) 
+{
+    
 }
 
 void ThreeDPool::showEnterIPWindow()
@@ -392,10 +411,10 @@ void ThreeDPool::createScene(void)
     gameStarted = true;
 
     if (isMultiplayer) {
-        std::ifstream configFile;
-        configFile.open ("ThreeDPool.config");
-        configFile >> isServer >> hostName >> port;
-        std::cout << isServer << std::endl << hostName << std::endl << port << std::endl;
+//        std::ifstream configFile;
+//        configFile.open ("ThreeDPool.config");
+//        configFile >> isServer >> hostName >> port;
+//        std::cout << isServer << std::endl << hostName << std::endl << port << std::endl;
 
         nm = new NetManager();
         std::cout << "INFO" << std::endl;

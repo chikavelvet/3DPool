@@ -64,6 +64,8 @@ protected:
     virtual void showEnterIPWindow(void);
     virtual void hideEnterIPWindow(void);
     virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
+    virtual void joinMultiplayer (const CEGUI::EventArgs& e);
+    virtual void hostMultiplayer (const CEGUI::EventArgs& e);
     
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(void);
