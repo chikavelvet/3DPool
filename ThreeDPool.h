@@ -77,8 +77,9 @@ protected:
     void hideAllScreens(void);
     
     bool guiInitialized;
-    bool mainMenuCreated;
-    bool mpLobbyCreated;
+    bool mainMenuScreenCreated;
+    bool mpLobbyScreenCreated;
+    bool gameScreenCreated;
     
     CEGUI::OgreRenderer* mRenderer;
         

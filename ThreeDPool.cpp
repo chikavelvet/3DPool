@@ -57,8 +57,9 @@ ThreeDPool::ThreeDPool(void) :
     gameStarted(false),
     isMultiplayer(false),
     guiInitialized(false),
-    mainMenuCreated(false),
-    mpLobbyCreated(false)
+    mainMenuScreenCreated(false),
+    mpLobbyScreenCreated(false),
+    gameScreenCreated(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -110,7 +111,9 @@ void ThreeDPool::hideAllScreens()
         CEGUI::Window* screen = sheet->getChildAtIdx(index);
         
         screen->hide();
-    }
+    }    
+
+    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().show();
 }
 
 void ThreeDPool::createMainMenu() 
@@ -122,7 +125,7 @@ void ThreeDPool::createMainMenu()
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
     
-    if (!mainMenuCreated) {
+    if (!mainMenuScreenCreated) {
         hideAllScreens();
         
         //----Main Menu Screen----//
@@ -165,7 +168,7 @@ void ThreeDPool::createMainMenu()
 
         mainMenu->addChild(multiPlayer);
         
-        mainMenuCreated = true;
+        mainMenuScreenCreated = true;
     } else {
         hideAllScreens();
         sheet->getChild("MainMenuScreen")->show();
@@ -181,7 +184,7 @@ void ThreeDPool::createMPLobby(void)
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
         
-    if (!mpLobbyCreated) {
+    if (!mpLobbyScreenCreated) {
         hideAllScreens();
         
         // Create Lobby                
@@ -202,12 +205,98 @@ void ThreeDPool::createMPLobby(void)
 
         mpLobby->addChild(back);
         
-        mpLobbyCreated = true;
+        mpLobbyScreenCreated = true;
     } else {
         hideAllScreens();
         sheet->getChild("MPLobbyScreen")->show();
     }
 }
+
+void ThreeDPool::setUpGUI(void) {    
+    if (!guiInitialized)
+           initGUI();
+
+    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    
+    if (!gameScreenCreated) {
+        hideAllScreens();
+        CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
+
+        //----Game Screen----//
+        CEGUI::Window* gameScreen = wmgr.createWindow("DefaultWindow", "GameScreen");
+        gameScreen->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        gameScreen->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        
+        sheet->addChild(gameScreen);
+
+        //----Quit Button----//
+        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
+        quit->setText("Quit");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+
+        quit->hide();
+        gameScreen->addChild(quit);
+
+        // Stroke counter
+        CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
+        std::stringstream ss;
+        ss << "Strokes: " << strokes;
+        strokesWin->setText(ss.str());
+        strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
+
+        gameScreen->addChild(strokesWin);
+
+        // Remaining Ball Counter
+        CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
+        std::stringstream ss3;
+        ss3 << "Remaining: " << remainingBalls;
+        remainingBallWin->setText(ss3.str());
+        remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
+        gameScreen->addChild(remainingBallWin);
+
+        if (isMultiplayer) {
+            // Opponent Stroke counter
+            CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
+            std::stringstream ss2;
+            ss2 << "Opp Strokes: " << opponentStrokes;
+            oppStrokesWin->setText(ss2.str());
+            oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.9, 0)));
+
+            gameScreen->addChild(oppStrokesWin);
+
+            // Opponent Remaining Ball Counter
+            CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
+            std::stringstream ss4;
+            ss4 << "Opp Remaining: " << oppRemainingBalls;
+            oppRemainingBallWin->setText(ss4.str());
+            oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.16, 0)));
+            gameScreen->addChild(oppRemainingBallWin);
+        }
+
+        CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
+        youWin->setText("You Win!");
+        youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
+        youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
+
+        youWin->hide();
+        gameScreen->addChild(youWin);
+        
+    } else {
+        hideAllScreens();
+        sheet->getChild("GameScreen")->show();
+    }
+}
+
 
 void ThreeDPool::createMultiplayer(void)
 {
@@ -301,73 +390,6 @@ void ThreeDPool::setUpSounds(void){
     playBGM();
 }
 
-void ThreeDPool::setUpGUI(void) {    
-    if (!guiInitialized)
-           initGUI();
-
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    // context.setRootWindow(sheet);
-
-    sheet->getChild("StartSinglePlayerButton")->hide();
-    sheet->getChild("StartMultiPlayerButton")->hide();
-    
-    CEGUI::Window* quit = sheet->getChild("QuitButton");
-    quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-
-    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
-    quit->hide();
-
-    // Stroke counter
-    CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
-    std::stringstream ss;
-    ss << "Strokes: " << strokes;
-    strokesWin->setText(ss.str());
-    strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
-    
-    sheet->addChild(strokesWin);
-    
-    // Remaining Ball Counter
-    CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
-    std::stringstream ss3;
-    ss3 << "Remaining: " << remainingBalls;
-    remainingBallWin->setText(ss3.str());
-    remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
-    sheet->addChild(remainingBallWin);
-    
-    if (isMultiplayer) {
-        // Opponent Stroke counter
-        CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
-        std::stringstream ss2;
-        ss2 << "Opp Strokes: " << opponentStrokes;
-        oppStrokesWin->setText(ss2.str());
-        oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.9, 0)));
-
-        sheet->addChild(oppStrokesWin);
-
-        // Opponent Remaining Ball Counter
-        CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
-        std::stringstream ss4;
-        ss4 << "Opp Remaining: " << oppRemainingBalls;
-        oppRemainingBallWin->setText(ss4.str());
-        oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.16, 0)));
-        sheet->addChild(oppRemainingBallWin);
-    }
-    
-    CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
-    youWin->setText("You Win!");
-    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
-    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
-
-    sheet->addChild(youWin);
-    
-    youWin->hide();
-}
 
 void ThreeDPool::playBGM() {
     Mix_PlayChannel(-1, bgMusic, -1);
@@ -460,7 +482,7 @@ void ThreeDPool::addPockets() {
 void ThreeDPool::incrementStrokeCount() {    
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* strokesWin = sheet->getChild("StrokeCount");
+    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("StrokeCount");
     std::stringstream ss;
     
     ++strokes;
@@ -486,7 +508,7 @@ void ThreeDPool::incrementStrokeCount() {
 void ThreeDPool::decrementRemainingBallCount() {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* remainingBallWin = sheet->getChild("RemainingBalls");
+    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
     std::stringstream ss;
     
     if (soundOn)
@@ -497,7 +519,7 @@ void ThreeDPool::decrementRemainingBallCount() {
     remainingBallWin->setText(ss.str());
     
     if (remainingBalls < 1 && oppRemainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("YouWin");
+        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
         youWin->show();
     }
     
@@ -520,7 +542,7 @@ void ThreeDPool::decrementRemainingBallCount() {
 void ThreeDPool::updateOppStrokeCount(int newVal) {    
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* strokesWin = sheet->getChild("OppStrokeCount");
+    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("OppStrokeCount");
     std::stringstream ss;
     
     opponentStrokes = newVal;
@@ -531,7 +553,7 @@ void ThreeDPool::updateOppStrokeCount(int newVal) {
 void ThreeDPool::updateOppRemainingBallCount(int newVal) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* remainingBallWin = sheet->getChild("OppRemainingBalls");
+    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
     std::stringstream ss;
       
     oppRemainingBalls = newVal;
@@ -539,7 +561,7 @@ void ThreeDPool::updateOppRemainingBallCount(int newVal) {
     remainingBallWin->setText(ss.str());
     
     if (oppRemainingBalls < 1 && remainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("YouWin");
+        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
         youWin->setText("You Lose!! :c");
         youWin->show();
     }
@@ -548,7 +570,7 @@ void ThreeDPool::updateOppRemainingBallCount(int newVal) {
 void ThreeDPool::displayQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* quit = sheet->getChild("QuitButton");
+    CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");
     
     context.getMouseCursor().show();
     quit->show();
@@ -557,7 +579,7 @@ void ThreeDPool::displayQuitCursor () {
 void ThreeDPool::hideQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* quit = sheet->getChild("QuitButton");
+    CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");
     
     context.getMouseCursor().hide();
     quit->hide();
