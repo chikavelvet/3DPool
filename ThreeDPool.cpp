@@ -205,6 +205,28 @@ void ThreeDPool::createMPLobby(void)
 
         mpLobby->addChild(back);
         
+        //----Host Game-----------------//
+        
+        //----Join Game-----------------//
+        
+        //----Info Window---------------//
+        
+        //--------Waiting for Client----//
+        
+        //------------Information-------//
+        
+        //------------Quit--------------//
+        
+        //--------Enter Server IP-------//
+        
+        //------------Information-------//
+        
+        //------------IP Enter Box------//
+        
+        //------------Go Button---------//
+        
+        //------------Quit--------------//
+        
         mpLobbyScreenCreated = true;
     } else {
         hideAllScreens();
