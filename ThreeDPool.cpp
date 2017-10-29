@@ -141,7 +141,7 @@ void ThreeDPool::createMainMenu()
         
         //----Back Ground----//   
         CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImage", "ThreeDPoolBackground.png", "Imagesets");
-        CEGUI::Window* background = wmgr.createWindow("TaharezLook/StaticImage", "Background");
+        CEGUI::Window* background = wmgr.createWindow("TaharezLook/StaticImage", "DefaultBackground");
         background->setProperty("Image", "BackgroundImage");
         background->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
         background->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
@@ -185,7 +185,7 @@ void ThreeDPool::createMainMenu()
     } else {
         hideAllScreens();
         sheet->getChild("MainMenuScreen")->show();
-        sheet->getChild("Background")->show();
+        sheet->getChild("DefaultBackground")->show();
     }
 }
 
@@ -285,10 +285,13 @@ void ThreeDPool::createMPLobby(void)
         serverInfo->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.425, 0)));
         waiting->addChild(serverInfo);
         
+        sheet->getChild("DefaultBackground")->show();
+        
         mpLobbyScreenCreated = true;
     } else {
         hideAllScreens();
         sheet->getChild("MPLobbyScreen")->show();
+        sheet->getChild("DefaultBackground")->show();
     }
 }
 
@@ -397,8 +400,10 @@ void ThreeDPool::hideEnterIPWindow()
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
-    
+        
     mpLobby->getChild("EnterIPWindow")->hide();
+    
+    isWaiting = false;
 }
 
 void ThreeDPool::setUpGUI(void) {    
