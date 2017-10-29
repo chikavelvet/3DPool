@@ -97,6 +97,22 @@ void ThreeDPool::initGUI()
     guiInitialized = true;
 }
 
+void ThreeDPool::hideAllScreens() 
+{
+    if (!guiInitialized)
+        initGUI();
+    
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    
+    for (size_t index = 0; index < sheet->getChildCount(); ++index) {
+        CEGUI::Window* screen = sheet->getChildAtIdx(index);
+        
+        screen->hide();
+    }
+}
+
 void ThreeDPool::createMainMenu() 
 {       
     if (!guiInitialized)
@@ -107,9 +123,14 @@ void ThreeDPool::createMainMenu()
     CEGUI::Window* sheet = context.getRootWindow();
     
     if (!mainMenuCreated) {
-        CEGUI::Window* mainMenu = wmgr.createWindow("DefaultWindow", "MainMenu");
+        hideAllScreens();
+        
+        //----Main Menu Screen----//
+        CEGUI::Window* mainMenu = wmgr.createWindow("DefaultWindow", "MainMenuScreen");
         mainMenu->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
         mainMenu->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        
+        sheet->addChild(mainMenu);
         
         //----Quit Button----//
         CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
@@ -120,7 +141,7 @@ void ThreeDPool::createMainMenu()
         quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
         quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
 
-        sheet->addChild(quit);
+        mainMenu->addChild(quit);
 
         //----Single Player----//
         CEGUI::Window *singlePlayer = wmgr.createWindow("TaharezLook/Button", "StartSinglePlayerButton");
@@ -131,7 +152,7 @@ void ThreeDPool::createMainMenu()
         singlePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.74, 0)));
         singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, this));
 
-        sheet->addChild(singlePlayer);
+        mainMenu->addChild(singlePlayer);
 
         //----Multi Player----//
         CEGUI::Window *multiPlayer = wmgr.createWindow("TaharezLook/Button", "StartMultiPlayerButton");
@@ -142,7 +163,33 @@ void ThreeDPool::createMainMenu()
         multiPlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.80, 0)));
         multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMPLobby, this));
 
-        sheet->addChild(multiPlayer);
+        mainMenu->addChild(multiPlayer);
+        
+        mainMenuCreated = true;
+    } else {
+        hideAllScreens();
+        sheet->getChild("MainMenuScreen")->show();
+    }
+}
+
+void ThreeDPool::createMPLobby(void) 
+{ 
+    if (!guiInitialized)
+        initGUI();
+    
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+        
+    if (!mpLobbyCreated) {
+        hideAllScreens();
+        
+        // Create Lobby                
+        CEGUI::Window* mpLobby = wmgr.createWindow("DefaultWindow", "MPLobbyScreen");
+        mpLobby->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        mpLobby->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        
+        sheet->addChild(mpLobby);
         
         //----Back to Main----//
         CEGUI::Window *back = wmgr.createWindow("TaharezLook/Button", "BackToMainButton");
@@ -153,38 +200,12 @@ void ThreeDPool::createMainMenu()
         back->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
         back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMainMenu, this));
 
-        sheet->addChild(back);
-        back->hide();
+        mpLobby->addChild(back);
         
-        mainMenuCreated = true;
+        mpLobbyCreated = true;
     } else {
-        sheet->getChild("StartSinglePlayerButton")->show();
-        sheet->getChild("StartMultiPlayerButton")->show();
-        sheet->getChild("BackToMainButton")->hide();
-        
-        CEGUI::Window* quit = sheet->getChild("QuitButton");
-        quit->show();
-        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
-    }
-}
-
-void ThreeDPool::createMPLobby(void) 
-{ 
-    if (!guiInitialized)
-        initGUI();
-    
-    if (!mpLobbyCreated) {
-        // Create Lobby
-    } else {
-        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
-        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-        CEGUI::Window* sheet = context.getRootWindow();
-
-        sheet->getChild("StartSinglePlayerButton")->hide();
-        sheet->getChild("StartMultiPlayerButton")->hide();
-        sheet->getChild("QuitButton")->hide();
-
-        sheet->getChild("BackToMainButton")->show();
+        hideAllScreens();
+        sheet->getChild("MPLobbyScreen")->show();
     }
 }
 

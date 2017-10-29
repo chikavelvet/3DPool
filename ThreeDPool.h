@@ -74,6 +74,8 @@ protected:
     
     bool quit (const CEGUI::EventArgs& e);
 
+    void hideAllScreens(void);
+    
     bool guiInitialized;
     bool mainMenuCreated;
     bool mpLobbyCreated;
