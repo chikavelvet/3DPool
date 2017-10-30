@@ -16,7 +16,7 @@
 GraphicsComponent::GraphicsComponent(GameObject* _owner,
         Ogre::SceneManager* _sceneMgr, Ogre::String _name,
         Ogre::Vector3 _position, Ogre::Vector3 _scale,
-        std::string _meshName, std::string _materialName = NULL) :
+        std::string _meshName, std::string _materialName) :
     Component(_owner),
         sceneMgr(_sceneMgr),
         name(_name),
@@ -27,7 +27,7 @@ GraphicsComponent::GraphicsComponent(GameObject* _owner,
 {
     geom = sceneMgr->createEntity(meshName);
     
-    if (materialName)
+    if (materialName != "")
         geom->setMaterialName(materialName);
     
     rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);

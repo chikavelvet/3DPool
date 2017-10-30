@@ -17,13 +17,20 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
                   : COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET),
         initialX(x), initialY(y), initialZ(z)
 {    
-    geom = sceneMgr->createEntity("sphere.mesh");
-    geom->setMaterialName(color);
-    
-    rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-    rootNode->attachObject(geom);
-    rootNode->setPosition(x, y, z);
-    rootNode->scale(0.05, 0.05, 0.05);
+    graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
+            Ogre::Vector3(x, y, z), 
+            Ogre::Vector3(BallDefault::SCALE_FACTOR,
+                          BallDefault::SCALE_FACTOR,
+                          BallDefault::SCALE_FACTOR),
+            "sphere.mesh", color);
+            
+//    geom = sceneMgr->createEntity("sphere.mesh");
+//    geom->setMaterialName(color);
+//    
+//    rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
+//    rootNode->attachObject(geom);
+//    rootNode->setPosition(x, y, z);
+//    rootNode->scale(0.05, 0.05, 0.05);
     
     physics = new PhysicsComponent(this, _simulator, 
                 BallDefault::MASS, BallDefault::INERTIA, 

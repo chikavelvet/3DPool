@@ -116,6 +116,7 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-Pocket.$(OBJEXT) ThreeDPool-NetManager.$(OBJEXT) \
 	ThreeDPool-Component.$(OBJEXT) \
 	ThreeDPool-PhysicsComponent.$(OBJEXT) \
+	ThreeDPool-GraphicsComponent.$(OBJEXT) \
 	ThreeDPool-ComponentNotFoundException.$(OBJEXT)
 ThreeDPool_OBJECTS = $(am_ThreeDPool_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -212,13 +213,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} "/u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3/missing" aclocal-1.15
+ACLOCAL = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-AUTOCONF = ${SHELL} "/u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3/missing" autoconf
-AUTOHEADER = ${SHELL} "/u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3/missing" autoheader
-AUTOMAKE = ${SHELL} "/u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3/missing" automake-1.15
+AUTOCONF = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing autoconf
+AUTOHEADER = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing autoheader
+AUTOMAKE = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing automake-1.15
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -260,7 +261,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} "/u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3/missing" makeinfo
+MAKEINFO = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
@@ -292,10 +293,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 0.1
-abs_builddir = /u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3
-abs_srcdir = /u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3
-abs_top_builddir = /u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3
-abs_top_srcdir = /u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3
+abs_builddir = /u/treyr3/Documents/CS354R/assignment3
+abs_srcdir = /u/treyr3/Documents/CS354R/assignment3
+abs_top_builddir = /u/treyr3/Documents/CS354R/assignment3
+abs_top_srcdir = /u/treyr3/Documents/CS354R/assignment3
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -327,7 +328,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} '/u/rsaamar/Desktop/Game Tech/pool-game/cs345r-assignment3/install-sh'
+install_sh = ${SHELL} /u/treyr3/Documents/CS354R/assignment3/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -348,9 +349,9 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h ComponentNotFoundException.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h GraphicsComponent.h ComponentNotFoundException.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp ComponentNotFoundException.cpp
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp GraphicsComponent.cpp ComponentNotFoundException.cpp
 ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer -lSDL_net
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS)
 ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
@@ -475,6 +476,7 @@ include ./$(DEPDIR)/ThreeDPool-Component.Po
 include ./$(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po
 include ./$(DEPDIR)/ThreeDPool-ControlListener.Po
 include ./$(DEPDIR)/ThreeDPool-GameObject.Po
+include ./$(DEPDIR)/ThreeDPool-GraphicsComponent.Po
 include ./$(DEPDIR)/ThreeDPool-NetManager.Po
 include ./$(DEPDIR)/ThreeDPool-Overlay.Po
 include ./$(DEPDIR)/ThreeDPool-PhysicsComponent.Po
@@ -731,6 +733,20 @@ ThreeDPool-PhysicsComponent.obj: PhysicsComponent.cpp
 #	$(AM_V_CXX)source='PhysicsComponent.cpp' object='ThreeDPool-PhysicsComponent.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-PhysicsComponent.obj `if test -f 'PhysicsComponent.cpp'; then $(CYGPATH_W) 'PhysicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/PhysicsComponent.cpp'; fi`
+
+ThreeDPool-GraphicsComponent.o: GraphicsComponent.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-GraphicsComponent.o -MD -MP -MF $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo -c -o ThreeDPool-GraphicsComponent.o `test -f 'GraphicsComponent.cpp' || echo '$(srcdir)/'`GraphicsComponent.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo $(DEPDIR)/ThreeDPool-GraphicsComponent.Po
+#	$(AM_V_CXX)source='GraphicsComponent.cpp' object='ThreeDPool-GraphicsComponent.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-GraphicsComponent.o `test -f 'GraphicsComponent.cpp' || echo '$(srcdir)/'`GraphicsComponent.cpp
+
+ThreeDPool-GraphicsComponent.obj: GraphicsComponent.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-GraphicsComponent.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo -c -o ThreeDPool-GraphicsComponent.obj `if test -f 'GraphicsComponent.cpp'; then $(CYGPATH_W) 'GraphicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/GraphicsComponent.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo $(DEPDIR)/ThreeDPool-GraphicsComponent.Po
+#	$(AM_V_CXX)source='GraphicsComponent.cpp' object='ThreeDPool-GraphicsComponent.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-GraphicsComponent.obj `if test -f 'GraphicsComponent.cpp'; then $(CYGPATH_W) 'GraphicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/GraphicsComponent.cpp'; fi`
 
 ThreeDPool-ComponentNotFoundException.o: ComponentNotFoundException.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-ComponentNotFoundException.o -MD -MP -MF $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo -c -o ThreeDPool-ComponentNotFoundException.o `test -f 'ComponentNotFoundException.cpp' || echo '$(srcdir)/'`ComponentNotFoundException.cpp

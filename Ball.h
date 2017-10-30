@@ -16,7 +16,8 @@ namespace BallDefault {
     const float        RESTITUTION = 0.8,
                        FRICTION = 1.0,
                        LINEAR_DAMPING = 0.05,
-                       ANGULAR_DAMPING = 0.0;
+                       ANGULAR_DAMPING = 0.0,
+                       SCALE_FACTOR = 0.05;
     const bool         KINEMATIC = false,
                        NEEDS_UPDATES = false;
 }

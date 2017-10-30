@@ -24,7 +24,8 @@ public:
     GraphicsComponent (GameObject* _owner, 
             Ogre::SceneManager* _sceneMgr,
             Ogre::String _name, 
-            Ogre::Vector3 _position, Ogre::Vector3 _scale);
+            Ogre::Vector3 _position, Ogre::Vector3 _scale,
+            std::string _meshName, std::string _materialName = "");
     
     Ogre::String name;
     Ogre::SceneManager* sceneMgr;
