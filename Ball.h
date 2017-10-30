@@ -39,10 +39,8 @@ public:
 
     btRigidBody* getBody();
     Simulator* getSimulator();
-    
-    Ogre::Entity* getOgreEntity(){ return geom; }
-
-    Ogre::SceneNode* getOgreSceneNode(){ return rootNode; }
+//
+    Ogre::SceneNode* getNode();
     
     void removeFromWorld (void);
     void resetCueBall (void);

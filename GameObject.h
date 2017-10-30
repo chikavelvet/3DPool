@@ -73,8 +73,10 @@ public:
     
     virtual PhysicsComponent* getPhysics();
     virtual GraphicsComponent* getGraphics();
+    
     virtual btRigidBody* getBody(){ return body; }
     virtual Ogre::SceneNode* getNode() { return rootNode; }
+    
     virtual void removeObject(void);
 };
 

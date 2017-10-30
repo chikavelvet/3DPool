@@ -32,6 +32,8 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
 //    rootNode->setPosition(x, y, z);
 //    rootNode->scale(0.05, 0.05, 0.05);
     
+    rootNode = getGraphics()->rootNode;
+    
     physics = new PhysicsComponent(this, _simulator, 
                 BallDefault::MASS, BallDefault::INERTIA, 
                 BallDefault::RESTITUTION, BallDefault::FRICTION,
@@ -98,4 +100,8 @@ btRigidBody* Ball::getBody() {
 
 Simulator* Ball::getSimulator() {
     return getPhysics()->simulator;
+}
+
+Ogre::SceneNode* Ball::getNode() {
+    return getGraphics()->rootNode;
 }
