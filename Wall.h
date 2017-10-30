@@ -17,7 +17,7 @@
 #include "GameObject.h"
 
 class Wall : public GameObject {
-public:
+protected:
     Wall(Ogre::String _name, Ogre::SceneManager* _sceneMgr,
             Simulator* _simulator,
             Ogre::Vector3 normal,
@@ -25,6 +25,11 @@ public:
             float posx, float posy, float posz,
             float btx, float bty, float btz,
             Ogre::Vector3 up, std::map<size_t, objType>& typeMap);
+public:
+    
+    static Wall* MakePhysicalWall ();
+    
+    static Wall* MakeVisualWall ();
     
     static Ogre::SceneNode* makeVisualPlane (Ogre::SceneManager* mSceneMgr, Ogre::Vector3 normal,
             std::string name, 

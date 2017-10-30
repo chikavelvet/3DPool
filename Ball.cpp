@@ -7,14 +7,6 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
         std::string color,
         bool isCue) :
-    GameObject(_name, _sceneMgr, _simulator,
-            5, btVector3(0, 0, 0),
-            0.8, 1.0,
-            0.05, 0.0,
-            false, false,
-            isCue ? COL_CUEBALL : COL_BALL,
-            isCue ? COL_STICK   | COL_BALL | COL_WALL | COL_POCKET 
-                  : COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET),
         initialX(x), initialY(y), initialZ(z)
 {    
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
@@ -64,12 +56,13 @@ Ogre::Vector3 Ball::getPosition() {
 
 void Ball::removeFromWorld() {
     try {
+        GraphicsComponent* graph = getGraphics();
         PhysicsComponent* phys = getPhysics();
         
         phys->body->clearForces();
         phys->body->setLinearVelocity(btVector3(0, 0, 0));
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
-        geom->setVisible(false);
+        graph->geom->setVisible(false);
     } catch (ComponentNotFoundException& e) {
         
     }

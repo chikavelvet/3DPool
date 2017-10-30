@@ -30,31 +30,10 @@ private:
     void makePlaneWithPhysics(Ogre::Vector3 normal, std::string name, float d1, float d2, Ogre::Vector3 up, float posx, float posy, float posz, Ogre::SceneManager* mSceneMgr, float btx, float bty, float btz,
         Simulator* physicsEngine)
     {
-        /*Ogre::Plane p(normal, 0);
-        Ogre::MeshManager::getSingleton().createPlane(name,
-            Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            p,
-            d1, d2, 20, 20,
-            true,
-            1, 5, 5,
-            up);
-        Ogre::Entity* entity = mSceneMgr->createEntity(name);
-        Ogre::SceneNode* node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        node->attachObject(entity);
-        node->setPosition(posx, posy, posz);
-        entity->setCastShadows(false);
-        entity->setMaterialName("Examples/Rockwall");       */
-
-        // btTransform groundTransform;
-        // groundTransform.setIdentity();
-        // groundTransform.setOrigin(btVector3(btx, bty, btz));
-
         btTransform groundTransform;
         groundTransform.setIdentity();
         groundTransform.setOrigin(btVector3(btx, bty, btz));
-
-        // groundTransform.setRotation(btQuaternion(normal.x, normal.y, normal.z, 1));
-        
+       
         btScalar groundMass(0);
         btVector3 localGroundInertia(0, 0, 0);
         
