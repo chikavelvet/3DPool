@@ -53,7 +53,8 @@ void PhysicsComponent::addToSimulator() {
     rbInfo.m_restitution = restitution;
     rbInfo.m_friction = friction;
     body = new btRigidBody(rbInfo);
-    body->setUserPointer(userPointer);
+    if (userPointer)
+        body->setUserPointer(userPointer);
     body->setDamping(linearDamping, angularDamping);
 
     if (kinematic) {

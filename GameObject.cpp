@@ -40,7 +40,8 @@ void GameObject::addToSimulator() {
 	rbInfo.m_restitution = restitution;
 	rbInfo.m_friction = friction;
 	body = new btRigidBody(rbInfo);
-	body->setUserPointer(rootNode);
+        if (rootNode)
+            body->setUserPointer(rootNode);
         body->setDamping(linearDamping, angularDamping);
 	
 	if (kinematic) {
