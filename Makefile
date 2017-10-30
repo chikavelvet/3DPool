@@ -110,8 +110,8 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-GameObject.$(OBJEXT) ThreeDPool-Overlay.$(OBJEXT) \
 	ThreeDPool-Player.$(OBJEXT) ThreeDPool-PlayerCamera.$(OBJEXT) \
 	ThreeDPool-PlayingField.$(OBJEXT) \
-	ThreeDPool-Simulator.$(OBJEXT) ThreeDPool-Wall.$(OBJEXT) \
-	ThreeDPool-BaseApplication.$(OBJEXT) \
+	ThreeDPool-Simulator.$(OBJEXT) ThreeDPool-Room.$(OBJEXT) \
+	ThreeDPool-Wall.$(OBJEXT) ThreeDPool-BaseApplication.$(OBJEXT) \
 	ThreeDPool-ThreeDPool.$(OBJEXT) ThreeDPool-Stick.$(OBJEXT) \
 	ThreeDPool-Pocket.$(OBJEXT) ThreeDPool-NetManager.$(OBJEXT) \
 	ThreeDPool-Component.$(OBJEXT) \
@@ -349,9 +349,9 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h GraphicsComponent.h ComponentNotFoundException.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Room.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h GraphicsComponent.h ComponentNotFoundException.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp GraphicsComponent.cpp ComponentNotFoundException.cpp
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Room.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp GraphicsComponent.cpp ComponentNotFoundException.cpp
 ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer -lSDL_net
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS)
 ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
@@ -484,6 +484,7 @@ include ./$(DEPDIR)/ThreeDPool-Player.Po
 include ./$(DEPDIR)/ThreeDPool-PlayerCamera.Po
 include ./$(DEPDIR)/ThreeDPool-PlayingField.Po
 include ./$(DEPDIR)/ThreeDPool-Pocket.Po
+include ./$(DEPDIR)/ThreeDPool-Room.Po
 include ./$(DEPDIR)/ThreeDPool-Simulator.Po
 include ./$(DEPDIR)/ThreeDPool-Stick.Po
 include ./$(DEPDIR)/ThreeDPool-ThreeDPool.Po
@@ -621,6 +622,20 @@ ThreeDPool-Simulator.obj: Simulator.cpp
 #	$(AM_V_CXX)source='Simulator.cpp' object='ThreeDPool-Simulator.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Simulator.obj `if test -f 'Simulator.cpp'; then $(CYGPATH_W) 'Simulator.cpp'; else $(CYGPATH_W) '$(srcdir)/Simulator.cpp'; fi`
+
+ThreeDPool-Room.o: Room.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Room.o -MD -MP -MF $(DEPDIR)/ThreeDPool-Room.Tpo -c -o ThreeDPool-Room.o `test -f 'Room.cpp' || echo '$(srcdir)/'`Room.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Room.Tpo $(DEPDIR)/ThreeDPool-Room.Po
+#	$(AM_V_CXX)source='Room.cpp' object='ThreeDPool-Room.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Room.o `test -f 'Room.cpp' || echo '$(srcdir)/'`Room.cpp
+
+ThreeDPool-Room.obj: Room.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Room.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-Room.Tpo -c -o ThreeDPool-Room.obj `if test -f 'Room.cpp'; then $(CYGPATH_W) 'Room.cpp'; else $(CYGPATH_W) '$(srcdir)/Room.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Room.Tpo $(DEPDIR)/ThreeDPool-Room.Po
+#	$(AM_V_CXX)source='Room.cpp' object='ThreeDPool-Room.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Room.obj `if test -f 'Room.cpp'; then $(CYGPATH_W) 'Room.cpp'; else $(CYGPATH_W) '$(srcdir)/Room.cpp'; fi`
 
 ThreeDPool-Wall.o: Wall.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Wall.o -MD -MP -MF $(DEPDIR)/ThreeDPool-Wall.Tpo -c -o ThreeDPool-Wall.o `test -f 'Wall.cpp' || echo '$(srcdir)/'`Wall.cpp
