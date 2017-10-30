@@ -68,3 +68,9 @@ PhysicsComponent* GameObject::getPhysics() {
         throw ComponentNotFoundException();
     return physics;
 }
+
+GraphicsComponent* GameObject::getGraphics() {
+    if (!graphics)
+        throw ComponentNotFoundException();
+    return graphics;
+}

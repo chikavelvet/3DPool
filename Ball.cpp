@@ -42,7 +42,6 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         
     // motionState = new OgreMotionState(tr, rootNode);
         
-    
     pocketMap[rootNode] = this;
     
     physics->addToSimulator();

@@ -18,6 +18,7 @@
 class CollisionContext;
 class BulletContactCallback;
 class PhysicsComponent;
+class GraphicsComponent;
 class Simulator;
 
 //const int cueBallType = 0,
@@ -39,9 +40,10 @@ protected:
     
     Ogre::String name;
     Ogre::SceneManager* sceneMgr;
-    Simulator* simulator;
     Ogre::SceneNode* rootNode;
     Ogre::Entity* geom;
+    
+    Simulator* simulator;
     btCollisionShape* shape;
     btScalar mass;
     // OgreMotionState* motionState;
@@ -64,14 +66,16 @@ protected:
     collisionType coltype;
     
     PhysicsComponent* physics;
+    GraphicsComponent* graphics;
 public:
     void addToSimulator();
     void updateTransform();
     
     virtual PhysicsComponent* getPhysics();
+    virtual GraphicsComponent* getGraphics();
     virtual btRigidBody* getBody(){ return body; }
     virtual Ogre::SceneNode* getNode() { return rootNode; }
-    void removeObject(void);
+    virtual void removeObject(void);
 };
 
 #endif

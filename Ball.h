@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "PhysicsComponent.h"
+#include "GraphicsComponent.h"
 #include "ComponentNotFoundException.h"
 
 class Simulator;
