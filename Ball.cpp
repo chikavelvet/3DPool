@@ -46,7 +46,7 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
     pocketMap[rootNode] = this;
     
     physics->addToSimulator();
-    physics->body->setRollingFriction(btScalar(1.0));
+    physics->body->setRollingFriction(BallDefault::ROLLING_FRICTION);
 }
 
 Ogre::Vector3 Ball::getPosition() {

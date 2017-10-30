@@ -19,8 +19,8 @@
 namespace WallDefault {
     const int           MASS = 0;
     const btVector3     INERTIA = btVector3(0, 0, 0);
-    const float         RESTITUTION = 0.0,
-                        FRICTION = 1.0,
+    const float         RESTITUTION = 1.0,
+                        FRICTION = 0.5,
                         ROLLING_FRICTION = 1.0,
                         LINEAR_DAMPING = 0.0,
                         ANGULAR_DAMPING = 0.0;

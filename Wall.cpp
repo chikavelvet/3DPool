@@ -60,7 +60,7 @@ Wall::Wall(Simulator* _simulator, btVector3 _origin, Ogre::Vector3 normal,
             shape, NULL);
     
     physics->addToSimulator();
-    physics->body->setRollingFriction(1.0);
+    physics->body->setRollingFriction(WallDefault::ROLLING_FRICTION);
 }
 
 Wall::Wall(Ogre::String _name, 
