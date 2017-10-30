@@ -1,5 +1,8 @@
+#include <OGRE/OgreMeshManager.h>
+
 #include "Wall.h"
 #include "PhysicsComponent.h"
+#include "GraphicsComponent.h"
 
 Wall::Wall(Ogre::String _name, Ogre::SceneManager* _sceneMgr, 
         Simulator* _simulator, 
@@ -60,13 +63,45 @@ Wall::Wall(Simulator* _simulator, btVector3 _origin, Ogre::Vector3 normal,
     physics->body->setRollingFriction(1.0);
 }
 
-static Ogre::SceneNode* makeVisualPlane (Ogre::SceneManager* mSceneMgr, 
+Wall::Wall(Ogre::String _name, 
+        Ogre::SceneManager* _sceneMgr,
+        Ogre::Vector3 _position, 
+        float dim1, float dim2,
         Ogre::Vector3 normal,
-        std::string name, 
-        float d1, float d2, 
-        Ogre::Vector3 up, 
-        float posx, float posy, float posz, 
-        std::string color) 
+        Ogre::Vector3 up,
+        std::string color)
 {
+    Ogre::Plane p(normal, 0);
+    Ogre::MeshManager::getSingleton().createPlane(_name,
+            Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            p,
+            dim1, dim2, 20, 20,
+            true,
+            1, 5, 5,
+            up);
     
+    graphics = new GraphicsComponent(this,
+            _sceneMgr, _name, _position, Ogre::Vector3(1.0, 1.0, 1.0),
+            _name, color);
+    
+    graphics->geom->setCastShadows(false);    
+}
+
+Wall* Wall::MakePhysicalWall(Simulator* _simulator, 
+        btVector3 _origin, 
+        Ogre::Vector3 normal, 
+        float dim1, float dim2)
+{
+    return new Wall(_simulator, _origin, normal, dim1, dim2);
+}
+
+Wall* Wall::MakeVisualWall(Ogre::String _name,
+        Ogre::SceneManager* _sceneMgr,
+        Ogre::Vector3 _position, 
+        float dim1, float dim2, 
+        Ogre::Vector3 normal, 
+        Ogre::Vector3 up, 
+        std::string color)
+{
+    return new Wall(_name, _sceneMgr, _position, dim1, dim2, normal, up, color);
 }
