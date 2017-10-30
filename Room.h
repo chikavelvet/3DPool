@@ -13,7 +13,9 @@ protected:
     std::vector<Wall*> physicalWalls;
     std::vector<Wall*> visualWalls;
     
-    void makePlane(Ogre::Vector3 normal, std::string name, float d1, float d2, Ogre::Vector3 up, float posx, float posy, float posz, Ogre::SceneManager* mSceneMgr, std::string color)
+    void makePlane(Ogre::Vector3 normal, std::string name, float d1, float d2, 
+        Ogre::Vector3 up, float posx, float posy, float posz, 
+        Ogre::SceneManager* mSceneMgr, std::string color)
     {
         Ogre::Plane p(normal, 0);
         Ogre::MeshManager::getSingleton().createPlane(name,
