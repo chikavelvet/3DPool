@@ -1182,8 +1182,6 @@ void ThreeDPool::createCamera(void){
     mCamera = pCamera->getCamera();
     mCamera->setPosition(Ogre::Vector3(200, 200, 200));
     mCamera->setNearClipDistance(1);
-
-    // mCamera->lookAt(Ogre::Vector3(50, 300, 300));
 }
 
 void ThreeDPool::cameraFollowStick(void)
@@ -1192,6 +1190,14 @@ void ThreeDPool::cameraFollowStick(void)
     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
     mCamera->setPosition(cueStickPos + cameraOffset);
     mCamera->lookAt(cueStickPos);
+}
+
+bool ThreeDPool::configure() {
+    if(mRoot->showConfigDialog()) {
+        mWindow = mRoot->initialise(true, "3-D Pool");
+    } else {
+        return false;
+    }
 }
 
 //---------------------------------------------------------------------------

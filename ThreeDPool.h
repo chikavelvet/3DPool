@@ -41,6 +41,7 @@ protected:
     virtual void createMPLobby(void);
     virtual void createCamera(void);
     virtual bool setup(void);
+    virtual bool configure(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
     void setUpGUI(void);
