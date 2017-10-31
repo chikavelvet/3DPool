@@ -1,4 +1,9 @@
-# CS354R Assignment 2 Revised Implementation Document
+# CS354R Assignment 3 Milestone 3.2
+Group: **Ghost Babel**
+
+- *Casey Bigelow*
+- *Rishi Amarnani*
+- *Trey Gonsoulin*
 
 ## Controls/Instructions
 Compile with standard `buildit`. Game binary is called `ThreeDPool`. 
@@ -10,71 +15,34 @@ Compile with standard `buildit`. Game binary is called `ThreeDPool`.
 * Left-Mouse Up - Release and hit cue ball
 * T - toggle Free Look mode (WASD and mouse to move and look around)
 
-## Components
+For multiplayer:
+On one computer, in the multiplayer menu, hit "Host Game". Then, on the second computer, hit "Join Game" and type in the IP Address shown on the host computer. Then hit "Go" to start the game!
 
-### The Pool Cue
-It's pretty close. Currently, you can rotate it horizontally and vertically around the cue ball (orbiting). You can hold left click and move the mouse back and forth to charge up the cue stick (it moves back and forth) and release the mouse button to hit the cue ball. There are min/max limits on the charge.
+## Progress
 
-**To-do**:
-* The camera doesn't move with the pool cue (i.e., first person-esque)
-* Still needs to not interact with objects other than the cue ball
-* Make it look nicer
-* Random bug where cue can't hit ball
-
-### The Balls
-Works pretty well. The cue ball moves when hit, and collides correctly with walls and other balls. 
-
-**To-do**:
-* Texturing
-* Add more balls
-* Implement pyramid setup
-
-### The "Table"/Walls
-Textures work, and all the walls work with physics. 
-
-**To-do**:
-* Change texturing
-
-### Pockets
-Not implemented yet. There is space for them in the current table setup.
-
-**To-do**:
-* Make them
-* Make collision behave appropriately
-
-### Sound
-Not implemented yet. 
-
-**To-do**:
-* Put them in the game.
-* Try to make the initial break not too awful
-	* Lower force -> less sound
+### Networking
+Networking is working! We are currently able to send scoring information back and forth between both players and synchronise it. Currently, the engines on each computer process physics separately, which could be a security/cheating risk, though for this project it doesn't matter as much. We may work on having physics data sent between the client and host as well.
 
 ### GUI
-Not implemented yet. Not in the demo, but we are starting on it.
+We have a main menu and connection lobby. 
 
-**To-do**:
-* Add the GUI elements
-* Prioritize scoring
+## Plan Moving Forward
+Essentially, we have the components of the finished project done. This is good, as we have the next week to clean up our code, refactor and optimize, and add extra features! We've already put some work into prettifying the GUI and textures, and it already looks much better than our project 2. We have plenty of things in mind for that. Our code also could use a good steam cleaning and restructuring, to be honest.
 
-## Problems We've Faced
-**Problems**:
-* Bullet integration
-* Not using the given starter code initially
+**Roles**:
 
-## Labor Division
-*Casey*:
- * Textures/graphics
- * GUI
+- Casey:
+	- Textures/graphics
+	- Sound
+	- Extra Features
 
-*Rishi*:
- * Bullet
- * Finding sounds
+- Rishi:
+	- Networking
+	- Extra Features
 
-*Trey*:
- * GUI
+- Trey:
+	- GUI
+	- Refactoring
+	- Extra Features
 
-*All*:
- * Bullet Integration
- * Extra features
 
