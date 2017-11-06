@@ -23,6 +23,10 @@ http://www.ogre3d.org/wiki/
 #include <SDL/SDL_mixer.h>
 #include "NetManager.h"
 #include <map>
+#include <OgreParticleIterator.h>
+#include <OgreParticleSystem.h>
+#include <OgreParticleSystemManager.h>
+#include <OgreParticle.h>
 
 class PlayerCamera;
 //---------------------------------------------------------------------------
@@ -84,6 +88,9 @@ protected:
     bool quit (const CEGUI::EventArgs& e);
 
     void hideAllScreens(void);
+
+    void setUpParticles(void);
+
     
     bool guiInitialized;
     bool mainMenuScreenCreated;

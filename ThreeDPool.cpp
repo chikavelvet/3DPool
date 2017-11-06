@@ -189,6 +189,31 @@ void ThreeDPool::createMainMenu()
     }
 }
 
+void ThreeDPool::setUpParticles(void){
+    bool jetEngine = false;
+    bool guideLine = true;
+    bool explosion = false;
+
+    if(explosion){
+            Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("Explosion", "Examples/Explosion");
+        Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
+        particleNode->attachObject(testParticle);       
+    }
+
+    if(jetEngine){
+        Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("JetEngine2Big", "Examples/JetEngine2Big");
+        Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
+        particleNode->attachObject(testParticle);        
+    }
+    
+    if(guideLine){
+        Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
+        Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
+        particleNode->attachObject(testParticle);        
+    }
+}
+
+
 void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e) 
 {
     using namespace CEGUI;
@@ -550,6 +575,7 @@ void ThreeDPool::createScene(void)
     oppRemainingBalls = remainingBalls;
     setUpGUI();
     setUpSounds();
+    setUpParticles();
 }
 
 void ThreeDPool::setUpSounds(void){
