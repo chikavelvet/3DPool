@@ -530,7 +530,7 @@ void ThreeDPool::createScene(void)
 
     //-------------basic setup stuff-----------------//
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
     Ogre::Light* pointLight1 = mSceneMgr->createLight("PointLight1");
     pointLight1->setType(Ogre::Light::LT_POINT);
     pointLight1->setDiffuseColour(.4, .4, .4);
