@@ -190,27 +190,27 @@ void ThreeDPool::createMainMenu()
 }
 
 void ThreeDPool::setUpParticles(void){
-    bool jetEngine = false;
-    bool guideLine = true;
-    bool explosion = false;
+    // bool jetEngine = false;
+    // bool guideLine = true;
+    // bool explosion = false;
 
-    if(explosion){
-            Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("Explosion", "Examples/Explosion");
-        Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
-        particleNode->attachObject(testParticle);       
-    }
+    // if(explosion){
+    //         Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("Explosion", "Examples/Explosion");
+    //     Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
+    //     particleNode->attachObject(testParticle);       
+    // }
 
-    if(jetEngine){
-        Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("JetEngine2Big", "Examples/JetEngine2Big");
-        Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
-        particleNode->attachObject(testParticle);        
-    }
+    // if(jetEngine){
+    //     Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("JetEngine2Big", "Examples/JetEngine2Big");
+    //     Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
+    //     particleNode->attachObject(testParticle);        
+    // }
     
-    if(guideLine){
-        Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
-        Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
-        particleNode->attachObject(testParticle);        
-    }
+    // if(guideLine){
+    //     Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
+    //     Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
+    //     particleNode->attachObject(testParticle);        
+    // }
 }
 
 
@@ -558,7 +558,7 @@ void ThreeDPool::createScene(void)
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
     cueBall = cueBallObject->getBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap, cueBallObject->getNode());
     cueStick = cueStickObject->getBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());

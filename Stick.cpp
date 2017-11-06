@@ -5,7 +5,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
              btScalar x, btScalar y, btScalar z,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
-             btRigidBody* _cueBall, std::map<size_t, objType> &typeMap) :
+             btRigidBody* _cueBall, std::map<size_t, objType> &typeMap, Ogre::SceneNode* _cueBallNode) :
     GameObject(_name, _sceneMgr, _simulator,
             10, btVector3(0, 0, 0),
             1.0, 1.0, 
@@ -15,7 +15,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
-        cueBall(_cueBall)
+        cueBall(_cueBall), cueBallNode(_cueBallNode)
 {
     geom = sceneMgr->createEntity("cube.mesh");
     geom->setMaterialName("Example/Stick");
@@ -37,6 +37,10 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     motionState = new btDefaultMotionState(tr);
     
     addToSimulator();
+
+    guideLineParticle = sceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
+    guideLineNode = rootNode->createChildSceneNode("Particle");
+    guideLineNode->attachObject(guideLineParticle);
 }
 
 bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
@@ -70,6 +74,13 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
     
     simulator->getDynamicsWorld()->addRigidBody(body);
     geom->setVisible(true);
+
+    // Ogre::Vector3 stickDirection(rootNode->getPosition() 
+    //             - cueBallNode->getPosition());
+    // stickDirection.normalise();
+
+    // guideLineNode->setPosition(stickDirection * (cueStickMin*2.f));
+    guideLineNode->setVisible(true);
     return true;
 }
 
@@ -80,6 +91,9 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
    
     body->activate(true);
     
+    guideLineNode->setOrientation(Ogre::Quaternion(-1.f, 1.f, 0.f, 0.f));
+    // guideLineNode->setOrientation(rootNode->getOrientation());
+
     if (cueStickTotal <= cueStickMax && cueStickTotal >= cueStickMin) {
         if (cueStickTotal + cueStickDelta > cueStickMax) 
             cueStickDelta = cueStickMax - cueStickTotal;
@@ -100,6 +114,14 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
         cueStickTotal += cueStickDelta;        
         cueStickDelta = 0;
     }
+
+    // Ogre::Vector3 stickDirection(rootNode->getPosition() 
+    //             - cueBallNode->getPosition());
+    // stickDirection.normalise();
+
+    // guideLineNode->setPosition(stickDirection * (cueStickTotal + cueStickMin));
+    guideLineNode->setVisible(true);
+
 }
 
 void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
@@ -109,6 +131,7 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
                 .normalize() * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
         body->applyCentralImpulse(movement);
         adjustingStick = true;
+        guideLineNode->setVisible(false);
     }
     cueStickTotal = cueStickMin;
     cueStickDelta = 0;
