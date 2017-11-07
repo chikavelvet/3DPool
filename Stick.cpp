@@ -102,7 +102,7 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
 
     // guideLineNode->setPosition(stickDirection * (cueStickTotal + cueStickMin));
     
-    guideLineNode->setPosition(0.f, 0.f, -(cueStickTotal + cueStickMin));
+    guideLineNode->setPosition(0.f, 0.f, -(cueStickTotal + (cueStickMin  * 3.f)));
     guideLineNode->setVisible(true);
 
 
@@ -132,10 +132,14 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
     if(cueStickTotal > cueStickMin){
         body->activate(true);
         
-        btVector3 direction(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition());
-        direction.normalize();
+        // btVector3 direction(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition());
+        // direction.normalize();
 
-        btVector3 movement = direction * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
+        btVector3 zAxis(0.0, 0.0, 1.0);
+        btQuaternion q = body->getCenterOfMassTransform().getRotation();
+        btVector3 direction = btMatrix3x3(q) * zAxis;
+
+        btVector3 movement = -direction * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
         
         body->applyCentralForce(movement);
         adjustingStick = true;
