@@ -277,7 +277,7 @@ particle_system Examples/GuideLine
     {
         angle           0
         emission_rate   1000
-        time_to_live    0.1
+        time_to_live    0.5
         position        0 -100 0
         direction       0 1 0
         velocity_min  	2000

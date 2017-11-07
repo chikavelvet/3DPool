@@ -26,7 +26,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     rootNode->scale(0.01, 0.01, 0.5);
 
     shape = new btBoxShape(btVector3(1, 1, 23));
-    // shape = new btBoxShape(btVector3(23, 23, 23));
+    // shape = new btBoxShape(btVector3(100, 100, 23));
     
     typeMap[((size_t) rootNode)] = stickType;
 
@@ -62,7 +62,10 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
         return false;
     
     cueBall->setLinearVelocity(btVector3(0, 0, 0));
+    cueBall->setAngularVelocity(btVector3(0, 0, 0));
     cueBall->clearForces();
+    cueBall->setLinearVelocity(btVector3(0, 0, 0));
+    cueBall->setAngularVelocity(btVector3(0, 0, 0));
     
     btVector3 ballPos = cueBall->getCenterOfMassPosition();
     btTransform newTransform(btQuaternion(0, 0, 0, 1), 
@@ -95,6 +98,11 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
     
     guideLineNode->setOrientation(Ogre::Quaternion(-1.f, 1.f, 0.f, 0.f));
     // guideLineNode->setOrientation(rootNode->getOrientation());
+
+    // std::cout << guideLineNode->_getDerivedOrientation() << std::endl;
+    std::cout << body->getOrientation() << std::endl;
+    std::cout << rootNode->_getDerivedOrientation() << std::endl;
+
 
     Ogre::Vector3 stickDirection(rootNode->getPosition() 
                 - cueBallNode->getPosition());

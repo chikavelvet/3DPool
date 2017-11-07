@@ -91,6 +91,10 @@ protected:
 
     void setUpParticles(void);
 
+    void setUpLighting(void);
+
+    void updateBallSpeedSum(void);
+
     
     bool guiInitialized;
     bool mainMenuScreenCreated;
@@ -132,6 +136,9 @@ protected:
 
     std::map<size_t, objType> typeMap;
     std::map<Ogre::SceneNode*, Ball*> pocketMap;
+
+    btVector3 ballSpeedSum;
+    int frameCounter;
 };
 
 //---------------------------------------------------------------------------

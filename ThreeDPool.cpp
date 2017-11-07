@@ -31,7 +31,7 @@ int isServer;
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 10.0f;
+const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 10.0f, BALL_SPEED_SUM_FREQUENCY = 100;
 
 std::vector<Ball*> balls;
 
@@ -62,7 +62,9 @@ ThreeDPool::ThreeDPool(void) :
         gameScreenCreated(false),
         hostName(""),
         port(59000),
-        isWaiting(false)
+        isWaiting(false),
+        ballSpeedSum(0, 0, 0),
+        frameCounter(0)
 {
 }
 //---------------------------------------------------------------------------
@@ -529,28 +531,7 @@ void ThreeDPool::createScene(void)
     gameStarted = true;
 
     //-------------basic setup stuff-----------------//
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
-    Ogre::Light* pointLight1 = mSceneMgr->createLight("PointLight1");
-    pointLight1->setType(Ogre::Light::LT_POINT);
-    pointLight1->setDiffuseColour(.4, .4, .4);
-    pointLight1->setSpecularColour(.4, .4, .4);
-    pointLight1->setPosition(0, 220, 460);
-    Ogre::Light* pointLight2 = mSceneMgr->createLight("PointLIght2");
-    pointLight2->setType(Ogre::Light::LT_POINT);
-    pointLight2->setDiffuseColour(.4, .4, .4);
-    pointLight2->setSpecularColour(.4, .4, .4);
-    pointLight2->setPosition(0, -220, 460);
-    Ogre::Light* pointLight3 = mSceneMgr->createLight("PointLIght3");
-    pointLight3->setType(Ogre::Light::LT_POINT);
-    pointLight3->setDiffuseColour(.4, .4, .4);
-    pointLight3->setSpecularColour(.4, .4, .4);
-    pointLight3->setPosition(0, 220, -460);
-    Ogre::Light* pointLight4 = mSceneMgr->createLight("PointLIght4");
-    pointLight4->setType(Ogre::Light::LT_POINT);
-    pointLight4->setDiffuseColour(.4, .4, .4);
-    pointLight4->setSpecularColour(.4, .4, .4);
-    pointLight4->setPosition(0, -220, -460);
+    setUpLighting();
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
@@ -576,6 +557,31 @@ void ThreeDPool::createScene(void)
     setUpGUI();
     setUpSounds();
     setUpParticles();
+}
+
+void ThreeDPool::setUpLighting(void){
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    Ogre::Light* pointLight1 = mSceneMgr->createLight("PointLight1");
+    pointLight1->setType(Ogre::Light::LT_POINT);
+    pointLight1->setDiffuseColour(.4, .4, .4);
+    pointLight1->setSpecularColour(.4, .4, .4);
+    pointLight1->setPosition(0, 220, 460);
+    Ogre::Light* pointLight2 = mSceneMgr->createLight("PointLIght2");
+    pointLight2->setType(Ogre::Light::LT_POINT);
+    pointLight2->setDiffuseColour(.4, .4, .4);
+    pointLight2->setSpecularColour(.4, .4, .4);
+    pointLight2->setPosition(0, -220, 460);
+    Ogre::Light* pointLight3 = mSceneMgr->createLight("PointLIght3");
+    pointLight3->setType(Ogre::Light::LT_POINT);
+    pointLight3->setDiffuseColour(.4, .4, .4);
+    pointLight3->setSpecularColour(.4, .4, .4);
+    pointLight3->setPosition(0, 220, -460);
+    Ogre::Light* pointLight4 = mSceneMgr->createLight("PointLIght4");
+    pointLight4->setType(Ogre::Light::LT_POINT);
+    pointLight4->setDiffuseColour(.4, .4, .4);
+    pointLight4->setSpecularColour(.4, .4, .4);
+    pointLight4->setPosition(0, -220, -460);    
 }
 
 void ThreeDPool::setUpSounds(void){
@@ -984,7 +990,7 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
     if(mShutDown)
         return false;
-    
+
     if(isWaiting) {
         if (isServer) {
             if (nm->scanForActivity()) {
@@ -1026,10 +1032,25 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
             networkLoop();
         gameLoop(evt);
         physicsLoop();
+    
+        // if(frameCounter >= BALL_SPEED_SUM_FREQUENCY) {
+        //     frameCounter = 0;
+        //     updateBallSpeedSum();
+        // }    
+
+        // ++frameCounter;
     }
+
 
     return true;
 }
+
+// void ThreeDPool::updateBallSpeedSum(void){
+//     ballSpeedSum = btVector3(0.f, 0.f, 0.f);
+//     for(Ball* curBall: balls){
+//         ballSpeedSum += curBall->getBody()->getLinearVelocity();
+//     }
+// }
 
 void ThreeDPool::networkLoop () {
     if (isServer) {
@@ -1074,6 +1095,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
         
+        // bool ballsStopped = ballSpeedSum.length() < 0.1f;
         bool ballsStopped = true;
         
         bool done = cueStickObject->readjustStickToCueball(adjustingStick, ballsStopped);
