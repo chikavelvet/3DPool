@@ -26,6 +26,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     rootNode->scale(0.01, 0.01, 0.5);
 
     shape = new btBoxShape(btVector3(1, 1, 23));
+    // shape = new btBoxShape(btVector3(23, 23, 23));
     
     typeMap[((size_t) rootNode)] = stickType;
 
@@ -75,11 +76,12 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
     simulator->getDynamicsWorld()->addRigidBody(body);
     geom->setVisible(true);
 
-    // Ogre::Vector3 stickDirection(rootNode->getPosition() 
-    //             - cueBallNode->getPosition());
-    // stickDirection.normalise();
+    Ogre::Vector3 stickDirection(rootNode->getPosition() 
+                - cueBallNode->getPosition());
+    stickDirection.normalise();
 
-    // guideLineNode->setPosition(stickDirection * (cueStickMin*2.f));
+    // guideLineNode->setPosition(-stickDirection * (cueStickMin*2.f));
+    guideLineNode->setPosition(stickDirection * (cueStickMin + 5.f));
     guideLineNode->setVisible(true);
     return true;
 }
@@ -93,6 +95,16 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
     
     guideLineNode->setOrientation(Ogre::Quaternion(-1.f, 1.f, 0.f, 0.f));
     // guideLineNode->setOrientation(rootNode->getOrientation());
+
+    Ogre::Vector3 stickDirection(rootNode->getPosition() 
+                - cueBallNode->getPosition());
+    stickDirection.normalise();
+
+    // guideLineNode->setPosition(stickDirection * (cueStickTotal + cueStickMin));
+    
+    guideLineNode->setPosition(0.f, 0.f, -(cueStickTotal + cueStickMin));
+    guideLineNode->setVisible(true);
+
 
     if (cueStickTotal <= cueStickMax && cueStickTotal >= cueStickMin) {
         if (cueStickTotal + cueStickDelta > cueStickMax) 
@@ -114,22 +126,18 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
         cueStickTotal += cueStickDelta;        
         cueStickDelta = 0;
     }
-
-    // Ogre::Vector3 stickDirection(rootNode->getPosition() 
-    //             - cueBallNode->getPosition());
-    // stickDirection.normalise();
-
-    // guideLineNode->setPosition(stickDirection * (cueStickTotal + cueStickMin));
-    guideLineNode->setVisible(true);
-
 }
 
 void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTotal, float& cueStickDelta) {
     if(cueStickTotal > cueStickMin){
         body->activate(true);
-        btVector3 movement = btVector3(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition())
-                .normalize() * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
-        body->applyCentralImpulse(movement);
+        
+        btVector3 direction(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition());
+        direction.normalize();
+
+        btVector3 movement = direction * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
+        
+        body->applyCentralForce(movement);
         adjustingStick = true;
         guideLineNode->setVisible(false);
     }
