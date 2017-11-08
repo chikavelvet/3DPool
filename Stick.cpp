@@ -73,8 +73,8 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
     body->setCenterOfMassTransform(newTransform);
     adjustingStick = false;
     
-    std::cout << "Node: " << rootNode->getPosition() << std::endl;
-    std::cout << "Body: " << body->getCenterOfMassPosition();
+//    std::cout << "Node: " << rootNode->getPosition() << std::endl;
+//    std::cout << "Body: " << body->getCenterOfMassPosition();
     
     simulator->getDynamicsWorld()->addRigidBody(body);
     geom->setVisible(true);
@@ -100,8 +100,8 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
     // guideLineNode->setOrientation(rootNode->getOrientation());
 
     // std::cout << guideLineNode->_getDerivedOrientation() << std::endl;
-    std::cout << body->getOrientation() << std::endl;
-    std::cout << rootNode->_getDerivedOrientation() << std::endl;
+//    std::cout << body->getOrientation() << std::endl;
+//    std::cout << rootNode->_getDerivedOrientation() << std::endl;
 
 
     Ogre::Vector3 stickDirection(rootNode->getPosition() 
