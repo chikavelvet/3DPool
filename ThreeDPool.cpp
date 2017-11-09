@@ -477,7 +477,7 @@ void ThreeDPool::setUpGUI(void) {
             ss4 << "Opp Remaining: " << oppRemainingBalls;
             oppRemainingBallWin->setText(ss4.str());
             oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.16, 0)));
+            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
             gameScreen->addChild(oppRemainingBallWin);
         }
 
