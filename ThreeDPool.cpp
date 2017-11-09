@@ -1061,6 +1061,16 @@ void ThreeDPool::networkLoop () {
                 } else if (key == "strokes") {
                     this->updateOppStrokeCount(val);
                 }
+                else if (key == "quit") {
+                    nm->stopServer();
+
+                    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+                    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+                    CEGUI::Window* sheet = context.getRootWindow();
+                    CEGUI::Window* youWin = sheet->getChild("YouWin");
+                    youWin->setText("Opp Disconnected: You Win!");
+                    youWin->show();
+                }
             }
         }
     } else {
@@ -1075,6 +1085,16 @@ void ThreeDPool::networkLoop () {
                 this->updateOppRemainingBallCount(val);
             } else if (key == "strokes") {
                 this->updateOppStrokeCount(val);
+            }
+            else if (key == "quit") {
+                nm->stopClient();
+
+                CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+                CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+                CEGUI::Window* sheet = context.getRootWindow();
+                CEGUI::Window* youWin = sheet->getChild("YouWin");
+                youWin->setText("Opp Disconnected: You Win!");
+                youWin->show();
             }
         }
     }
@@ -1212,6 +1232,14 @@ void ThreeDPool::physicsLoop()
 }
 
 bool ThreeDPool::quit (const CEGUI::EventArgs& e) {
+    std::string msg = "quit";
+    if (!isServer) {
+        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
+    else {
+        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
+
     mShutDown = true;
     return true;
 }
