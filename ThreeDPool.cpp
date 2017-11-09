@@ -470,22 +470,30 @@ void ThreeDPool::setUpGUI(void) {
 
         if (isMultiplayer) {
             // Opponent Stroke counter
+            CEGUI::Window *oppTitle = wmgr.createWindow("TaharezLook/StaticText", "OppTitle");
+            oppTitle->setText("Opponent: ");
+            oppTitle->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            oppTitle->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
+
+            gameScreen->addChild(oppTitle);
+
+            // Opponent Stroke counter
             CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
             std::stringstream ss2;
-            ss2 << "Opp Strokes: " << opponentStrokes;
+            ss2 << "Strokes: " << opponentStrokes;
             oppStrokesWin->setText(ss2.str());
             oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.9, 0)));
+            oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.6, 0)));
 
             gameScreen->addChild(oppStrokesWin);
 
             // Opponent Remaining Ball Counter
             CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
             std::stringstream ss4;
-            ss4 << "Opp Remaining: " << oppRemainingBalls;
+            ss4 << "Remaining: " << oppRemainingBalls;
             oppRemainingBallWin->setText(ss4.str());
             oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
+            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
             gameScreen->addChild(oppRemainingBallWin);
         }
 
