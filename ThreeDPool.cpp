@@ -306,19 +306,19 @@ void ThreeDPool::startWaiting() {
         isServer = true;
         
         nm = new NetManager();
-        std::cout << "INFO" << std::endl;
+        std::cout << "** NETWORKING INFO **" << std::endl;
         std::cout << isServer << std::endl;
         std::cout << hostName << std::endl;
         std::cout << port << std::endl;
-        std::cout << "endINFO" << std::endl;
+        std::cout << "****** ENDINFO ******" << std::endl;
 
         nm->initNetManager();
         nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
         bool started = nm->startServer();
         nm->acceptConnections();
 
-        std::cout << std::boolalpha << started << std::endl;
-        std::cout << nm->getIPstring() << std::endl;
+//        std::cout << std::boolalpha << started << std::endl;
+//        std::cout << nm->getIPstring() << std::endl;
 
         CEGUI::Window* waiting = mpLobby->getChild("WaitingWindow");
 
@@ -361,11 +361,11 @@ void ThreeDPool::joinMultiplayer ()
     isServer = false;
     
     nm = new NetManager();
-    std::cout << "INFO" << std::endl;
+    std::cout << "** NETWORKING INFO **" << std::endl;
     std::cout << isServer << std::endl;
     std::cout << hostName << std::endl;
     std::cout << port << std::endl;
-    std::cout << "endINFO" << std::endl;
+    std::cout << "****** ENDINFO ******" << std::endl;
 
     nm->initNetManager();
     nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
@@ -860,19 +860,20 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             }
             soundOn = !soundOn;
             break;
-        case OIS::KC_N:
-            if (!isServer) {
-                std::string msg = "I am a client";
-                nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
-                std::cout << "Sent " << msg << std::endl;
-            }
-            break;
-        case OIS::KC_M:
-            if (isServer) {
-                std::string msg = "I am a server";
-                nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-                std::cout << "Sent " << msg << std::endl;
-            }
+//        case OIS::KC_N:
+//            if (!isServer) {
+//                std::string msg = "I am a client";
+//                nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+//                std::cout << "Sent " << msg << std::endl;
+//            }
+//            break;
+//        case OIS::KC_M:
+//            if (isServer) {
+//                std::string msg = "I am a server";
+//                nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+//                std::cout << "Sent " << msg << std::endl;
+//            }
+//            break;
     }
     return true;
 }
@@ -946,7 +947,7 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     switch(id)
     {
         case OIS::MB_Left:
-            cout << "Left" << endl;
+//            cout << "Left" << endl;
             LMBDown = true;
             break;
         case OIS::MB_Right:
@@ -1035,7 +1036,7 @@ void ThreeDPool::networkLoop () {
             if (nm->getClients()){
                 ClientData* data = nm->tcpClientData.front();
 
-                std::cout << "Rcvd " << std::string(data->output) << std::endl;
+//                std::cout << "Rcvd " << std::string(data->output) << std::endl;
                 std::stringstream ss(data->output);
                 std::string key;
                 int val;
@@ -1050,7 +1051,7 @@ void ThreeDPool::networkLoop () {
     } else {
         if (nm->scanForActivity()) {
             ClientData& data = nm->tcpServerData;
-            std::cout << "Rcvd " << std::string(data.output) << std::endl;
+//            std::cout << "Rcvd " << std::string(data.output) << std::endl;
             std::stringstream ss(data.output);
             std::string key;
             int val;
