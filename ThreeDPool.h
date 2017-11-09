@@ -89,8 +89,6 @@ protected:
 
     void hideAllScreens(void);
 
-    void setUpParticles(void);
-
     void setUpLighting(void);
 
     void updateBallSpeedSum(void);

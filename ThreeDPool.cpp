@@ -191,31 +191,6 @@ void ThreeDPool::createMainMenu()
     }
 }
 
-void ThreeDPool::setUpParticles(void){
-    // bool jetEngine = false;
-    // bool guideLine = true;
-    // bool explosion = false;
-
-    // if(explosion){
-    //         Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("Explosion", "Examples/Explosion");
-    //     Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
-    //     particleNode->attachObject(testParticle);       
-    // }
-
-    // if(jetEngine){
-    //     Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("JetEngine2Big", "Examples/JetEngine2Big");
-    //     Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
-    //     particleNode->attachObject(testParticle);        
-    // }
-    
-    // if(guideLine){
-    //     Ogre::ParticleSystem* testParticle = mSceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
-    //     Ogre::SceneNode* particleNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Particle");
-    //     particleNode->attachObject(testParticle);        
-    // }
-}
-
-
 void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e) 
 {
     using namespace CEGUI;
@@ -479,8 +454,10 @@ void ThreeDPool::setUpGUI(void) {
         std::stringstream ss3;
         ss3 << "Remaining: " << remainingBalls;
         remainingBallWin->setText(ss3.str());
+        // remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        // remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
         remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
+        remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
         gameScreen->addChild(remainingBallWin);
 
         if (isMultiplayer) {
@@ -556,7 +533,6 @@ void ThreeDPool::createScene(void)
     oppRemainingBalls = remainingBalls;
     setUpGUI();
     setUpSounds();
-    setUpParticles();
 }
 
 void ThreeDPool::setUpLighting(void){
