@@ -1067,8 +1067,12 @@ void ThreeDPool::networkLoop () {
                     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
                     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
                     CEGUI::Window* sheet = context.getRootWindow();
-                    CEGUI::Window* youWin = sheet->getChild("YouWin");
-                    youWin->setText("Opp Disconnected: You Win!");
+                    CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
+
+                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
+                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
+
+                    youWin->setText("Opponent Disconnected:\nYou Win!");
                     youWin->show();
                 }
             }
@@ -1092,8 +1096,12 @@ void ThreeDPool::networkLoop () {
                 CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
                 CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
                 CEGUI::Window* sheet = context.getRootWindow();
-                CEGUI::Window* youWin = sheet->getChild("YouWin");
-                youWin->setText("Opp Disconnected: You Win!");
+                CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
+
+                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
+                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
+
+                youWin->setText("Opponent Disconnected:\nYou Win!");
                 youWin->show();
             }
         }
