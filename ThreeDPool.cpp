@@ -64,7 +64,8 @@ ThreeDPool::ThreeDPool(void) :
         port(59000),
         isWaiting(false),
         ballSpeedSum(0, 0, 0),
-        frameCounter(0)
+        frameCounter(0),
+        gameEnded(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -739,6 +740,7 @@ void ThreeDPool::decrementRemainingBallCount() {
     
     if (remainingBalls < 1 && oppRemainingBalls > 0) {
         CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+        gameEnded = true;
         youWin->show();
     }
     
@@ -782,6 +784,7 @@ void ThreeDPool::updateOppRemainingBallCount(int newVal) {
     if (oppRemainingBalls < 1 && remainingBalls > 0) {
         CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
         youWin->setText("You Lose!! :c");
+        gameEnded = true;
         youWin->show();
     }
 }
@@ -1020,6 +1023,9 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
     if (gameStarted) {
+        if(gameEnded)
+           return true;
+
         if (isMultiplayer)
             networkLoop();
         gameLoop(evt);
@@ -1073,6 +1079,7 @@ void ThreeDPool::networkLoop () {
                     youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
 
                     youWin->setText("Opponent Disconnected:\nYou Win!");
+                    gameEnded = true;
                     youWin->show();
                 }
             }
@@ -1102,6 +1109,7 @@ void ThreeDPool::networkLoop () {
                     youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
 
                 youWin->setText("Opponent Disconnected:\nYou Win!");
+                gameEnded = true;
                 youWin->show();
             }
         }

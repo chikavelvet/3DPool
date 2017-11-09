@@ -118,6 +118,7 @@ protected:
     bool soundOn;
     bool yourTurn;
     bool gameStarted;
+    bool gameEnded;
     
     bool isMultiplayer;
     bool isWaiting;
