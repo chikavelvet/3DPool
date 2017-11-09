@@ -200,6 +200,14 @@ void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e)
     
     if (key.scancode == Key::Return) {
         joinMultiplayer();
+    } else if (key.scancode == Key::Backspace) {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* ipEnterBox = context.getRootWindow()->getChild("MPLobbyScreen/EnterIPWindow/IPEnterBox");
+
+        std::string text = ipEnterBox->getText().c_str();
+        std::string backspacedText = text.substr(0, text.length() - 1);
+        ipEnterBox->setText(backspacedText);
     }
 }
 
