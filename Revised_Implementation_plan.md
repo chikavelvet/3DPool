@@ -38,6 +38,9 @@ We will perform two types of cylindrical raycasts to find clear shots.
 - Raycast between cue-ball and ball we want to hit
 - Raycast between ball we want to hit and pocket we want to hit into
 
+We will run the greedy algorithm on a subset of the balls and pockets
+that pass these raycasts.
+
 ## Extra Feature: Difficulty Settings
 
 ### General Idea
