@@ -25,8 +25,9 @@ can easily calculate the position on that ball the cue ball must touch. Then we 
 exact direction that we have to hit the cue ball at. 
 
 #### Raycasts
-We will also perform cylndrical raycasts between the cue-ball, the balls, and the pockets
-to find clear paths to balls.
+We will perform two types of cylindrical raycasts to find clear shots.
+- Raycast between cue-ball and ball we want to hit
+- Raycast between ball we want to hit and pocket we want to hit into
 
 #### Turn-based design
 In order for AI to make sense for our game, we will have to change our fundamental game
