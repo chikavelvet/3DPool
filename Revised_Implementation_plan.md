@@ -1,33 +1,39 @@
-# CS354R Assignment 3 Milestone 3.2
-Group: **Ghost Babel**
+# CS354R Assignment 4 Milestone 4.1
+Group: **No Good Devs**
 
 - *Casey Bigelow*
 - *Rishi Amarnani*
 - *Trey Gonsoulin*
 
-## Controls/Instructions
-Compile with standard `buildit`. Game binary is called `ThreeDPool`. 
+- AI
+- Difficulty Settings 
+- Upgraded multiplayer (play against each other in the same environment)
+- Passive networking during single player
+- Additional Refactoring
 
-**Controls**:
-* Mouse - orbit cue stick around ball to choose direction
-* Left-Mouse Down - Start charging
-* Mouse forward and backward - change charge amount
-* Left-Mouse Up - Release and hit cue ball
-* T - toggle Free Look mode (WASD and mouse to move and look around)
+## AI
+We will build articial intelligence to play pool against the player.
+Our general idea so far is to made a greedy algorithm based on two heuristics:
+	- the proximity of a ball to a pocket
+	- how "straight" a shot is	
 
-For multiplayer:
-On one computer, in the multiplayer menu, hit "Host Game". Then, on the second computer, hit "Join Game" and type in the IP Address shown on the host computer. Then hit "Go" to start the game!
+We found that these are the two most important factors that we think about when we
+play the game, and so we will use these two factors to build our AI to make it realistic.
 
-## Progress
+We will also perform cylndrical raycasts between the cue-ball, the balls, and the pockets
+to find clear paths to balls.
 
-### Networking
-Networking is working! We are currently able to send scoring information back and forth between both players and synchronise it. Currently, the engines on each computer process physics separately, which could be a security/cheating risk, though for this project it doesn't matter as much. We may work on having physics data sent between the client and host as well.
+In order for AI to make sense for our game, we will have to change our fundamental game
+design to be turn based. This change will also have to be applied to multiplayer.
 
-### GUI
-We have a main menu and connection lobby. 
+## Difficulty Settings
+Because we are implementing AI, we will also implement difficulty settings for the AI.
+These settings will be easy, medium, hard, and adaptive. 
+
+Easy, medium, and hard settings will change 
 
 ## Plan Moving Forward
-Essentially, we have the components of the finished project done. This is good, as we have the next week to clean up our code, refactor and optimize, and add extra features! We've already put some work into prettifying the GUI and textures, and it already looks much better than our project 2. We have plenty of things in mind for that. Our code also could use a good steam cleaning and restructuring, to be honest.
+We are going to build on top of our existing game which we have 
 
 **Roles**:
 
