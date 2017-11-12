@@ -29,8 +29,8 @@ play the game, and so we will use these two factors to build our AI to make it r
 After using our greedy algorithm to decide which ball to hit and which pocket to hit it
 into, we'll know *where on the chosen ball the cue ball must touch*. 
 
-From this position, we can easily calculate exact direction that we have to hit the cue ball 
-at using the cue stick. Then the AI just charges up the cue stick and hits the ball in the 
+From this position, we can easily calculate the exact direction that we have to hit
+the cue ball at. Then the AI just charges up the cue stick and hits the ball in the
 calculated direction.
 
 ### Raycasts
