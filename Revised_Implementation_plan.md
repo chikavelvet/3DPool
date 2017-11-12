@@ -11,7 +11,7 @@ Group: **No Good Devs**
 
 ### General Idea
 We will build articial intelligence to play pool against the player.
-Our general idea so far is to made a greedy algorithm based on two heuristics:
+Our general idea is to make a greedy algorithm based on two heuristics:
 - the proximity of a ball to a pocket
 - how "straight" a shot is	
 
