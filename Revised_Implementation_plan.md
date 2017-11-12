@@ -12,8 +12,8 @@ Group: **No Good Devs**
 ### General Idea
 We will build articial intelligence to play pool against the player.
 Our general idea so far is to made a greedy algorithm based on two heuristics:
-	- the proximity of a ball to a pocket
-	- how "straight" a shot is	
+	* the proximity of a ball to a pocket
+	* how "straight" a shot is	
 
 We found that these are the two most important factors that we think about when we
 play the game, and so we will use these two factors to build our AI to make it realistic.
