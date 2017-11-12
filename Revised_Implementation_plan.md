@@ -9,8 +9,13 @@ Group: **No Good Devs**
 
 ## Core Feature: AI
 
-#### Greedy Algorithm
-We will build articial intelligence to play pool against the player.
+### General Idea
+We will build articial intelligence to play pool against the player in a turn-based game
+in the same environment. The player will be able to see the AI move the cue stick and hit
+the ball. On a tangential note, this turn-based change will also have to be applied to multiplayer.
+
+### Greedy Algorithm
+
 Our general idea is to make a greedy algorithm that decides
 which ball to hit into which pocket based on two heuristics:
 - the proximity of a ball to a pocket
@@ -19,19 +24,15 @@ which ball to hit into which pocket based on two heuristics:
 We found that these are the two most important factors that we think about when we
 play the game, and so we will use these two factors to build our AI to make it realistic.
 
-#### Calculating Cue-Ball Hit Direction
+### Calculating Cue-Ball Hit Direction
 If we know which ball we're going to be hitting, and which pocket we will hit it into, we
 can easily calculate the position on that ball the cue ball must touch. Then we know the
 exact direction that we have to hit the cue ball at. 
 
-#### Raycasts
+### Raycasts
 We will perform two types of cylindrical raycasts to find clear shots.
 - Raycast between cue-ball and ball we want to hit
 - Raycast between ball we want to hit and pocket we want to hit into
-
-#### Turn-based design
-In order for AI to make sense for our game, we will have to change our fundamental game
-design to be turn based. This change will also have to be applied to multiplayer.
 
 ## Extra Feature: Difficulty Settings
 
