@@ -10,13 +10,21 @@ Group: **No Good Devs**
 ## Core Feature: AI
 
 ### General Idea
+
+#### Greedy Algorithm
 We will build articial intelligence to play pool against the player.
-Our general idea is to make a greedy algorithm based on two heuristics:
+Our general idea is to make a greedy algorithm that decides
+which ball to hit into which pocket based on two heuristics:
 - the proximity of a ball to a pocket
-- how "straight" a shot is	
+- how "straight" a shot is
 
 We found that these are the two most important factors that we think about when we
 play the game, and so we will use these two factors to build our AI to make it realistic.
+
+#### Calculating Cue-Ball Hit Direction
+If we know which ball we're going to be hitting, and which pocket we will hit it into, we
+can easily calculate the position on that ball the cue ball must touch. Then we know the
+exact direction that we have to hit the cue ball at. 
 
 ### Raycasts
 We will also perform cylndrical raycasts between the cue-ball, the balls, and the pockets
