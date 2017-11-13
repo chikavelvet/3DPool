@@ -10,7 +10,7 @@
 //#include "GameObject.h"
 #include "Enums.h"
 
-//class GameObject;
+class GameObject;
 
 class Simulator { 
 protected: 
@@ -34,6 +34,8 @@ public:
 	}
 
 	void addObject(GameObject* o, collisionType coltype, int collidesWith); 
+        void addObject(GameObject* o, collisionType coltype, int collidesWith, btRigidBody* body);
+        
 	bool removeObject(GameObject* o); 
 	btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld; }
 	void stepSimulation(const Ogre::Real elapsedTime, 

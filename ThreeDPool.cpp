@@ -16,6 +16,7 @@ http://www.ogre3d.org/wiki/
 */
 
 #include <OGRE/OgreMeshManager.h>
+#include <fstream>
 
 #include "ThreeDPool.h"
 
@@ -25,31 +26,46 @@ btRigidBody* cueStick;
 Ball* cueBallObject;
 btRigidBody* cueBall;
 Room* room;
+int isServer;
 
 Ogre::Vector3 preFreeLookCameraPosition;
 Ogre::Vector3 preFreeLookCameraDirection;
 
-const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 0.15f;
+const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 10.0f, BALL_SPEED_SUM_FREQUENCY = 100;
 
 std::vector<Ball*> balls;
 
 int remainingBalls;
+int oppRemainingBalls;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
-    mMoveSpeed(750),
-    hitBall(false),
-    LMBDown(false),
-    cueStickDelta(0),
-    cueStickTotal(CUE_STICK_MIN),
-    adjustingStick(false),
-    adjustingCamera(false),
-    cursorDisplaying(false),
-    soundOn(true),
-    strokes(0),
-    cameraCounter(0),
-    typeMap(),
-    pocketMap()
+        mMoveSpeed(750),
+        hitBall(false),
+        LMBDown(false),
+        cueStickDelta(0),
+        cueStickTotal(CUE_STICK_MIN),
+        adjustingStick(false),
+        adjustingCamera(false),
+        cursorDisplaying(false),
+        soundOn(true),
+        strokes(0),
+        opponentStrokes(0),
+        cameraCounter(0),
+        typeMap(),
+        pocketMap(),
+        gameStarted(false),
+        isMultiplayer(false),
+        guiInitialized(false),
+        mainMenuScreenCreated(false),
+        mpLobbyScreenCreated(false),
+        gameScreenCreated(false),
+        hostName(""),
+        port(59000),
+        isWaiting(false),
+        ballSpeedSum(0, 0, 0),
+        frameCounter(0),
+        gameEnded(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -58,27 +74,467 @@ ThreeDPool::~ThreeDPool(void)
     delete pCamera;
 }
 
+bool ThreeDPool::setup(void)
+{
+    if (!BaseApplication::setup())
+        return false;
+
+    createMainMenu();
+
+    return true;
+};
+
+void ThreeDPool::initGUI()
+{
+    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+    CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
+    CEGUI::Font::setDefaultResourceGroup("Fonts");
+    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
+
+    CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
+    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
+
+    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    context.setRootWindow(sheet);
+    
+    guiInitialized = true;
+}
+
+void ThreeDPool::hideAllScreens() 
+{
+    if (!guiInitialized)
+        initGUI();
+    
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    
+    for (size_t index = 0; index < sheet->getChildCount(); ++index) {
+        CEGUI::Window* screen = sheet->getChildAtIdx(index);
+        
+        screen->hide();
+    }    
+
+    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().show();
+}
+
+void ThreeDPool::createMainMenu() 
+{       
+    if (!guiInitialized)
+        initGUI();
+    
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    
+    if (!mainMenuScreenCreated) {
+        hideAllScreens();
+        
+        //----Main Menu Screen----//
+        CEGUI::Window* mainMenu = wmgr.createWindow("DefaultWindow", "MainMenuScreen");
+        mainMenu->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        mainMenu->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        mainMenu->setAlwaysOnTop(true);
+        
+        sheet->addChild(mainMenu);
+        
+        //----Back Ground----//   
+        CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImage", "ThreeDPoolBackground.png", "Imagesets");
+        CEGUI::Window* background = wmgr.createWindow("TaharezLook/StaticImage", "DefaultBackground");
+        background->setProperty("Image", "BackgroundImage");
+        background->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        background->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        background->setAlwaysOnTop(false);
+        sheet->addChild(background);
+        
+        //----Quit Button----//
+        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
+        quit->setText("Quit");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
+        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+
+        mainMenu->addChild(quit);
+
+        //----Single Player----//
+        CEGUI::Window *singlePlayer = wmgr.createWindow("TaharezLook/Button", "StartSinglePlayerButton");
+        singlePlayer->setText("Single Player");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        singlePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        singlePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.74, 0)));
+        singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, this));
+
+        mainMenu->addChild(singlePlayer);
+
+        //----Multi Player----//
+        CEGUI::Window *multiPlayer = wmgr.createWindow("TaharezLook/Button", "StartMultiPlayerButton");
+        multiPlayer->setText("Multi Player");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        multiPlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        multiPlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.80, 0)));
+        multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMPLobby, this));
+
+        mainMenu->addChild(multiPlayer);
+        
+        mainMenuScreenCreated = true;
+    } else {
+        hideAllScreens();
+        sheet->getChild("MainMenuScreen")->show();
+        sheet->getChild("DefaultBackground")->show();
+    }
+}
+
+void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e) 
+{
+    using namespace CEGUI;
+    
+    //Cast it to a key event
+    const KeyEventArgs& key = static_cast<const KeyEventArgs&>(e);
+    
+    if (key.scancode == Key::Return) {
+        joinMultiplayer();
+    } else if (key.scancode == Key::Backspace) {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* ipEnterBox = context.getRootWindow()->getChild("MPLobbyScreen/EnterIPWindow/IPEnterBox");
+
+        std::string text = ipEnterBox->getText().c_str();
+        std::string backspacedText = text.substr(0, text.length() - 1);
+        ipEnterBox->setText(backspacedText);
+    }
+}
+
+void ThreeDPool::createMPLobby(void) 
+{ 
+    if (!guiInitialized)
+        initGUI();
+    
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+        
+    if (!mpLobbyScreenCreated) {
+        hideAllScreens();
+        
+        // Create Lobby                
+        CEGUI::Window* mpLobby = wmgr.createWindow("DefaultWindow", "MPLobbyScreen");
+        mpLobby->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        mpLobby->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        
+        sheet->addChild(mpLobby);
+        
+        //----Back to Main----//
+        CEGUI::Window *back = wmgr.createWindow("TaharezLook/Button", "BackToMainButton");
+        back->setText("Back");
+        back->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        back->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMainMenu, this));
+        mpLobby->addChild(back);
+        
+        //----Host Game-----------------//
+        CEGUI::Window *hostGame = wmgr.createWindow("TaharezLook/Button", "HostGameButton");
+        hostGame->setText("Host Game");
+        hostGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        hostGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.8, 0)));
+        hostGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::startWaiting, this));
+        mpLobby->addChild(hostGame);
+        
+        //----Join Game-----------------//
+        CEGUI::Window *joinGame = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
+        joinGame->setText("Join Game");
+        joinGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        joinGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.8, 0)));
+        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::showEnterIPWindow, this));
+        mpLobby->addChild(joinGame);
+        
+        //--------Enter Server IP-------//
+        CEGUI::FrameWindow *enterIP = static_cast<CEGUI::FrameWindow*>(wmgr.createWindow("TaharezLook/FrameWindow", "EnterIPWindow"));
+        enterIP->setText("Enter Server IP");
+        enterIP->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
+        enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        enterIP->setAlwaysOnTop(true);
+        enterIP->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::hideEnterIPWindow, this));
+        enterIP->hide();
+        mpLobby->addChild(enterIP);
+                
+        //------------IP Enter Box------//
+        CEGUI::Editbox *ipEnterBox = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox", "IPEnterBox"));
+        ipEnterBox->setSize(CEGUI::USize(CEGUI::UDim(0.5, 0), CEGUI::UDim(0.2, 0)));
+        ipEnterBox->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25, 0), CEGUI::UDim(0.4, 0)));
+        ipEnterBox->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber(&ThreeDPool::onIPEnterBoxKeyPressed, this));
+        enterIP->addChild(ipEnterBox);
+        
+        //------------Go Button---------//
+        CEGUI::Window *goButton = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
+        goButton->setText("Go");
+        goButton->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.1, 0)));
+        goButton->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.7, 0)));
+        goButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::joinMultiplayer, this));
+        enterIP->addChild(goButton);
+        
+        //--------Waiting for Client----//
+        CEGUI::FrameWindow *waiting = static_cast<CEGUI::FrameWindow*>(wmgr.createWindow("TaharezLook/FrameWindow", "WaitingWindow"));
+        waiting->setText("Waiting for Client...");
+        waiting->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
+        waiting->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        waiting->setAlwaysOnTop(true);
+        waiting->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::cancelWaiting, this));
+        waiting->hide();
+        mpLobby->addChild(waiting);
+        
+        //------------Information-------//
+        CEGUI::Window *serverInfo = wmgr.createWindow("TaharezLook/StaticText", "ServerInfo");
+        serverInfo->setSize(CEGUI::USize(CEGUI::UDim(0.4, 0), CEGUI::UDim(0.15, 0)));
+        serverInfo->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.425, 0)));
+        waiting->addChild(serverInfo);
+        
+        sheet->getChild("DefaultBackground")->show();
+        
+        mpLobbyScreenCreated = true;
+    } else {
+        hideAllScreens();
+        sheet->getChild("MPLobbyScreen")->show();
+        sheet->getChild("DefaultBackground")->show();
+    }
+}
+
+void ThreeDPool::startWaiting() {
+    if (!isWaiting || !isServer) {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+
+        isServer = true;
+        
+        nm = new NetManager();
+        std::cout << "INFO" << std::endl;
+        std::cout << isServer << std::endl;
+        std::cout << hostName << std::endl;
+        std::cout << port << std::endl;
+        std::cout << "endINFO" << std::endl;
+
+        nm->initNetManager();
+        nm->addNetworkInfo(PROTOCOL_ALL, NULL, port);
+        bool started = nm->startServer();
+        nm->acceptConnections();
+
+        std::cout << std::boolalpha << started << std::endl;
+        std::cout << nm->getIPstring() << std::endl;
+
+        CEGUI::Window* waiting = mpLobby->getChild("WaitingWindow");
+
+        mpLobby->getChild("EnterIPWindow")->hide();
+        waiting->getChild("ServerInfo")->setText("Server IP: " + nm->getIPstring());
+        waiting->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+        waiting->show();
+
+        isWaiting = true;
+    }
+}
+
+void ThreeDPool::cancelWaiting() {
+    if (isWaiting && isServer) {
+        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+        CEGUI::Window* waiting = mpLobby->getChild("WaitingWindow");
+
+        nm->stopServer(PROTOCOL_TCP);
+        nm->stopServer(PROTOCOL_UDP);
+        delete nm;
+
+        waiting->hide();
+
+        isWaiting = false;
+        isServer = false;
+    }
+}
+
+void ThreeDPool::joinMultiplayer () 
+{
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Editbox* ipEnterBox = static_cast<CEGUI::Editbox*>
+            (context.getRootWindow()->getChild("MPLobbyScreen/EnterIPWindow/IPEnterBox"));
+    
+    hostName = std::string(ipEnterBox->getText().c_str());
+    
+    isServer = false;
+    
+    nm = new NetManager();
+    std::cout << "INFO" << std::endl;
+    std::cout << isServer << std::endl;
+    std::cout << hostName << std::endl;
+    std::cout << port << std::endl;
+    std::cout << "endINFO" << std::endl;
+
+    nm->initNetManager();
+    nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
+    nm->startClient();
+    
+//    std::string msg = "Client Request";
+//    nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    
+    isWaiting = true;
+    
+//    createMultiplayer();
+}
+
+void ThreeDPool::hostMultiplayer () 
+{
+    createMultiplayer();
+}
+
+void ThreeDPool::showEnterIPWindow()
+{
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+    
+    CEGUI::Window* enterIP = mpLobby->getChild("EnterIPWindow");
+    
+    cancelWaiting();
+    enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+    enterIP->show();
+}
+
+void ThreeDPool::hideEnterIPWindow()
+{
+    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
+        
+    mpLobby->getChild("EnterIPWindow")->hide();
+    
+    isWaiting = false;
+}
+
+void ThreeDPool::setUpGUI(void) {    
+    if (!guiInitialized)
+           initGUI();
+
+    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    
+    if (!gameScreenCreated) {
+        hideAllScreens();
+        CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
+
+        //----Game Screen----//
+        CEGUI::Window* gameScreen = wmgr.createWindow("DefaultWindow", "GameScreen");
+        gameScreen->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
+        gameScreen->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        
+        sheet->addChild(gameScreen);
+
+        //----Quit Button----//
+        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
+        quit->setText("Quit");    
+
+        // In UDim, only set one of the two params, the other should be 0
+        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
+        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
+
+        quit->hide();
+        gameScreen->addChild(quit);
+
+        // Stroke counter
+        CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
+        std::stringstream ss;
+        ss << "Strokes: " << strokes;
+        strokesWin->setText(ss.str());
+        strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
+
+        gameScreen->addChild(strokesWin);
+
+        // Remaining Ball Counter
+        CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
+        std::stringstream ss3;
+        ss3 << "Remaining: " << remainingBalls;
+        remainingBallWin->setText(ss3.str());
+        // remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        // remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
+        remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
+        gameScreen->addChild(remainingBallWin);
+
+        if (isMultiplayer) {
+            // Opponent Stroke counter
+            CEGUI::Window *oppTitle = wmgr.createWindow("TaharezLook/StaticText", "OppTitle");
+            oppTitle->setText("Opponent: ");
+            oppTitle->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            oppTitle->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
+
+            gameScreen->addChild(oppTitle);
+
+            // Opponent Stroke counter
+            CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
+            std::stringstream ss2;
+            ss2 << "Strokes: " << opponentStrokes;
+            oppStrokesWin->setText(ss2.str());
+            oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.6, 0)));
+
+            gameScreen->addChild(oppStrokesWin);
+
+            // Opponent Remaining Ball Counter
+            CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
+            std::stringstream ss4;
+            ss4 << "Remaining: " << oppRemainingBalls;
+            oppRemainingBallWin->setText(ss4.str());
+            oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
+            gameScreen->addChild(oppRemainingBallWin);
+        }
+
+        CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
+        youWin->setText("You Win!");
+        youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
+        youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
+
+        youWin->hide();
+        gameScreen->addChild(youWin);
+        
+    } else {
+        hideAllScreens();
+        sheet->getChild("GameScreen")->show();
+    }
+}
+
+
+void ThreeDPool::createMultiplayer(void)
+{
+    isMultiplayer = true;
+    createScene();
+}
+
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
+    gameStarted = true;
+
     //-------------basic setup stuff-----------------//
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
-    Ogre::Light* pointLight = mSceneMgr->createLight("PointLight");
-    pointLight->setType(Ogre::Light::LT_POINT);
-    pointLight->setDiffuseColour(1, 0.3, 0.3);
-    pointLight->setSpecularColour(0.3, 0.3, 1);
-    pointLight->setPosition(0, 0, 0);
+    setUpLighting();
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
 
-
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
-    cueBall = cueBallObject->getRigidBody();
+    cueBall = cueBallObject->getBody();
 
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
-    cueStick = cueStickObject->getRigidBody();
+    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap, cueBallObject->getNode());
+    cueStick = cueStickObject->getBody();
     
     cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
     btVector3 btPos = cueStick->getCenterOfMassPosition();
@@ -91,8 +547,34 @@ void ThreeDPool::createScene(void)
     addPockets();
     addBallPyramid();
     remainingBalls = balls.size();
+    oppRemainingBalls = remainingBalls;
     setUpGUI();
     setUpSounds();
+}
+
+void ThreeDPool::setUpLighting(void){
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    Ogre::Light* pointLight1 = mSceneMgr->createLight("PointLight1");
+    pointLight1->setType(Ogre::Light::LT_POINT);
+    pointLight1->setDiffuseColour(.4, .4, .4);
+    pointLight1->setSpecularColour(.4, .4, .4);
+    pointLight1->setPosition(0, 220, 460);
+    Ogre::Light* pointLight2 = mSceneMgr->createLight("PointLIght2");
+    pointLight2->setType(Ogre::Light::LT_POINT);
+    pointLight2->setDiffuseColour(.4, .4, .4);
+    pointLight2->setSpecularColour(.4, .4, .4);
+    pointLight2->setPosition(0, -220, 460);
+    Ogre::Light* pointLight3 = mSceneMgr->createLight("PointLIght3");
+    pointLight3->setType(Ogre::Light::LT_POINT);
+    pointLight3->setDiffuseColour(.4, .4, .4);
+    pointLight3->setSpecularColour(.4, .4, .4);
+    pointLight3->setPosition(0, 220, -460);
+    Ogre::Light* pointLight4 = mSceneMgr->createLight("PointLIght4");
+    pointLight4->setType(Ogre::Light::LT_POINT);
+    pointLight4->setDiffuseColour(.4, .4, .4);
+    pointLight4->setSpecularColour(.4, .4, .4);
+    pointLight4->setPosition(0, -220, -460);    
 }
 
 void ThreeDPool::setUpSounds(void){
@@ -112,62 +594,6 @@ void ThreeDPool::setUpSounds(void){
     playBGM();
 }
 
-void ThreeDPool::setUpGUI(void){
-    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
-    CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
-    CEGUI::Font::setDefaultResourceGroup("Fonts");
-    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
-    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
-    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-    
-    CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
-    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
-        
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    context.setRootWindow(sheet);
-    
-    CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
-    quit->setText("Quit");    
-        
-    // In UDim, only set one of the two params, the other should be 0
-    quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
-    
-    sheet->addChild(quit);
-    
-    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
-    quit->hide();
-    
-    // Stroke counter
-    CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
-    std::stringstream ss;
-    ss << "Strokes: " << strokes;
-    strokesWin->setText(ss.str());
-    strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
-    strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.9, 0)));
-    
-    sheet->addChild(strokesWin);
-            
-    // Remaining Ball Counter
-    CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
-    std::stringstream ss2;
-    ss2 << "Remaining: " << remainingBalls;
-    remainingBallWin->setText(ss2.str());
-    remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-    remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
-    sheet->addChild(remainingBallWin);
-    
-    CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
-    youWin->setText("You Win!");
-    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
-    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
-
-    sheet->addChild(youWin);
-    
-    youWin->hide();
-}
 
 void ThreeDPool::playBGM() {
     Mix_PlayChannel(-1, bgMusic, -1);
@@ -176,7 +602,7 @@ void ThreeDPool::playBGM() {
 
 void ThreeDPool::addBallPyramid() {
     // 1st Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
+    /*balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
     balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  -5, -255, "b2",  typeMap, pocketMap, "Example/Red"));
     balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,   5, -255, "b3",  typeMap, pocketMap, "Example/Red"));
     balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  15, -255, "b4",  typeMap, pocketMap, "Example/Red"));
@@ -213,7 +639,23 @@ void ThreeDPool::addBallPyramid() {
     // 4th Layer
     balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
 
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));*/
+    
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Blue"));
+
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -235, "b2", typeMap, pocketMap, "Example/Orange"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -235, "b3", typeMap, pocketMap, "Example/Purple"));
+    
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -245, "b4", typeMap, pocketMap, "Example/Black"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 10, -10, -245, "b5", typeMap, pocketMap, "Example/Red"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10, 10, -245, "b6", typeMap, pocketMap, "Example/GreenOther"));
+    
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -255, "b7", typeMap, pocketMap, "Example/Teal"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -255, "b8", typeMap, pocketMap, "Example/PinkPurple"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, 15, -15, -255, "b9", typeMap, pocketMap, "Example/Yellow"));
+    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, 15, -255, "b10", typeMap, pocketMap, "Example/BOrange"));
+
+    //balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "bTest", typeMap, pocketMap, "Example/GreenOther"));
 }
 
 void ThreeDPool::addPockets() {
@@ -260,18 +702,33 @@ void ThreeDPool::addPockets() {
 void ThreeDPool::incrementStrokeCount() {    
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* strokesWin = sheet->getChild("StrokeCount");
+    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("StrokeCount");
     std::stringstream ss;
     
     ++strokes;
     ss << "Strokes: " << strokes;
     strokesWin->setText(ss.str());
+    
+    if (isMultiplayer) {
+        if (isServer) {
+            std::stringstream ss2;
+            ss2 << "strokes " << strokes;
+            std::string msg = ss2.str();
+            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
+        else {
+            std::stringstream ss2;
+            ss2 << "strokes " << strokes;
+            std::string msg = ss2.str();
+            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
+    }
 }
 
 void ThreeDPool::decrementRemainingBallCount() {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* remainingBallWin = sheet->getChild("RemainingBalls");
+    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
     std::stringstream ss;
     
     if (soundOn)
@@ -281,8 +738,53 @@ void ThreeDPool::decrementRemainingBallCount() {
     ss << "Remaining: " << remainingBalls;
     remainingBallWin->setText(ss.str());
     
-    if (remainingBalls < 1) {
-        CEGUI::Window* youWin = sheet->getChild("YouWin");
+    if (remainingBalls < 1 && oppRemainingBalls > 0) {
+        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+        gameEnded = true;
+        youWin->show();
+    }
+    
+    if (isMultiplayer) {
+        if (isServer) {
+            std::stringstream ss2;
+            ss2 << "remaining " << remainingBalls;
+            std::string msg = ss2.str();
+            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
+        else {
+            std::stringstream ss2;
+            ss2 << "remaining " << remainingBalls;
+            std::string msg = ss2.str();
+            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+        }
+    }
+}
+
+void ThreeDPool::updateOppStrokeCount(int newVal) {    
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("OppStrokeCount");
+    std::stringstream ss;
+    
+    opponentStrokes = newVal;
+    ss << "Opp Strokes: " << opponentStrokes;
+    strokesWin->setText(ss.str());
+}
+
+void ThreeDPool::updateOppRemainingBallCount(int newVal) {
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
+    std::stringstream ss;
+      
+    oppRemainingBalls = newVal;
+    ss << "Opp Remaining: " << oppRemainingBalls;
+    remainingBallWin->setText(ss.str());
+    
+    if (oppRemainingBalls < 1 && remainingBalls > 0) {
+        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+        youWin->setText("You Lose!! :c");
+        gameEnded = true;
         youWin->show();
     }
 }
@@ -290,7 +792,7 @@ void ThreeDPool::decrementRemainingBallCount() {
 void ThreeDPool::displayQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* quit = sheet->getChild("QuitButton");
+    CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");
     
     context.getMouseCursor().show();
     quit->show();
@@ -299,7 +801,7 @@ void ThreeDPool::displayQuitCursor () {
 void ThreeDPool::hideQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* quit = sheet->getChild("QuitButton");
+    CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");
     
     context.getMouseCursor().hide();
     quit->hide();
@@ -359,11 +861,15 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             adjustingCamera = !adjustingCamera;
             break;
         case OIS::KC_ESCAPE :
-            if (!cursorDisplaying)
-                displayQuitCursor();
-            else 
-                hideQuitCursor();
-            cursorDisplaying = !cursorDisplaying;
+            if (gameStarted) {
+                if (!cursorDisplaying)
+                    displayQuitCursor();
+                else 
+                    hideQuitCursor();
+                cursorDisplaying = !cursorDisplaying;
+            } else {
+                mShutDown = true;
+            }
             break;
         case OIS::KC_Y:
             if (!soundOn) {
@@ -373,6 +879,19 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
             }
             soundOn = !soundOn;
             break;
+        case OIS::KC_N:
+            if (!isServer) {
+                std::string msg = "I am a client";
+                nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+                std::cout << "Sent " << msg << std::endl;
+            }
+            break;
+        case OIS::KC_M:
+            if (isServer) {
+                std::string msg = "I am a server";
+                nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+                std::cout << "Sent " << msg << std::endl;
+            }
     }
     return true;
 }
@@ -459,7 +978,6 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     return true;
 }
 
-
 bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
     if(mWindow->isClosed())
@@ -468,17 +986,134 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     if(mShutDown)
         return false;
 
+    if(isWaiting) {
+        if (isServer) {
+            if (nm->scanForActivity()) {
+                if (nm->getClients()){
+                    ClientData* data = nm->tcpClientData.front();
+                    
+                    if (std::string(data->output) == "Client Request") {
+                        std::string msg = "Server Response";
+                        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+                        isWaiting = false;
+                        createMultiplayer();
+                    }
+                }
+            }
+        } else {
+            if (nm->scanForActivity()) {
+                ClientData& data = nm->tcpServerData;
+                if (std::string(data.output) == "Server Response") {
+                    isWaiting = false;
+                    createMultiplayer();
+                }
+            } else {
+                std::string msg = "Client Request";
+                nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+            }
+        }
+           
+    }
+
     // Need to capture/update each device
     mKeyboard->capture();
     mMouse->capture();
 
     //Need to inject timestamps to CEGUI System.
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
+
+    if (gameStarted) {
+        if(gameEnded)
+           return true;
+
+        if (isMultiplayer)
+            networkLoop();
+        gameLoop(evt);
+        physicsLoop();
     
-    gameLoop(evt);
-    physicsLoop();
+        // if(frameCounter >= BALL_SPEED_SUM_FREQUENCY) {
+        //     frameCounter = 0;
+        //     updateBallSpeedSum();
+        // }    
+
+        // ++frameCounter;
+    }
+
 
     return true;
+}
+
+// void ThreeDPool::updateBallSpeedSum(void){
+//     ballSpeedSum = btVector3(0.f, 0.f, 0.f);
+//     for(Ball* curBall: balls){
+//         ballSpeedSum += curBall->getBody()->getLinearVelocity();
+//     }
+// }
+
+void ThreeDPool::networkLoop () {
+    if (isServer) {
+        if (nm->scanForActivity()) {
+            //ClientData& data = nm->tcpServerData;
+            if (nm->getClients()){
+                ClientData* data = nm->tcpClientData.front();
+
+                std::cout << "Rcvd " << std::string(data->output) << std::endl;
+                std::stringstream ss(data->output);
+                std::string key;
+                int val;
+                ss >> key >> val;
+                if (key == "remaining") {
+                    this->updateOppRemainingBallCount(val);
+                } else if (key == "strokes") {
+                    this->updateOppStrokeCount(val);
+                }
+                else if (key == "quit") {
+                    nm->stopServer();
+
+                    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+                    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+                    CEGUI::Window* sheet = context.getRootWindow();
+                    CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
+
+                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
+                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
+
+                    youWin->setText("Opponent Disconnected:\nYou Win!");
+                    gameEnded = true;
+                    youWin->show();
+                }
+            }
+        }
+    } else {
+        if (nm->scanForActivity()) {
+            ClientData& data = nm->tcpServerData;
+            std::cout << "Rcvd " << std::string(data.output) << std::endl;
+            std::stringstream ss(data.output);
+            std::string key;
+            int val;
+            ss >> key >> val;
+            if (key == "remaining") {
+                this->updateOppRemainingBallCount(val);
+            } else if (key == "strokes") {
+                this->updateOppStrokeCount(val);
+            }
+            else if (key == "quit") {
+                nm->stopClient();
+
+                CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+                CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+                CEGUI::Window* sheet = context.getRootWindow();
+                CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
+
+                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
+                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
+
+                youWin->setText("Opponent Disconnected:\nYou Win!");
+                gameEnded = true;
+                youWin->show();
+            }
+        }
+    }
 }
 
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
@@ -488,6 +1123,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
         
+        // bool ballsStopped = ballSpeedSum.length() < 0.1f;
         bool ballsStopped = true;
         
         bool done = cueStickObject->readjustStickToCueball(adjustingStick, ballsStopped);
@@ -574,8 +1210,7 @@ void ThreeDPool::physicsLoop()
                 const btRigidBody* body2 = btRigidBody::upcast(obB);
                 if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold) {
                     if (soundsToPlay-- > 0)
-                        if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
-                            std::cout << "No channels" << std::endl;
+                        Mix_PlayChannel(-1, ball_ball, 0);
                 }
             }
             else if((obAType == ballType && obBType == cueBallType) || (obBType == ballType && obAType == cueBallType)) {
@@ -583,8 +1218,7 @@ void ThreeDPool::physicsLoop()
                 const btRigidBody* body2 = btRigidBody::upcast(obB);
                 if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold)
                     if (soundsToPlay-- > 0)
-                        if (Mix_PlayChannel(-1, ball_ball, 0) == -1)
-                            std::cout << "No channels" << std::endl;
+                        Mix_PlayChannel(-1, ball_ball, 0);
             }
         }
         
@@ -614,6 +1248,14 @@ void ThreeDPool::physicsLoop()
 }
 
 bool ThreeDPool::quit (const CEGUI::EventArgs& e) {
+    std::string msg = "quit";
+    if (!isServer) {
+        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
+    else {
+        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+    }
+
     mShutDown = true;
     return true;
 }
@@ -624,8 +1266,6 @@ void ThreeDPool::createCamera(void){
     mCamera = pCamera->getCamera();
     mCamera->setPosition(Ogre::Vector3(200, 200, 200));
     mCamera->setNearClipDistance(1);
-
-    // mCamera->lookAt(Ogre::Vector3(50, 300, 300));
 }
 
 void ThreeDPool::cameraFollowStick(void)
@@ -634,6 +1274,14 @@ void ThreeDPool::cameraFollowStick(void)
     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
     mCamera->setPosition(cueStickPos + cameraOffset);
     mCamera->lookAt(cueStickPos);
+}
+
+bool ThreeDPool::configure() {
+    if(mRoot->showConfigDialog()) {
+        mWindow = mRoot->initialise(true, "3-D Pool");
+    } else {
+        return false;
+    }
 }
 
 //---------------------------------------------------------------------------

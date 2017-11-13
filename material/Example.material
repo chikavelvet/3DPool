@@ -6,9 +6,9 @@ material Example/Green
       {
          lighting on
  
-         ambient 0.10 0.43 0.09 1
-         diffuse 0.10 0.43 0.09 1
-	 specular 0.0 0.0 0.0 1
+         ambient 0.22 0.49 0.05 1
+         diffuse 0.22 0.49 0.05 1
+	      specular 0.0 0.0 0.0 1
          emissive 0 0 0 1
       }
    }
@@ -22,9 +22,9 @@ material Example/Wood
       {
          lighting on
  
-         ambient 0.57 0.46 0.2 1
-         diffuse 0.57 0.46 0.2 1
-	 specular 0.0 0.0 0.0 1
+         ambient 0.37 0.20 0.03 1
+         diffuse 0.37 0.20 0.03 1
+         specular 1 1 1 70
          emissive 0 0 0 1
       }
    }
@@ -56,7 +56,7 @@ material Example/Blue
 
          ambient 0.02 0.37 0.84 1
          diffuse 0.02 0.37 0.84 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
       }
    }
@@ -72,7 +72,7 @@ material Example/Red
 
          ambient 0.84 0.11 0.02 1
          diffuse 0.84 0.11 0.02 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
       }
    }
@@ -88,7 +88,7 @@ material Example/Yellow
 
          ambient 1.00 1.00 0.00 1
          diffuse 1.00 1.00 0.00 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
       }
    }
@@ -104,7 +104,7 @@ material Example/Purple
 
          ambient 0.46 0.02 0.72 1
          diffuse 0.46 0.02 0.72 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
       }
    }
@@ -120,7 +120,7 @@ material Example/Orange
 
          ambient 0.91 0.48 0.00 1
          diffuse 0.91 0.48 0.00 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
       }
    }
@@ -136,7 +136,7 @@ material Example/GreenOther
 
          ambient 0.02 0.70 0.00 1
          diffuse 0.02 0.70 0.00 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
       }
    }
@@ -152,8 +152,101 @@ material Example/White
 
          ambient 1 1 1 1
          diffuse 1 1 1 1
-         specular 0 0 0 1
+         specular 1 1 1 40
          emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Teal
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient .25 .76 .71 1
+         diffuse .25 .76 .71 1
+         specular 1 1 1 40
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/PinkPurple
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient .91 .05 .76 1
+         diffuse .91 .05 .76 1
+         specular 1 1 1 40
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/BOrange
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient .68 .33 .02 1
+         diffuse .68 .33 .02 1
+         specular 1 1 1 40
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Maroon
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient .45 .06 .06 1
+         diffuse .45 .06 .06 1
+         specular 1 1 1 40
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Black
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         ambient .01 .01 .01 1
+         diffuse .01 .01 .01 1
+         specular 1 1 1 40
+         emissive 0 0 0 1
+      }
+   }
+}
+
+material Example/Background
+{
+   technique
+   {
+      pass
+      {
+         lighting on
+
+         texture ThreeDPoolBackground.png
       }
    }
 }

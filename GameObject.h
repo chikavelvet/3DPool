@@ -13,11 +13,13 @@
 // #include "BaseApplication.h"
 #include "Simulator.h"
 #include "Enums.h"
+#include "ComponentNotFoundException.h"
 
-class Simulator;
 class CollisionContext;
 class BulletContactCallback;
-
+class PhysicsComponent;
+class GraphicsComponent;
+class Simulator;
 
 //const int cueBallType = 0,
 //          ballType    = 1,
@@ -29,7 +31,7 @@ class GameObject {
 protected:        
     GameObject ();
     
-    GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
+    GameObject (const Ogre::String& _name, Ogre::SceneManager* _sceneMgr,
             Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
             btScalar _restitution, btScalar _friction, 
             btScalar _linearDamping, btScalar _angularDamping,
@@ -38,9 +40,10 @@ protected:
     
     Ogre::String name;
     Ogre::SceneManager* sceneMgr;
-    Simulator* simulator;
     Ogre::SceneNode* rootNode;
     Ogre::Entity* geom;
+    
+    Simulator* simulator;
     btCollisionShape* shape;
     btScalar mass;
     // OgreMotionState* motionState;
@@ -61,13 +64,20 @@ protected:
 
     int collidesWith;
     collisionType coltype;
+    
+    PhysicsComponent* physics;
+    GraphicsComponent* graphics;
 public:
     void addToSimulator();
     void updateTransform();
-
-    btRigidBody* getBody(){ return body; }
-    Ogre::SceneNode* getNode() { return rootNode; }
-    void removeObject(void);
+    
+    virtual PhysicsComponent* getPhysics();
+    virtual GraphicsComponent* getGraphics();
+    
+    virtual btRigidBody* getBody(){ return body; }
+    virtual Ogre::SceneNode* getNode() { return rootNode; }
+    
+    virtual void removeObject(void);
 };
 
 #endif

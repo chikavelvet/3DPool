@@ -110,10 +110,14 @@ am_ThreeDPool_OBJECTS = ThreeDPool-Ball.$(OBJEXT) \
 	ThreeDPool-GameObject.$(OBJEXT) ThreeDPool-Overlay.$(OBJEXT) \
 	ThreeDPool-Player.$(OBJEXT) ThreeDPool-PlayerCamera.$(OBJEXT) \
 	ThreeDPool-PlayingField.$(OBJEXT) \
-	ThreeDPool-Simulator.$(OBJEXT) ThreeDPool-Wall.$(OBJEXT) \
-	ThreeDPool-BaseApplication.$(OBJEXT) \
+	ThreeDPool-Simulator.$(OBJEXT) ThreeDPool-Room.$(OBJEXT) \
+	ThreeDPool-Wall.$(OBJEXT) ThreeDPool-BaseApplication.$(OBJEXT) \
 	ThreeDPool-ThreeDPool.$(OBJEXT) ThreeDPool-Stick.$(OBJEXT) \
-	ThreeDPool-Pocket.$(OBJEXT)
+	ThreeDPool-Pocket.$(OBJEXT) ThreeDPool-NetManager.$(OBJEXT) \
+	ThreeDPool-Component.$(OBJEXT) \
+	ThreeDPool-PhysicsComponent.$(OBJEXT) \
+	ThreeDPool-GraphicsComponent.$(OBJEXT) \
+	ThreeDPool-ComponentNotFoundException.$(OBJEXT)
 ThreeDPool_OBJECTS = $(am_ThreeDPool_OBJECTS)
 am__DEPENDENCIES_1 =
 ThreeDPool_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -217,8 +221,6 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BULLET_CFLAGS = @BULLET_CFLAGS@
-BULLET_LIBS = @BULLET_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CEGUI_0_OGRE_CFLAGS = @CEGUI_0_OGRE_CFLAGS@
@@ -347,10 +349,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h
+noinst_HEADERS = Ball.h ControlListener.h Enums.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Room.h Wall.h BaseApplication.h ThreeDPool.h Stick.h Pocket.h NetManager.h Component.h PhysicsComponent.h GraphicsComponent.h ComponentNotFoundException.h
 ThreeDPool_CPPFLAGS = -I$(top_srcdir)
-ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp
-ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer
+ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp Overlay.cpp Player.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Room.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp Component.cpp PhysicsComponent.cpp GraphicsComponent.cpp ComponentNotFoundException.cpp
+ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS) -lSDL -lSDL_mixer -lSDL_net
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS)
 ThreeDPool_LDFLAGS = -lOgreOverlay -lboost_system -R/lusr/lib/cegui-0.8
 EXTRA_DIST = buildit makeit
@@ -470,13 +472,19 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Ball.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-BaseApplication.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Component.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-ControlListener.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-GameObject.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-GraphicsComponent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-NetManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Overlay.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-PhysicsComponent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Player.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-PlayerCamera.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-PlayingField.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Pocket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Room.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Simulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-Stick.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ThreeDPool-ThreeDPool.Po@am__quote@
@@ -615,6 +623,20 @@ ThreeDPool-Simulator.obj: Simulator.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Simulator.obj `if test -f 'Simulator.cpp'; then $(CYGPATH_W) 'Simulator.cpp'; else $(CYGPATH_W) '$(srcdir)/Simulator.cpp'; fi`
 
+ThreeDPool-Room.o: Room.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Room.o -MD -MP -MF $(DEPDIR)/ThreeDPool-Room.Tpo -c -o ThreeDPool-Room.o `test -f 'Room.cpp' || echo '$(srcdir)/'`Room.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Room.Tpo $(DEPDIR)/ThreeDPool-Room.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Room.cpp' object='ThreeDPool-Room.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Room.o `test -f 'Room.cpp' || echo '$(srcdir)/'`Room.cpp
+
+ThreeDPool-Room.obj: Room.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Room.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-Room.Tpo -c -o ThreeDPool-Room.obj `if test -f 'Room.cpp'; then $(CYGPATH_W) 'Room.cpp'; else $(CYGPATH_W) '$(srcdir)/Room.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Room.Tpo $(DEPDIR)/ThreeDPool-Room.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Room.cpp' object='ThreeDPool-Room.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Room.obj `if test -f 'Room.cpp'; then $(CYGPATH_W) 'Room.cpp'; else $(CYGPATH_W) '$(srcdir)/Room.cpp'; fi`
+
 ThreeDPool-Wall.o: Wall.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Wall.o -MD -MP -MF $(DEPDIR)/ThreeDPool-Wall.Tpo -c -o ThreeDPool-Wall.o `test -f 'Wall.cpp' || echo '$(srcdir)/'`Wall.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Wall.Tpo $(DEPDIR)/ThreeDPool-Wall.Po
@@ -684,6 +706,76 @@ ThreeDPool-Pocket.obj: Pocket.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Pocket.cpp' object='ThreeDPool-Pocket.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Pocket.obj `if test -f 'Pocket.cpp'; then $(CYGPATH_W) 'Pocket.cpp'; else $(CYGPATH_W) '$(srcdir)/Pocket.cpp'; fi`
+
+ThreeDPool-NetManager.o: NetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-NetManager.o -MD -MP -MF $(DEPDIR)/ThreeDPool-NetManager.Tpo -c -o ThreeDPool-NetManager.o `test -f 'NetManager.cpp' || echo '$(srcdir)/'`NetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-NetManager.Tpo $(DEPDIR)/ThreeDPool-NetManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NetManager.cpp' object='ThreeDPool-NetManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-NetManager.o `test -f 'NetManager.cpp' || echo '$(srcdir)/'`NetManager.cpp
+
+ThreeDPool-NetManager.obj: NetManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-NetManager.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-NetManager.Tpo -c -o ThreeDPool-NetManager.obj `if test -f 'NetManager.cpp'; then $(CYGPATH_W) 'NetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/NetManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-NetManager.Tpo $(DEPDIR)/ThreeDPool-NetManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NetManager.cpp' object='ThreeDPool-NetManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-NetManager.obj `if test -f 'NetManager.cpp'; then $(CYGPATH_W) 'NetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/NetManager.cpp'; fi`
+
+ThreeDPool-Component.o: Component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Component.o -MD -MP -MF $(DEPDIR)/ThreeDPool-Component.Tpo -c -o ThreeDPool-Component.o `test -f 'Component.cpp' || echo '$(srcdir)/'`Component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Component.Tpo $(DEPDIR)/ThreeDPool-Component.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Component.cpp' object='ThreeDPool-Component.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Component.o `test -f 'Component.cpp' || echo '$(srcdir)/'`Component.cpp
+
+ThreeDPool-Component.obj: Component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-Component.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-Component.Tpo -c -o ThreeDPool-Component.obj `if test -f 'Component.cpp'; then $(CYGPATH_W) 'Component.cpp'; else $(CYGPATH_W) '$(srcdir)/Component.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-Component.Tpo $(DEPDIR)/ThreeDPool-Component.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Component.cpp' object='ThreeDPool-Component.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-Component.obj `if test -f 'Component.cpp'; then $(CYGPATH_W) 'Component.cpp'; else $(CYGPATH_W) '$(srcdir)/Component.cpp'; fi`
+
+ThreeDPool-PhysicsComponent.o: PhysicsComponent.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-PhysicsComponent.o -MD -MP -MF $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo -c -o ThreeDPool-PhysicsComponent.o `test -f 'PhysicsComponent.cpp' || echo '$(srcdir)/'`PhysicsComponent.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo $(DEPDIR)/ThreeDPool-PhysicsComponent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PhysicsComponent.cpp' object='ThreeDPool-PhysicsComponent.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-PhysicsComponent.o `test -f 'PhysicsComponent.cpp' || echo '$(srcdir)/'`PhysicsComponent.cpp
+
+ThreeDPool-PhysicsComponent.obj: PhysicsComponent.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-PhysicsComponent.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo -c -o ThreeDPool-PhysicsComponent.obj `if test -f 'PhysicsComponent.cpp'; then $(CYGPATH_W) 'PhysicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/PhysicsComponent.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-PhysicsComponent.Tpo $(DEPDIR)/ThreeDPool-PhysicsComponent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PhysicsComponent.cpp' object='ThreeDPool-PhysicsComponent.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-PhysicsComponent.obj `if test -f 'PhysicsComponent.cpp'; then $(CYGPATH_W) 'PhysicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/PhysicsComponent.cpp'; fi`
+
+ThreeDPool-GraphicsComponent.o: GraphicsComponent.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-GraphicsComponent.o -MD -MP -MF $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo -c -o ThreeDPool-GraphicsComponent.o `test -f 'GraphicsComponent.cpp' || echo '$(srcdir)/'`GraphicsComponent.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo $(DEPDIR)/ThreeDPool-GraphicsComponent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GraphicsComponent.cpp' object='ThreeDPool-GraphicsComponent.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-GraphicsComponent.o `test -f 'GraphicsComponent.cpp' || echo '$(srcdir)/'`GraphicsComponent.cpp
+
+ThreeDPool-GraphicsComponent.obj: GraphicsComponent.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-GraphicsComponent.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo -c -o ThreeDPool-GraphicsComponent.obj `if test -f 'GraphicsComponent.cpp'; then $(CYGPATH_W) 'GraphicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/GraphicsComponent.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-GraphicsComponent.Tpo $(DEPDIR)/ThreeDPool-GraphicsComponent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GraphicsComponent.cpp' object='ThreeDPool-GraphicsComponent.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-GraphicsComponent.obj `if test -f 'GraphicsComponent.cpp'; then $(CYGPATH_W) 'GraphicsComponent.cpp'; else $(CYGPATH_W) '$(srcdir)/GraphicsComponent.cpp'; fi`
+
+ThreeDPool-ComponentNotFoundException.o: ComponentNotFoundException.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-ComponentNotFoundException.o -MD -MP -MF $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo -c -o ThreeDPool-ComponentNotFoundException.o `test -f 'ComponentNotFoundException.cpp' || echo '$(srcdir)/'`ComponentNotFoundException.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ComponentNotFoundException.cpp' object='ThreeDPool-ComponentNotFoundException.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-ComponentNotFoundException.o `test -f 'ComponentNotFoundException.cpp' || echo '$(srcdir)/'`ComponentNotFoundException.cpp
+
+ThreeDPool-ComponentNotFoundException.obj: ComponentNotFoundException.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -MT ThreeDPool-ComponentNotFoundException.obj -MD -MP -MF $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo -c -o ThreeDPool-ComponentNotFoundException.obj `if test -f 'ComponentNotFoundException.cpp'; then $(CYGPATH_W) 'ComponentNotFoundException.cpp'; else $(CYGPATH_W) '$(srcdir)/ComponentNotFoundException.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Tpo $(DEPDIR)/ThreeDPool-ComponentNotFoundException.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ComponentNotFoundException.cpp' object='ThreeDPool-ComponentNotFoundException.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ThreeDPool_CPPFLAGS) $(CPPFLAGS) $(ThreeDPool_CXXFLAGS) $(CXXFLAGS) -c -o ThreeDPool-ComponentNotFoundException.obj `if test -f 'ComponentNotFoundException.cpp'; then $(CYGPATH_W) 'ComponentNotFoundException.cpp'; else $(CYGPATH_W) '$(srcdir)/ComponentNotFoundException.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

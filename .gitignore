@@ -1,5 +1,5 @@
 ThreeDPool-*
-.deps/ThreeDPool-*
+.deps/*
 CEGUI.log
 Ogre.log
 ThreeDPool
@@ -8,3 +8,5 @@ config.log
 config.status
 nbproject/*
 ThreeDPool.config
+libtool
+Makefile

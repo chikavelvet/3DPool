@@ -1,6 +1,8 @@
-#pragma once
+#ifndef COLLISIONCONTEXT_H
+#define COLLISIONCONTEXT_H
 
 #include <btBulletDynamicsCommon.h>
+
 class GameObject;
 
 /*
@@ -82,3 +84,5 @@ struct BulletContactCallback : public btCollisionWorld::ContactResultCallback {
 		return 0;
 	}
 };
+
+#endif /* COLLISIONCONTEXT_H */

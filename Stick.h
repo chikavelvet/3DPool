@@ -2,6 +2,11 @@
 #define __Stick_h_
 
 #include "GameObject.h"
+#include <OgreParticleIterator.h>
+#include <OgreParticleSystem.h>
+#include <OgreParticleSystemManager.h>
+#include <OgreParticle.h>
+
 
 class GameObject;
 
@@ -11,13 +16,17 @@ private:
     float cueStickMin;
     float powerMultiplier;
     btRigidBody* cueBall;
+    Ogre::SceneNode* cueBallNode;
+    Ogre::ParticleSystem* guideLineParticle;
+    Ogre::SceneNode* guideLineNode;
+
 
 public:
     Stick(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
             btScalar x, btScalar y, btScalar z, 
             std::string _name, 
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
-            btRigidBody* _cueBall, std::map<size_t, objType> &typeMap);
+            btRigidBody* _cueBall, std::map<size_t, objType> &typeMap, Ogre::SceneNode* _cueBallNode);
 
     bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped);
 

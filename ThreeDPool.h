@@ -21,7 +21,12 @@ http://www.ogre3d.org/wiki/
 #include "BaseApplication.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+#include "NetManager.h"
 #include <map>
+#include <OgreParticleIterator.h>
+#include <OgreParticleSystem.h>
+#include <OgreParticleSystemManager.h>
+#include <OgreParticle.h>
 
 class PlayerCamera;
 //---------------------------------------------------------------------------
@@ -34,7 +39,13 @@ public:
 
 protected:
     virtual void createScene(void);
+    virtual void createMultiplayer(void);
+    virtual void createMainMenu();
+    virtual void initGUI(void);
+    virtual void createMPLobby(void);
     virtual void createCamera(void);
+    virtual bool setup(void);
+    virtual bool configure(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
     void setUpGUI(void);
@@ -42,6 +53,7 @@ protected:
 
     void gameLoop(const Ogre::FrameEvent& evt);
     void physicsLoop(void);
+    void networkLoop (void);
     void makeGround(void);
     void cameraFollowStick(void);
     
@@ -54,8 +66,18 @@ protected:
     void displayQuitCursor(void);
     void hideQuitCursor(void);
     
+    virtual void showEnterIPWindow(void);
+    virtual void hideEnterIPWindow(void);
+    virtual void startWaiting(void);
+    virtual void cancelWaiting(void);
+    virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
+    virtual void joinMultiplayer ();
+    virtual void hostMultiplayer ();
+    
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(void);
+    void updateOppStrokeCount(int newVal);
+    void updateOppRemainingBallCount(int newVal);
     
     void createFrameListener(void);
     
@@ -65,9 +87,22 @@ protected:
     
     bool quit (const CEGUI::EventArgs& e);
 
+    void hideAllScreens(void);
+
+    void setUpLighting(void);
+
+    void updateBallSpeedSum(void);
+
+    
+    bool guiInitialized;
+    bool mainMenuScreenCreated;
+    bool mpLobbyScreenCreated;
+    bool gameScreenCreated;
+    
     CEGUI::OgreRenderer* mRenderer;
         
     PlayerCamera* pCamera;
+    NetManager* nm;
     Simulator* physicsEngine;
     bool adjustingCamera;
     int cameraCounter;
@@ -81,8 +116,17 @@ protected:
     bool adjustingStick;
     bool cursorDisplaying;
     bool soundOn;
+    bool yourTurn;
+    bool gameStarted;
+    bool gameEnded;
+    
+    bool isMultiplayer;
+    bool isWaiting;
+    std::string hostName;
+    int port;
     
     int strokes;
+    int opponentStrokes;
 
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;
@@ -91,6 +135,9 @@ protected:
 
     std::map<size_t, objType> typeMap;
     std::map<Ogre::SceneNode*, Ball*> pocketMap;
+
+    btVector3 ballSpeedSum;
+    int frameCounter;
 };
 
 //---------------------------------------------------------------------------

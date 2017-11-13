@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject (Ogre::String _name, Ogre::SceneManager* _sceneMgr,
+GameObject::GameObject (const Ogre::String& _name, Ogre::SceneManager* _sceneMgr,
             Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
             btScalar _restitution, btScalar _friction, 
             btScalar _linearDamping, btScalar _angularDamping,
@@ -29,8 +29,7 @@ GameObject::GameObject ()
 }
 
 //Add the game object to the simulator
-void GameObject::addToSimulator() {
-	
+void GameObject::addToSimulator() {	
 	updateTransform();
 	
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
@@ -41,7 +40,8 @@ void GameObject::addToSimulator() {
 	rbInfo.m_restitution = restitution;
 	rbInfo.m_friction = friction;
 	body = new btRigidBody(rbInfo);
-	body->setUserPointer(rootNode);
+        if (rootNode)
+            body->setUserPointer(rootNode);
         body->setDamping(linearDamping, angularDamping);
 	
 	if (kinematic) {
@@ -62,4 +62,16 @@ void GameObject::updateTransform()
 void GameObject::removeObject (void) {
     simulator->getDynamicsWorld()->removeRigidBody(body);
     geom->setVisible(false);
+}
+
+PhysicsComponent* GameObject::getPhysics() {
+    if (!physics)
+        throw ComponentNotFoundException();
+    return physics;
+}
+
+GraphicsComponent* GameObject::getGraphics() {
+    if (!graphics)
+        throw ComponentNotFoundException();
+    return graphics;
 }

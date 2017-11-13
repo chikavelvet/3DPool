@@ -1,7 +1,14 @@
 # ThreeDPool : Casey, Rishi, Trey : User Manual
 
+## Setting the Game Up
+At the main menu screen, click *Single Player* to start a single player game. To play in multiplayer, click *Multi Player* to go to the multiplayer lobby. To host a game for a friend to join, click *Host Game*, and a screen will come up showing your IP address. To join a friend's game, click *Join Game*, and type in your friend's IP address and hit go!
+
 ## Objective
-There are 30 balls in the pool game. The objective is to knock them all into the pockets in the corners of the room, using as few strokes as possible. 
+*Single Player:*
+There are 10 balls in the pool game. The objective is to knock them all into the pockets in the corners of the room, using as few strokes as possible. 
+
+*Multiplayer:*
+Like Single Player, but you can see your opponents' stroke count and remaining balls. Knock yours in before they do!
 
 ## Controls
 **How To Play:**
