@@ -84,6 +84,12 @@ While playing single player, if someone else is playing on the same LAN, you wil
 to a multiplayer game. They will get the invite from you. Until they accept the invite, you can keep
 playing single-player. If they reject the invite, you will be notified.
 
+## Extra Feature: Our Own Art
+We are having trouble figuring out how to get striped cue balls and cue balls with numbers in ogre.
+We also feel that our cue stick, which is currently a rectangular prism, could look a lot nicer.
+Therefore, we are considering making these meshes in blender (if it is relatively easy) or finding
+free assets.
+
 # Team and Work Division
 We are keeping the same team as before (Rishi, Casey, and Trey). All of the features we are attempting to
 add are large-scale and will require lots of designing and programming. So we will try as much as possible
@@ -91,4 +97,4 @@ to use pair-programming and to not divide up roles. For now, all of us will work
 
 # Attack Plan
 We will start with implementing the core features which include the turn-based model for both single player and multiplayer, and
-the AI. After implementing these features, we can add on difficulty settings, and the passive multiplayer, which are extra features.
+the AI. After implementing these features, we can add on difficulty settings, passive multiplayer, and our own art which are extra features.
