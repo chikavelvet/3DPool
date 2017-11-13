@@ -1,3 +1,0 @@
-3dpool-ControlListener.o: ControlListener.cpp /usr/include/stdc-predef.h
-
-/usr/include/stdc-predef.h:
