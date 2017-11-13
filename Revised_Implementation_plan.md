@@ -9,13 +9,13 @@ Group: **No Good Devs**
 
 ## Core Feature: AI
 
-### General Idea
+##### General Idea
 We will build articial intelligence to play pool against the player in a turn-based game
 in the same environment. The player will be able to see the AI move the cue stick and hit
 the ball. On a tangential note, this turn-based change will also have to be applied to 
 multiplayer.
 
-### Greedy Algorithm
+##### Greedy Algorithm
 
 Our general idea is to make a greedy algorithm that decides
 which ball to hit into which pocket based on two heuristics:
@@ -25,7 +25,7 @@ which ball to hit into which pocket based on two heuristics:
 We found that these are the two most important factors that we think about when we
 play the game, and so we will use these two factors to build our AI to make it realistic.
 
-### Calculating Cue-Ball Hit Direction
+##### Calculating Cue-Ball Hit Direction
 After using our greedy algorithm to decide which ball to hit and which pocket to hit it
 into, we'll know *where on the chosen ball the cue ball must touch*. 
 
@@ -33,7 +33,7 @@ From this position, we can easily calculate the exact direction that we have to 
 the cue ball at. Then the AI just charges up the cue stick and hits the ball in the
 calculated direction.
 
-### Raycasts
+##### Raycasts
 We will perform two types of cylindrical raycasts to find clear shots.
 - Raycast between cue-ball and ball we want to hit
 - Raycast between ball we want to hit and pocket we want to hit into
@@ -43,11 +43,11 @@ that pass these raycasts.
 
 ## Extra Feature: Difficulty Settings
 
-### General Idea
+##### General Idea
 Because we are implementing AI, we will also implement difficulty settings for the AI.
 These settings will be easy, medium, hard, and adaptive. 
 
-### Implementation: Error Factor
+##### Implementation: Error Factor
 To implement these settings, we will have an error factor which will be increased as you
 go from hard to medium, and medium to easy. This error factor will be multilpied by a 
 random number, and the result will be added to the direction the AI wants to hit the 
@@ -58,7 +58,7 @@ All that will change is the precision of the shot. This makes the AI realistic,
 because generally speaking people of all skill levels will choose the same shot, 
 but some people will be more skilled and will be able to execute the shot more precisely. 
 
-### Adaptive Difficulty
+##### Adaptive Difficulty
 The adaptive setting will take into account the performance of the player as the game goes
 on and adjust the AI to easy, medium, or hard dynamically.
 
