@@ -66,12 +66,12 @@ void GameObject::removeObject (void) {
 
 PhysicsComponent* GameObject::getPhysics() {
     if (!physics)
-        throw ComponentNotFoundException();
+        throw ComponentNotFoundException("Physics");
     return physics;
 }
 
 GraphicsComponent* GameObject::getGraphics() {
     if (!graphics)
-        throw ComponentNotFoundException();
+        throw ComponentNotFoundException("Graphics");
     return graphics;
 }

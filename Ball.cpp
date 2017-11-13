@@ -16,15 +16,8 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
                           BallDefault::SCALE_FACTOR),
             "sphere.mesh", color);
             
-//    geom = sceneMgr->createEntity("sphere.mesh");
-//    geom->setMaterialName(color);
-//    
-//    rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-//    rootNode->attachObject(geom);
-//    rootNode->setPosition(x, y, z);
-//    rootNode->scale(0.05, 0.05, 0.05);
     
-    rootNode = getGraphics()->rootNode;
+    Ogre::SceneNode* rootNode = getGraphics()->rootNode;
     
     physics = new PhysicsComponent(this, _simulator, 
                 BallDefault::MASS, BallDefault::INERTIA, 
@@ -64,7 +57,7 @@ void Ball::removeFromWorld() {
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
         graph->geom->setVisible(false);
     } catch (ComponentNotFoundException& e) {
-        
+        std::cout << "ERROR: " << e.what() << " Ball::removeFromWorld()" << std::endl();
     }
 }
 
@@ -83,7 +76,7 @@ void Ball::resetCueBall() {
 
         phys->simulator->getDynamicsWorld()->addRigidBody(phys->body, phys->coltype, phys->collidesWith);
     } catch (ComponentNotFoundException& e) {
-        
+        std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
     }
 }
 
