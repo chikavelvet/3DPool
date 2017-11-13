@@ -50,13 +50,13 @@ These settings will be easy, medium, hard, and adaptive.
 ### Implementation: Error Factor
 To implement these settings, we will have an error factor which will be increased as you
 go from hard to medium, and medium to easy. This error factor will be multilpied by a 
-random number, and the result will be added to aiming position of the AI. The ball the AI
-chooses to hit will not change as difficulty settings change. All that will change is the
-precision of the shot. 
+random number, and the result will be added to the direction the AI wants to hit the 
+cue ball.
 
-This makes the AI realistic, because generally speaking people of all skill levels will
-choose the same shot, but some people will be more skilled and will be able to execute
-the shot more precisely. 
+The ball the AI chooses to hit will not change as difficulty settings change.
+All that will change is the precision of the shot. This makes the AI realistic, 
+because generally speaking people of all skill levels will choose the same shot, 
+but some people will be more skilled and will be able to execute the shot more precisely. 
 
 ### Adaptive Difficulty
 The adaptive setting will take into account the performance of the player as the game goes
