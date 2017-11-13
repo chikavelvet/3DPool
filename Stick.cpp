@@ -17,6 +17,13 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
         powerMultiplier(_powerMultiplier),
         cueBall(_cueBall), cueBallNode(_cueBallNode)
 {
+    graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
+            Ogre::Vector3(x, y, z),
+            Ogre::Vector3(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
+                          STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY,
+                          STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z),
+            "cube.mesh", "Example/Stick");
+    
     geom = sceneMgr->createEntity("cube.mesh");
     geom->setMaterialName("Example/Stick");
     

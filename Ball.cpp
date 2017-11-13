@@ -11,26 +11,24 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
 {    
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z), 
-            Ogre::Vector3(BallDefault::SCALE_FACTOR,
-                          BallDefault::SCALE_FACTOR,
-                          BallDefault::SCALE_FACTOR),
+            Ogre::Vector3(BALL_DEFAULT::GRAPHICS::SCALE_FACTOR,
+                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR,
+                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR),
             "sphere.mesh", color);
-            
     
     Ogre::SceneNode* rootNode = getGraphics()->rootNode;
     
     physics = new PhysicsComponent(this, _simulator, 
-                BallDefault::MASS, BallDefault::INERTIA, 
-                BallDefault::RESTITUTION, BallDefault::FRICTION,
-                BallDefault::LINEAR_DAMPING, BallDefault::ANGULAR_DAMPING,
-                BallDefault::KINEMATIC, BallDefault::NEEDS_UPDATES,
+                BALL_DEFAULT::PHYSICS::MASS, BALL_DEFAULT::PHYSICS::INERTIA, 
+                BALL_DEFAULT::PHYSICS::RESTITUTION, BALL_DEFAULT::PHYSICS::FRICTION,
+                BALL_DEFAULT::PHYSICS::LINEAR_DAMPING, BALL_DEFAULT::PHYSICS::ANGULAR_DAMPING,
+                BALL_DEFAULT::PHYSICS::KINEMATIC, BALL_DEFAULT::PHYSICS::NEEDS_UPDATES,
                 isCue ? COL_CUEBALL : COL_BALL, 
                 isCue ? COL_STICK   | COL_BALL | COL_WALL | COL_POCKET
                       : COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET,
-                btVector3(x, y, z), BallDefault::ROTATION,
-                new btSphereShape(BallDefault::RADIUS),
-                rootNode
-            );
+                btVector3(x, y, z), BALL_DEFAULT::PHYSICS::ROTATION,
+                new btSphereShape(BALL_DEFAULT::PHYSICS::RADIUS),
+                rootNode);
 
     typeMap[((size_t) rootNode)] = isCue ? cueBallType : ballType;
         
@@ -39,7 +37,7 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
     pocketMap[rootNode] = this;
     
     physics->addToSimulator();
-    physics->body->setRollingFriction(BallDefault::ROLLING_FRICTION);
+    physics->body->setRollingFriction(BALL_DEFAULT::ROLLING_FRICTION);
 }
 
 Ogre::Vector3 Ball::getPosition() {

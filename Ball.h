@@ -8,21 +8,26 @@
 
 class Simulator;
 
-namespace BallDefault {
-    const int          MASS = 5,
-                       RADIUS = 5;
-    const btVector3    INERTIA = btVector3(0, 0, 0);
-    const btQuaternion ROTATION = btQuaternion(0.0f, 0.0f, 0.0f, 1);
-    const float        RESTITUTION = 0.8,
-                       FRICTION = 1.0,
-                       ROLLING_FRICTION = 1.0,
-                       LINEAR_DAMPING = 0.05,
-                       ANGULAR_DAMPING = 0.05,
-                       SCALE_FACTOR = 0.05;
-    const bool         KINEMATIC = false,
-                       NEEDS_UPDATES = false;
-}
+namespace BALL_DEFAULT {
+    namespace PHYSICS {
+        const int          MASS = 5,
+                           RADIUS = 5;
+        const btVector3    INERTIA = btVector3(0, 0, 0);
+        const btQuaternion ROTATION = btQuaternion(0.0f, 0.0f, 0.0f, 1);
+        const float        RESTITUTION = 0.8,
+                           FRICTION = 1.0,
+                           ROLLING_FRICTION = 1.0,
+                           LINEAR_DAMPING = 0.05,
+                           ANGULAR_DAMPING = 0.05;
+        const bool         KINEMATIC = false,
+                           NEEDS_UPDATES = false;
+    }
     
+    namespace GRAPHICS {
+        const float SCALE_FACTOR = 0.05;
+    }
+}
+
 class Ball : public GameObject {
 protected:
     btScalar initialX, initialY, initialZ;
