@@ -89,4 +89,4 @@ to use pair-programming and to not divide up roles. For now, all of us will work
 
 # Attack Plan
 We will start with implementing the core features which include the turn-based model for both single player and multiplayer, and
-the AI. After implemeting these features, we can add on difficulty settings, and the passive multiplayer, which are extra features. 
+the AI. After implementing these features, we can add on difficulty settings, and the passive multiplayer, which are extra features. 
