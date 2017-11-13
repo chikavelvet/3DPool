@@ -5,6 +5,8 @@ Group: **No Good Devs**
 - *Rishi Amarnani*
 - *Trey Gonsoulin*
 
+(Same group as in past projects)
+
 # Features
 
 ## Core Feature: AI
