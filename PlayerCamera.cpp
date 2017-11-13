@@ -12,7 +12,7 @@ cam(_cam)
 
 bool PlayerCamera::moveCameraToStick (Stick* const cueStick) {
     Ogre::Vector3 stickPos = cueStick->getPosition();
-    Ogre::Quaternion stickDir = cueStick->getOgreSceneNode()->getOrientation();
+    Ogre::Quaternion stickDir = cueStick->getNode()->getOrientation();
     
     cam->setPosition(stickPos);
     cam->setOrientation(stickDir);

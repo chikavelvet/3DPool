@@ -5,7 +5,7 @@ GameObject::GameObject (const Ogre::String& _name, Ogre::SceneManager* _sceneMgr
             btScalar _restitution, btScalar _friction, 
             btScalar _linearDamping, btScalar _angularDamping,
             bool _kinematic, bool _needsUpdates,
-            collisionType _coltype, int _collidesWith) : 
+            collisionType _coltype, collisionType _collidesWith) : 
         name(_name),
         sceneMgr(_sceneMgr),
         simulator(_simulator),

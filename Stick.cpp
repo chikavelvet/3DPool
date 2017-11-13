@@ -1,5 +1,6 @@
 #include "Stick.h"
 #include "GraphicsComponent.h"
+#include "PhysicsComponent.h"
 
 Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Simulator* _simulator,
@@ -7,12 +8,6 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
              btRigidBody* _cueBall, std::map<size_t, objType> &typeMap, Ogre::SceneNode* _cueBallNode) :
-    GameObject(_name, _sceneMgr, _simulator,
-            10, btVector3(0, 0, 0),
-            1.0, 1.0, 
-            0.0, 1.0,
-            false, false,
-            COL_STICK, COL_CUEBALL),
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
@@ -26,20 +21,20 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
             STICK_DEFAULT::GRAPHICS::MESH, STICK_DEFAULT::GRAPHICS::MATERIAL);
     
     rootNode = graphics->rootNode;
-
-    shape = new btBoxShape(btVector3(1, 1, 23));
-    // shape = new btBoxShape(btVector3(100, 100, 23));
+    
+    physics = new PhysicsComponent(this, _simulator,
+            STICK_DEFAULT::PHYSICS::MASS, STICK_DEFAULT::PHYSICS::INERTIA,
+            STICK_DEFAULT::PHYSICS::RESTITUTION, STICK_DEFAULT::PHYSICS::FRICTION,
+            STICK_DEFAULT::PHYSICS::LINEAR_DAMPING, STICK_DEFAULT::PHYSICS::ANGULAR_DAMPING,
+            STICK_DEFAULT::PHYSICS::KINEMATIC, STICK_DEFAULT::PHYSICS::NEEDS_UPDATES,
+            STICK_DEFAULT::PHYSICS::COLTYPE, STICK_DEFAULT::PHYSICS::COLLIDES_WITH,
+            btVector3(x, y, z), STICK_DEFAULT::PHYSICS::ROTATION,
+            new btBoxShape(STICK_DEFAULT::PHYSICS::DIMENSIONS),
+            rootNode);
     
     typeMap[((size_t) rootNode)] = stickType;
-
-    tr.setIdentity();
-    tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-    tr.setOrigin(btVector3(x, y, z));
-        
-    // motionState = new OgreMotionState(tr, rootNode);
-    motionState = new btDefaultMotionState(tr);
     
-    addToSimulator();
+    physics->addToSimulator();
 
     guideLineParticle = sceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
     guideLineNode = rootNode->createChildSceneNode("Particle");
@@ -47,11 +42,11 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 }
 
 bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
-    bool cueStickStopped = (fabs(body->getLinearVelocity().length()) < 0.05f)
-                        && (fabs(body->getTotalForce().length()) < 0.05f);
+    bool cueStickStopped = body->getLinearVelocity().length() < 0.05f
+                        && body->getTotalForce().length() < 0.05f;
     
-    bool cueBallStopped = (fabs(cueBall->getLinearVelocity().length()) < 1.f)
-                       && (fabs(cueBall->getTotalForce().length()) < 1.f);
+    bool cueBallStopped = cueBall->getLinearVelocity().length() < 1.f
+                       && cueBall->getTotalForce().length() < 1.f;
     
     if (cueStickStopped) {
         simulator->getDynamicsWorld()->removeRigidBody(body);
@@ -215,4 +210,12 @@ void Stick::rotateToMouseYInput (float& deltaRotationY) {
 
 Ogre::Vector3 Stick::getPosition() {
     return rootNode->getPosition();
+}
+
+btRigidBody* Stick::getBody() {
+    return getPhysics()->body;
+}
+
+Ogre::SceneNode* Stick::getNode() {
+    return getGraphics()->rootNode;
 }

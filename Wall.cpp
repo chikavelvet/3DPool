@@ -15,7 +15,7 @@ Wall::Wall(Ogre::String _name, Ogre::SceneManager* _sceneMgr,
             1.0, 1.0,
             0.0, 0.0,
             false, false,
-            COL_WALL, COL_BALL | COL_CUEBALL)
+            COL_WALL, collisionType(COL_BALL | COL_CUEBALL))
 {
     // Leave all Entity/SceneNode stuff as default
     rootNode->setVisible(false);

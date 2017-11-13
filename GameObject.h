@@ -36,7 +36,7 @@ protected:
             btScalar _restitution, btScalar _friction, 
             btScalar _linearDamping, btScalar _angularDamping,
             bool _kinematic, bool _needsUpdates,
-            collisionType _coltype, int _collidesWith);
+            collisionType _coltype, collisionType _collidesWith);
     
     Ogre::String name;
     Ogre::SceneManager* sceneMgr;
@@ -62,7 +62,7 @@ protected:
     CollisionContext* context;
     BulletContactCallback* cCallBack;
 
-    int collidesWith;
+    collisionType collidesWith;
     collisionType coltype;
     
     PhysicsComponent* physics;

@@ -9,6 +9,11 @@
 class Simulator;
 
 namespace BALL_DEFAULT {
+    namespace GRAPHICS {
+        const float       SCALE_FACTOR_XYZ = 0.05;
+        const std::string MESH             = "sphere.mesh";
+    }
+    
     namespace PHYSICS {
         const int          MASS             = 5,
                            RADIUS           = 5;
@@ -21,11 +26,6 @@ namespace BALL_DEFAULT {
                            ANGULAR_DAMPING  = 0.05;
         const bool         KINEMATIC        = false,
                            NEEDS_UPDATES    = false;
-    }
-    
-    namespace GRAPHICS {
-        const float       SCALE_FACTOR_XYZ = 0.05;
-        const std::string MESH             = "sphere.mesh";
     }
 }
 

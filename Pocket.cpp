@@ -15,7 +15,7 @@ GameObject(_name, _sceneMgr, _simulator,
             0.0, 0.0,
             0.0, 0.0,
             false, false,
-            COL_POCKET, COL_CUEBALL | COL_BALL)
+            COL_POCKET, collisionType(COL_CUEBALL | COL_BALL))
 {    
     geom = sceneMgr->createEntity("sphere.mesh"); 
     geom->setMaterialName("Example/Purple");

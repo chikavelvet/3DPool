@@ -26,8 +26,8 @@ namespace WallDefault {
                         ANGULAR_DAMPING = 0.0;
     const bool          KINEMATIC = false,
                         NEEDS_UPDATES = false;
-    const collisionType COLTYPE = COL_WALL;
-    const int           COLLIDES_WITH = COL_BALL | COL_CUEBALL;
+    const collisionType COLTYPE = COL_WALL,
+                        COLLIDES_WITH = collisionType(COL_BALL | COL_CUEBALL);
 }
 
 class Wall : public GameObject {

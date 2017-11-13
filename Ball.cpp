@@ -23,9 +23,9 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
                 BALL_DEFAULT::PHYSICS::RESTITUTION, BALL_DEFAULT::PHYSICS::FRICTION,
                 BALL_DEFAULT::PHYSICS::LINEAR_DAMPING, BALL_DEFAULT::PHYSICS::ANGULAR_DAMPING,
                 BALL_DEFAULT::PHYSICS::KINEMATIC, BALL_DEFAULT::PHYSICS::NEEDS_UPDATES,
-                isCue ? COL_CUEBALL : COL_BALL, 
-                isCue ? COL_STICK   | COL_BALL | COL_WALL | COL_POCKET
-                      : COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET,
+                collisionType(isCue ? COL_CUEBALL : COL_BALL), 
+                isCue ? collisionType(COL_STICK   | COL_BALL | COL_WALL | COL_POCKET)
+                      : collisionType(COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET),
                 btVector3(x, y, z), BALL_DEFAULT::PHYSICS::ROTATION,
                 new btSphereShape(BALL_DEFAULT::PHYSICS::RADIUS),
                 rootNode);
@@ -37,7 +37,7 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
     pocketMap[rootNode] = this;
     
     physics->addToSimulator();
-    physics->body->setRollingFriction(BALL_DEFAULT::ROLLING_FRICTION);
+    physics->body->setRollingFriction(BALL_DEFAULT::PHYSICS::ROLLING_FRICTION);
 }
 
 Ogre::Vector3 Ball::getPosition() {
@@ -55,7 +55,7 @@ void Ball::removeFromWorld() {
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
         graph->geom->setVisible(false);
     } catch (ComponentNotFoundException& e) {
-        std::cout << "ERROR: " << e.what() << " Ball::removeFromWorld()" << std::endl();
+        std::cout << "ERROR: " << e.what() << " Ball::removeFromWorld()" << std::endl;
     }
 }
 

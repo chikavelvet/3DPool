@@ -27,7 +27,7 @@ public:
             btScalar _restitution, btScalar _friction,
             btScalar _linearDamping, btScalar _angularDamping,
             bool _kinematic, bool _needsUpdates,
-            collisionType _coltype, int _collidesWith,
+            collisionType _coltype, collisionType _collidesWith,
             btVector3 _origin, btQuaternion _rotation,
             btCollisionShape* _shape,
             void* _userPointer);
@@ -58,7 +58,7 @@ public:
     bool needsUpdates;
     
     collisionType coltype;
-    int collidesWith;
+    collisionType collidesWith;
 };
 
 #endif /* PHYSICSCOMPONENT_H */

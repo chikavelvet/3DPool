@@ -7,7 +7,6 @@
 #include <OgreParticleSystemManager.h>
 #include <OgreParticle.h>
 
-
 class GameObject;
 
 namespace STICK_DEFAULT {
@@ -16,6 +15,21 @@ namespace STICK_DEFAULT {
                           SCALE_FACTOR_Z  = 0.5;
         const std::string MESH            = "cube.mesh",
                           MATERIAL        = "Example/Stick";
+    }
+    
+    namespace PHYSICS {
+        const int           MASS            = 10;
+        const btVector3     DIMENSIONS      = btVector3(1, 1, 23),
+                            INERTIA         = btVector3(0, 0, 0);
+        const btQuaternion  ROTATION        = btQuaternion(0, 0, 0, 1);
+        const float         RESTITUTION     = 1.0,
+                            FRICTION        = 1.0,
+                            LINEAR_DAMPING  = 0.0,
+                            ANGULAR_DAMPING = 1.0;
+        const bool          KINEMATIC       = false, 
+                            NEEDS_UPDATES   = false;
+        const collisionType COLTYPE         = COL_STICK,
+                            COLLIDES_WITH   = COL_CUEBALL;
     }
 }
 
@@ -48,12 +62,9 @@ public:
     void rotateToMouseXInput(float& deltaRotationX);
 
     void rotateToMouseYInput(float& deltaRotationY);
-
-    btRigidBody* getRigidBody() { return body; }
-
-    Ogre::Entity* getOgreEntity(){ return geom; }
-
-    Ogre::SceneNode* getOgreSceneNode(){ return rootNode; }
+    
+    btRigidBody* getBody();
+    Ogre::SceneNode* getNode();
     
     Ogre::Vector3 getPosition();
 };
