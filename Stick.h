@@ -12,8 +12,10 @@ class GameObject;
 
 namespace STICK_DEFAULT {
     namespace GRAPHICS {
-        const float SCALE_FACTOR_XY = 0.01,
-                    SCALE_FACTOR_Z = 0.5;
+        const float       SCALE_FACTOR_XY = 0.01,
+                          SCALE_FACTOR_Z  = 0.5;
+        const std::string MESH            = "cube.mesh",
+                          MATERIAL        = "Example/Stick";
     }
 }
 

@@ -11,10 +11,10 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
 {    
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z), 
-            Ogre::Vector3(BALL_DEFAULT::GRAPHICS::SCALE_FACTOR,
-                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR,
-                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR),
-            "sphere.mesh", color);
+            Ogre::Vector3(BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
+                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
+                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ),
+            BALL_DEFAULT::GRAPHICS::MESH, color);
     
     Ogre::SceneNode* rootNode = getGraphics()->rootNode;
     

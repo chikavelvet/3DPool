@@ -1,4 +1,5 @@
 #include "Stick.h"
+#include "GraphicsComponent.h"
 
 Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Simulator* _simulator,
@@ -22,15 +23,9 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
             Ogre::Vector3(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
                           STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY,
                           STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z),
-            "cube.mesh", "Example/Stick");
+            STICK_DEFAULT::GRAPHICS::MESH, STICK_DEFAULT::GRAPHICS::MATERIAL);
     
-    geom = sceneMgr->createEntity("cube.mesh");
-    geom->setMaterialName("Example/Stick");
-    
-    rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-    rootNode->attachObject(geom);
-    rootNode->setPosition(x, y, z);
-    rootNode->scale(0.01, 0.01, 0.5);
+    rootNode = graphics->rootNode;
 
     shape = new btBoxShape(btVector3(1, 1, 23));
     // shape = new btBoxShape(btVector3(100, 100, 23));
