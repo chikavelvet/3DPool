@@ -62,6 +62,9 @@ but some people will be more skilled and will be able to execute the shot more p
 The adaptive setting will take into account the performance of the player as the game goes
 on and adjust the AI to easy, medium, or hard dynamically.
 
+Since we care about the performance of the player as the game goes on, we will consider the
+performance of the player to be equivalent to the number of balls hit in the last few shots. 
+
 ## Core Feature: Turn-based Multiplayer
 Currently our multiplayer runs two games separately and sends scores over the network. So
 when you start a network game, you are just racing against your opponent to see who can
