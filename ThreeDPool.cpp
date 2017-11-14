@@ -965,7 +965,7 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     switch(id)
     {
         case OIS::MB_Left:
-            cout << "Left" << endl;
+//            cout << "Left" << endl;
             LMBDown = true;
             break;
         case OIS::MB_Right:
