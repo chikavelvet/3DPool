@@ -43,7 +43,6 @@ private:
     Ogre::ParticleSystem* guideLineParticle;
     Ogre::SceneNode* guideLineNode;
 
-
 public:
     Stick(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
             btScalar x, btScalar y, btScalar z, 

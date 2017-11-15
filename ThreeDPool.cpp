@@ -1165,8 +1165,9 @@ void ThreeDPool::physicsLoop()
 {
     if (physicsEngine == NULL)
         return;
-
+    
     physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
+    /*
     int length = physicsEngine->getDynamicsWorld()->getCollisionObjectArray().size();
     for (int i = 0; i< length; i++) {
         btCollisionObject* obj = physicsEngine->getDynamicsWorld()->getCollisionObjectArray()[i];
@@ -1183,7 +1184,7 @@ void ThreeDPool::physicsLoop()
                 sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
             }
         }
-    }
+    }*/
 
     int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
     
