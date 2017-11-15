@@ -10,3 +10,7 @@ nbproject/*
 ThreeDPool.config
 libtool
 Makefile
+config.h
+configure
+Makefile.in
+
