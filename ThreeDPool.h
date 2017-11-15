@@ -28,6 +28,20 @@ http://www.ogre3d.org/wiki/
 #include <OgreParticleSystemManager.h>
 #include <OgreParticle.h>
 
+class GameObject;
+#include "Simulator.h"
+class Simulator; 
+#include "Ball.h"
+#include "Stick.h"
+#include "Room.h"
+#include "PlayerCamera.h"
+#include "Pocket.h"
+
+#include "Player.h"
+#include "ManualPlayer.h"
+#include "AIPlayer.h"
+#include "NetworkPlayer.h"
+
 class PlayerCamera;
 //---------------------------------------------------------------------------
 
@@ -125,8 +139,13 @@ protected:
     std::string hostName;
     int port;
     
+    bool isAI;
+    
     int strokes;
     int opponentStrokes;
+    
+    Player* player1;
+    Player* player2;
 
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;

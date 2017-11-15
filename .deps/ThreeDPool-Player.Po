@@ -1,3 +1,5 @@
-ThreeDPool-Player.o: Player.cpp /usr/include/stdc-predef.h
+ThreeDPool-Player.o: Player.cpp /usr/include/stdc-predef.h Player.h
 
 /usr/include/stdc-predef.h:
+
+Player.h:

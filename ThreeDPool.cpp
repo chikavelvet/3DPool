@@ -19,6 +19,9 @@ http://www.ogre3d.org/wiki/
 #include <fstream>
 
 #include "ThreeDPool.h"
+#include "ManualPlayer.h"
+#include "AIPlayer.h"
+#include "NetworkPlayer.h"
 
 Ogre::Vector3 cameraOffset;
 Stick* cueStickObject;
@@ -56,6 +59,7 @@ ThreeDPool::ThreeDPool(void) :
         pocketMap(),
         gameStarted(false),
         isMultiplayer(false),
+        isAI(false),
         guiInitialized(false),
         mainMenuScreenCreated(false),
         mpLobbyScreenCreated(false),
@@ -512,7 +516,6 @@ void ThreeDPool::setUpGUI(void) {
     }
 }
 
-
 void ThreeDPool::createMultiplayer(void)
 {
     isMultiplayer = true;
@@ -529,6 +532,17 @@ void ThreeDPool::createScene(void)
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
+    
+    // Set up Players //
+    player1 = new ManualPlayer();
+    
+    if (isMultiplayer)
+        if (isAI)
+            player2 = new AIPlayer();
+        else
+            player2 = new NetworkPlayer();
+    else
+        player2 = NULL;
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
     cueBall = cueBallObject->getBody();
@@ -1029,13 +1043,6 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
             networkLoop();
         gameLoop(evt);
         physicsLoop();
-    
-        // if(frameCounter >= BALL_SPEED_SUM_FREQUENCY) {
-        //     frameCounter = 0;
-        //     updateBallSpeedSum();
-        // }    
-
-        // ++frameCounter;
     }
 
 
