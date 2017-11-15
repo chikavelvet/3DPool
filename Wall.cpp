@@ -1,4 +1,4 @@
-//#include <OGRE/OgreMeshManager.h>
+#include <OGRE/OgreMeshManager.h>
 
 #include "Wall.h"
 #include "PhysicsComponent.h"
@@ -60,7 +60,7 @@ Wall::Wall(Simulator* _simulator, btVector3 _origin, Ogre::Vector3 normal,
             shape, NULL);
     
     physics->addToSimulator();
-    physics->body->setRollingFriction(WallDefault::ROLLING_FRICTION);
+    physics->body->setRollingFriction(WALL_DEFAULT::PHYSICS::ROLLING_FRICTION);
 }
 
 Wall::Wall(Ogre::String _name, 

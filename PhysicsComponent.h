@@ -19,6 +19,8 @@
 #include <btBulletDynamicsCommon.h>
 #include "Simulator.h"
 
+class Simulator;
+
 class PhysicsComponent : public Component {
 public:
     PhysicsComponent (GameObject* owner,

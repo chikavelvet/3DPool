@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 #include "Pocket.h"
+#include "GraphicsComponent.h"
+#include "PhysicsComponent.h"
 
 Pocket::Pocket(Ogre::SceneManager* _sceneMgr, 
         Simulator* _simulator, 
@@ -16,27 +18,34 @@ GameObject(_name, _sceneMgr, _simulator,
             0.0, 0.0,
             false, false,
             COL_POCKET, collisionType(COL_CUEBALL | COL_BALL))
-{    
-    geom = sceneMgr->createEntity("sphere.mesh"); 
-    geom->setMaterialName("Example/Purple");
-    
-    rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-    rootNode->attachObject(geom);
-    rootNode->setPosition(x, y, z);
-    rootNode->scale(0.27, 0.27, 0.27);
-    
+{   
+    graphics = new GraphicsComponent(this, _sceneMgr, _name,
+            Ogre::Vector3(x, y, z), 
+            Ogre::Vector3(
+                POCKET_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
+                POCKET_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
+                POCKET_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ),
+            POCKET_DEFAULT::GRAPHICS::MESH,
+            POCKET_DEFAULT::GRAPHICS::MATERIAL);
+
+    rootNode = graphics->rootNode;
     rootNode->setVisible(false);
     
-    shape = new btSphereShape(27);
+    physics = new PhysicsComponent(this, _simulator,
+            POCKET_DEFAULT::PHYSICS::MASS, 
+            POCKET_DEFAULT::PHYSICS::INERTIA,
+            POCKET_DEFAULT::PHYSICS::RESTITUTION, 
+            POCKET_DEFAULT::PHYSICS::FRICTION,
+            POCKET_DEFAULT::PHYSICS::LINEAR_DAMPING, 
+            POCKET_DEFAULT::PHYSICS::ANGULAR_DAMPING,
+            POCKET_DEFAULT::PHYSICS::KINEMATIC, 
+            POCKET_DEFAULT::PHYSICS::NEEDS_UPDATES,
+            POCKET_DEFAULT::PHYSICS::COLTYPE, 
+            POCKET_DEFAULT::PHYSICS::COLLIDES_WITH,
+            btVector3(x, y, z), POCKET_DEFAULT::PHYSICS::ROTATION,
+            new btSphereShape(27), 
+            rootNode);
        
     typeMap[((size_t) rootNode)] = pocketType;
-        
-    tr.setIdentity();
-    tr.setRotation(btQuaternion(0.0f, 0.0f, 0.0f, 1));
-    tr.setOrigin(btVector3(x, y, z));
-    
-    // motionState = new OgreMotionState(tr, rootNode);
-    motionState = new btDefaultMotionState(tr);
-    
-    addToSimulator();
+    physics->addToSimulator();
 }

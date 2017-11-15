@@ -7,6 +7,7 @@
 #include <string>
 #include "BulletContactCallback.h"
 #include "OgreMotionState.h"
+#include <OgreRoot.h>
 //#include "GameObject.h"
 #include "Enums.h"
 

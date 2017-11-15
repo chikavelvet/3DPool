@@ -14,11 +14,11 @@
 #include "Simulator.h"
 #include "Enums.h"
 #include "ComponentNotFoundException.h"
+#include "GraphicsComponent.h"
+#include "PhysicsComponent.h"
 
 class CollisionContext;
 class BulletContactCallback;
-class PhysicsComponent;
-class GraphicsComponent;
 class Simulator;
 
 //const int cueBallType = 0,
