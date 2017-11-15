@@ -1,4 +1,4 @@
-#include <OGRE/OgreMeshManager.h>
+//#include <OGRE/OgreMeshManager.h>
 
 #include "Wall.h"
 #include "PhysicsComponent.h"
@@ -51,12 +51,12 @@ Wall::Wall(Simulator* _simulator, btVector3 _origin, Ogre::Vector3 normal,
 
     physics = new PhysicsComponent(this,
             _simulator,
-            WallDefault::MASS, WallDefault::INERTIA,
-            WallDefault::RESTITUTION, WallDefault::FRICTION,
-            WallDefault::LINEAR_DAMPING, WallDefault::ANGULAR_DAMPING,
-            WallDefault::KINEMATIC, WallDefault::NEEDS_UPDATES,
-            WallDefault::COLTYPE, WallDefault::COLLIDES_WITH,
-            _origin, btQuaternion(0.0, 0.0, 0.0, 1), 
+            WALL_DEFAULT::PHYSICS::MASS, WALL_DEFAULT::PHYSICS::INERTIA,
+            WALL_DEFAULT::PHYSICS::RESTITUTION, WALL_DEFAULT::PHYSICS::FRICTION,
+            WALL_DEFAULT::PHYSICS::LINEAR_DAMPING, WALL_DEFAULT::PHYSICS::ANGULAR_DAMPING,
+            WALL_DEFAULT::PHYSICS::KINEMATIC, WALL_DEFAULT::PHYSICS::NEEDS_UPDATES,
+            WALL_DEFAULT::PHYSICS::COLTYPE, WALL_DEFAULT::PHYSICS::COLLIDES_WITH,
+            _origin, WALL_DEFAULT::PHYSICS::ROTATION, 
             shape, NULL);
     
     physics->addToSimulator();
@@ -81,10 +81,11 @@ Wall::Wall(Ogre::String _name,
             up);
     
     graphics = new GraphicsComponent(this,
-            _sceneMgr, _name, _position, Ogre::Vector3(1.0, 1.0, 1.0),
+            _sceneMgr, _name, _position, 
+            WALL_DEFAULT::GRAPHICS::SCALE,
             _name, color);
     
-    graphics->geom->setCastShadows(false);    
+    graphics->geom->setCastShadows(false);
 }
 
 Wall* Wall::MakePhysicalWall(Simulator* _simulator, 
