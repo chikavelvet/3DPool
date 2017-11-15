@@ -947,7 +947,7 @@ bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     
     // if(!BaseApplication::mouseReleased(me, id))
     //     return false;
-    if(fabs(cueStickTotal) > 0.1)
+    if(std::abs(cueStickTotal) > 0.1)
         if(id==OIS::MB_Left)
             hitBall = true;
     return true;
@@ -965,7 +965,6 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     switch(id)
     {
         case OIS::MB_Left:
-//            cout << "Left" << endl;
             LMBDown = true;
             break;
         case OIS::MB_Right:
@@ -1119,7 +1118,7 @@ void ThreeDPool::networkLoop () {
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
     if(adjustingStick) {
-        if(fabs(cueBall->getLinearVelocity().length())>0.01f){
+        if(std::abs(cueBall->getLinearVelocity().length())>0.01f){
             cueStick->setLinearVelocity(btVector3(0, 0, 0));
         }
         

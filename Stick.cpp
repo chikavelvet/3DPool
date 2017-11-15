@@ -170,7 +170,7 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
             btQuaternion q = body->getCenterOfMassTransform().getRotation();
             btVector3 direction = btMatrix3x3(q) * zAxis;
 
-            btVector3 movement = -direction * powerMultiplier * cueStickTotal * fabs(cueStickTotal);    
+            btVector3 movement = -direction * powerMultiplier * cueStickTotal * std::abs(cueStickTotal);    
 
             body->applyCentralForce(movement);
             adjustingStick = true;
