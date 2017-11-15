@@ -5,20 +5,20 @@
  */
 
 /* 
- * File:   Player.cpp
+ * File:   AIPlayer.cpp
  * Author: treyr3
  * 
- * Created on November 15, 2017, 5:16 PM
+ * Created on November 15, 2017, 5:19 PM
  */
 
-#include "Player.h"
+#include "AIPlayer.h"
 
-Player::Player() {
+AIPlayer::AIPlayer() {
 }
 
-Player::Player(const Player& orig) {
+AIPlayer::AIPlayer(const AIPlayer& orig) {
 }
 
-Player::~Player() {
+AIPlayer::~AIPlayer() {
 }
 

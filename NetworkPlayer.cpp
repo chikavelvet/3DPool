@@ -5,20 +5,20 @@
  */
 
 /* 
- * File:   Player.cpp
+ * File:   NetworkPlayer.cpp
  * Author: treyr3
  * 
- * Created on November 15, 2017, 5:16 PM
+ * Created on November 15, 2017, 5:18 PM
  */
 
-#include "Player.h"
+#include "NetworkPlayer.h"
 
-Player::Player() {
+NetworkPlayer::NetworkPlayer() {
 }
 
-Player::Player(const Player& orig) {
+NetworkPlayer::NetworkPlayer(const NetworkPlayer& orig) {
 }
 
-Player::~Player() {
+NetworkPlayer::~NetworkPlayer() {
 }
 

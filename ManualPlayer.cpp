@@ -5,20 +5,20 @@
  */
 
 /* 
- * File:   Player.cpp
+ * File:   ManualPlayer.cpp
  * Author: treyr3
  * 
- * Created on November 15, 2017, 5:16 PM
+ * Created on November 15, 2017, 5:19 PM
  */
 
-#include "Player.h"
+#include "ManualPlayer.h"
 
-Player::Player() {
+ManualPlayer::ManualPlayer() {
 }
 
-Player::Player(const Player& orig) {
+ManualPlayer::ManualPlayer(const ManualPlayer& orig) {
 }
 
-Player::~Player() {
+ManualPlayer::~ManualPlayer() {
 }
 
