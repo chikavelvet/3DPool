@@ -21,6 +21,8 @@ public:
     NetworkPlayer();
     NetworkPlayer(const NetworkPlayer& orig);
     virtual ~NetworkPlayer();
+    
+    virtual bool frameUpdate(const Ogre::FrameEvent& evt) {};
 private:
 
 };

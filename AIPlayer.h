@@ -21,6 +21,8 @@ public:
     AIPlayer();
     AIPlayer(const AIPlayer& orig);
     virtual ~AIPlayer();
+    
+    virtual bool frameUpdate(const Ogre::FrameEvent& evt) {};
 private:
 
 };

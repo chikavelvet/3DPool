@@ -14,13 +14,30 @@
 #ifndef MANUALPLAYER_H
 #define MANUALPLAYER_H
 
+#include <ois/OISKeyboard.h>
+#include <ois/OISMouse.h>
+
 #include "Player.h"
 
-class ManualPlayer : public Player {
+class ManualPlayer : public Player, public OIS::KeyListener, public OIS::MouseListener {
+protected:
+    virtual bool keyPressed(const OIS::KeyEvent &arg) {};
+    virtual bool keyReleased(const OIS::KeyEvent &arg) {};
+    virtual bool mouseMoved(const OIS::MouseEvent &arg) {};
+    virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
+    virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
+    
+    //OIS Input devices
+    OIS::InputManager*          mInputManager;
+    OIS::Mouse*                 mMouse;
+    OIS::Keyboard*              mKeyboard;
+    
 public:
     ManualPlayer();
     ManualPlayer(const ManualPlayer& orig);
     virtual ~ManualPlayer();
+    
+    virtual bool frameUpdate(const Ogre::FrameEvent& evt);
 private:
 
 };

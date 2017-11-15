@@ -22,3 +22,6 @@ ManualPlayer::ManualPlayer(const ManualPlayer& orig) {
 ManualPlayer::~ManualPlayer() {
 }
 
+bool ManualPlayer::frameUpdate(const Ogre::FrameEvent& evt) {
+    
+}

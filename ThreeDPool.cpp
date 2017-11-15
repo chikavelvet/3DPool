@@ -69,7 +69,9 @@ ThreeDPool::ThreeDPool(void) :
         isWaiting(false),
         ballSpeedSum(0, 0, 0),
         frameCounter(0),
-        gameEnded(false)
+        gameEnded(false),
+        player1(NULL),
+        player2(NULL)
 {
 }
 //---------------------------------------------------------------------------
@@ -1031,6 +1033,11 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     // Need to capture/update each device
     mKeyboard->capture();
     mMouse->capture();
+    
+    if (player1)
+        player1->frameUpdate(evt);
+    if (player2)
+        player2->frameUpdate(evt);
 
     //Need to inject timestamps to CEGUI System.
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);

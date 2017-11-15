@@ -14,11 +14,15 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <OgreFrameListener.h>
+
 class Player {
 public:
     Player();
     Player(const Player& orig);
     virtual ~Player();
+    
+    virtual bool frameUpdate(const Ogre::FrameEvent& evt) = 0;
 private:
 
 };
