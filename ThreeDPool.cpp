@@ -536,7 +536,7 @@ void ThreeDPool::createScene(void)
     physicsEngine->initObjects();
     
     // Set up Players //
-    player1 = new ManualPlayer();
+    player1 = new ManualPlayer(mWindow);
     
     if (isMultiplayer)
         if (isAI)
@@ -1033,21 +1033,20 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     // Need to capture/update each device
     mKeyboard->capture();
     mMouse->capture();
-    
-    if (player1)
-        player1->frameUpdate(evt);
-    if (player2)
-        player2->frameUpdate(evt);
 
     //Need to inject timestamps to CEGUI System.
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
     if (gameStarted) {
         if(gameEnded)
-           return true;
+           return true;    
+        
+        player1->frameUpdate(evt);
 
-        if (isMultiplayer)
+        if (isMultiplayer) {
+            player2->frameUpdate(evt);
             networkLoop();
+        }
         gameLoop(evt);
         physicsLoop();
     }

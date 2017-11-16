@@ -16,6 +16,7 @@
 
 #include <ois/OISKeyboard.h>
 #include <ois/OISMouse.h>
+#include <ois/OISInputManager.h>
 
 #include "Player.h"
 
@@ -27,13 +28,17 @@ protected:
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
     virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
     
+    void setUpInputListener(void);
+    
+    Ogre::RenderWindow* mWindow;
+    
     //OIS Input devices
     OIS::InputManager*          mInputManager;
     OIS::Mouse*                 mMouse;
     OIS::Keyboard*              mKeyboard;
     
 public:
-    ManualPlayer();
+    ManualPlayer(Ogre::RenderWindow* _mWindow);
     ManualPlayer(const ManualPlayer& orig);
     virtual ~ManualPlayer();
     
