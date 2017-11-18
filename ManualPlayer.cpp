@@ -14,10 +14,8 @@
 #include "ManualPlayer.h"
 #include <OgreRenderWindow.h>
 
-ManualPlayer::ManualPlayer(Ogre::RenderWindow* _mWindow) :
-    mWindow(_mWindow)
+ManualPlayer::ManualPlayer()
 {
-    setUpInputListener();
 }
 
 ManualPlayer::ManualPlayer(const ManualPlayer& orig) {
@@ -27,24 +25,23 @@ ManualPlayer::~ManualPlayer() {
 }
 
 void ManualPlayer::setUpInputListener() {       
-    OIS::ParamList pl;
-    size_t windowHnd = 0;
-    std::ostringstream windowHndStr;
+    // OIS::ParamList pl;
+    // size_t windowHnd = 0;
+    // std::ostringstream windowHndStr;
  
-    mWindow->getCustomAttribute("WINDOW", &windowHnd);
-    windowHndStr << windowHnd;
-    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+    // mWindow->getCustomAttribute("WINDOW", &windowHnd);
+    // windowHndStr << windowHnd;
+    // pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
     
-    mInputManager = OIS::InputManager::createInputSystem( pl );
+    // mInputManager = OIS::InputManager::createInputSystem( pl );
     
-    mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, true ));
-    mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject( OIS::OISMouse, true ));
+    // mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, true ));
+    // mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject( OIS::OISMouse, true ));
     
-    mMouse->setEventCallback(this);
-    mKeyboard->setEventCallback(this);
+    // mMouse->setEventCallback(this);
+    // mKeyboard->setEventCallback(this);
 }
 
 bool ManualPlayer::frameUpdate(const Ogre::FrameEvent& evt) {
-    mKeyboard->capture();
-    mMouse->capture();
+    
 }

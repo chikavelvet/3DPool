@@ -536,7 +536,7 @@ void ThreeDPool::createScene(void)
     physicsEngine->initObjects();
     
     // Set up Players //
-    player1 = new ManualPlayer(mWindow);
+    player1 = new ManualPlayer();
     
     if (isMultiplayer)
         if (isAI)
@@ -855,6 +855,12 @@ bool ThreeDPool::keyPressed(const OIS::KeyEvent& arg) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectKeyDown((CEGUI::Key::Scan)arg.key);
     context.injectChar((CEGUI::Key::Scan)arg.text);
+
+    if (player1)
+        player1->keyPressed(arg);
+    if (player2)
+        player2->keyPressed(arg);
+
     return true;
 }
 
@@ -865,6 +871,11 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
     if (!BaseApplication::keyReleased(arg))
         return false;
     
+    if (player1)
+        player1->keyReleased(arg);
+    if (player2)
+        player2->keyReleased(arg);
+
     switch(arg.key) {
         case OIS::KC_T :
             if (!adjustingCamera){
@@ -916,6 +927,12 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
     // CEGUI Injection
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectMouseMove(me.state.X.rel, me.state.Y.rel);
+
+    if (player1)
+        player1->mouseMoved(me);
+    if (player2)
+        player2->mouseMoved(me);
+
     // Scroll wheel.
     if (me.state.Z.rel)
         context.injectMouseWheelChange(me.state.Z.rel / 120.0f);
@@ -961,6 +978,11 @@ bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     // CEGUI Injection
     CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertButton(id));
     
+    if (player1)
+        player1->mouseReleased(me, id);
+    if (player2)
+        player2->mouseReleased(me, id);
+
     // if(!BaseApplication::mouseReleased(me, id))
     //     return false;
     if(std::abs(cueStickTotal) > 0.1)
@@ -976,6 +998,11 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     
     if(!BaseApplication::mousePressed(me, id))
         return false;
+
+    if (player1)
+        player1->mousePressed(me, id);
+    if (player2)
+        player2->mousePressed(me, id);
 
     using namespace std;
     switch(id)

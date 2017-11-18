@@ -20,25 +20,18 @@
 
 #include "Player.h"
 
-class ManualPlayer : public Player, public OIS::KeyListener, public OIS::MouseListener {
+class ManualPlayer : public Player {
 protected:
-    virtual bool keyPressed(const OIS::KeyEvent &arg) {};
-    virtual bool keyReleased(const OIS::KeyEvent &arg) {};
-    virtual bool mouseMoved(const OIS::MouseEvent &arg) {};
-    virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
-    virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {};
+    virtual bool keyPressed(const OIS::KeyEvent &arg) {}
+    virtual bool keyReleased(const OIS::KeyEvent &arg) {}
+    virtual bool mouseMoved(const OIS::MouseEvent &arg) {}
+    virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {}
+    virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {}
     
     void setUpInputListener(void);
-    
-    Ogre::RenderWindow* mWindow;
-    
-    //OIS Input devices
-    OIS::InputManager*          mInputManager;
-    OIS::Mouse*                 mMouse;
-    OIS::Keyboard*              mKeyboard;
-    
+        
 public:
-    ManualPlayer(Ogre::RenderWindow* _mWindow);
+    ManualPlayer();
     ManualPlayer(const ManualPlayer& orig);
     virtual ~ManualPlayer();
     
