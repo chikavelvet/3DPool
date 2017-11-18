@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -27,10 +27,7 @@ protected:
     virtual bool mouseMoved(const OIS::MouseEvent &me);
     virtual bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id) {}
     virtual bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
-
-
-    void setUpInputListener(void);
-        
+    
 public:
     ManualPlayer();
     ManualPlayer(const ManualPlayer& orig);

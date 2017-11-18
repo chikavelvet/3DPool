@@ -24,28 +24,9 @@ ManualPlayer::ManualPlayer(const ManualPlayer& orig) {
 ManualPlayer::~ManualPlayer() {
 }
 
-void ManualPlayer::setUpInputListener() {       
-    // OIS::ParamList pl;
-    // size_t windowHnd = 0;
-    // std::ostringstream windowHndStr;
- 
-    // mWindow->getCustomAttribute("WINDOW", &windowHnd);
-    // windowHndStr << windowHnd;
-    // pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
-    
-    // mInputManager = OIS::InputManager::createInputSystem( pl );
-    
-    // mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, true ));
-    // mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject( OIS::OISMouse, true ));
-    
-    // mMouse->setEventCallback(this);
-    // mKeyboard->setEventCallback(this);
-}
-
 bool ManualPlayer::frameUpdate(const Ogre::FrameEvent& evt) {
 
 }
-
 
 bool ManualPlayer::mouseMoved(const OIS::MouseEvent &me) {
     if(me.state.buttonDown(OIS::MB_Left))

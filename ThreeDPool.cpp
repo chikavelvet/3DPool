@@ -1174,6 +1174,8 @@ void ThreeDPool::networkLoop () {
     }
 }
 
+static bool needToUpdateCamera = false;
+
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
     if (player1Turn) {
@@ -1224,7 +1226,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
     }
     else {
         cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
-        pCamera->moveCameraToStick(cueStickObject);
+        needToUpdateCamera = true;
         cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
     }
 }
@@ -1235,6 +1237,10 @@ void ThreeDPool::physicsLoop()
         return;
     
     physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
+    if (needToUpdateCamera) {
+        pCamera->moveCameraToStick(cueStickObject);
+        needToUpdateCamera = false;
+    }
     /*
     int length = physicsEngine->getDynamicsWorld()->getCollisionObjectArray().size();
     for (int i = 0; i< length; i++) {
