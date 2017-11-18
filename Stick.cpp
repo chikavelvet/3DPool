@@ -134,7 +134,7 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
                 cueStickDelta = cueStickMax - cueStickTotal;
 
             if (cueStickTotal + cueStickDelta < cueStickMin) {
-                std::cout << "Below Minimum" << std::endl;
+                std::cout << "Below Minimum Wage" << std::endl;
                 cueStickTotal = cueStickMin;
                 cueStickDelta = 0.0f;
                 return;

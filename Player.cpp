@@ -13,7 +13,12 @@
 
 #include "Player.h"
 
-Player::Player() {
+Player::Player() :
+    cueStickDelta(0),
+    cueStickRotationX(0),
+    cueStickRotationY(0),
+    hitBall(false)
+{
 }
 
 Player::Player(const Player& orig) {
@@ -22,3 +27,14 @@ Player::Player(const Player& orig) {
 Player::~Player() {
 }
 
+bool Player::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hb) {
+    csd = cueStickDelta;
+    csrx = cueStickRotationX;
+    csry = cueStickRotationY;
+    hb = hitBall;
+    cueStickDelta = 0;
+    cueStickRotationX = 0;
+    cueStickRotationY = 0;
+    hitBall = false;
+    return true;
+}

@@ -130,7 +130,7 @@ protected:
     bool adjustingStick;
     bool cursorDisplaying;
     bool soundOn;
-    bool yourTurn;
+    bool player1Turn;
     bool gameStarted;
     bool gameEnded;
     

@@ -71,7 +71,8 @@ ThreeDPool::ThreeDPool(void) :
         frameCounter(0),
         gameEnded(false),
         player1(NULL),
-        player2(NULL)
+        player2(NULL),
+        player1Turn(true)
 {
 }
 //---------------------------------------------------------------------------
@@ -928,28 +929,19 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectMouseMove(me.state.X.rel, me.state.Y.rel);
 
-    if (player1)
-        player1->mouseMoved(me);
-    if (player2)
-        player2->mouseMoved(me);
-
     // Scroll wheel.
     if (me.state.Z.rel)
         context.injectMouseWheelChange(me.state.Z.rel / 120.0f);
 
     if (!BaseApplication::mouseMoved(me))
         return false;
+
+    if (player1)
+        player1->mouseMoved(me);
+    if (player2)
+        player2->mouseMoved(me);
     
-    if (!adjustingCamera) {
-        if(me.state.buttonDown(OIS::MB_Left))
-        {
-            cueStickDelta = me.state.Y.rel * 0.05;
-        }
-        else{
-            cueStickRotationX = 0.01 * me.state.X.rel;
-            cueStickRotationY = 0.01 * me.state.Y.rel;
-        }
-    } else {
+    if (adjustingCamera) {
        mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
        mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
     }
@@ -985,9 +977,11 @@ bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
 
     // if(!BaseApplication::mouseReleased(me, id))
     //     return false;
-    if(std::abs(cueStickTotal) > 0.1)
-        if(id==OIS::MB_Left)
-            hitBall = true;
+
+    // if(std::abs(cueStickTotal) > 0.1)
+    //     if(id==OIS::MB_Left)
+    //         hitBall = true;
+
     return true;
 }
 
@@ -1157,6 +1151,12 @@ void ThreeDPool::networkLoop () {
 
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
+    if (player1Turn) {
+        player1->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+    } else {
+        player2->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+    }
+
     if(adjustingStick) {
         if(std::abs(cueBall->getLinearVelocity().length())>0.01f){
             cueStick->setLinearVelocity(btVector3(0, 0, 0));

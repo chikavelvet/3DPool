@@ -22,7 +22,7 @@ public:
     AIPlayer(const AIPlayer& orig);
     virtual ~AIPlayer();
     
-    virtual bool frameUpdate(const Ogre::FrameEvent& evt) {};
+    virtual bool frameUpdate(const Ogre::FrameEvent& evt) {}
 private:
 
 };

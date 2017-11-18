@@ -21,6 +21,12 @@
 #include <ois/OISInputManager.h>
 
 class Player {
+protected:
+    float cueStickDelta;
+    float cueStickRotationX;
+    float cueStickRotationY;
+    bool hitBall;
+
 public:
     Player();
     Player(const Player& orig);
@@ -28,11 +34,12 @@ public:
 
     virtual bool keyPressed(const OIS::KeyEvent &arg) {}
     virtual bool keyReleased(const OIS::KeyEvent &arg) {}
-    virtual bool mouseMoved(const OIS::MouseEvent &arg) {}
-    virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {}
-    virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {}
+    virtual bool mouseMoved(const OIS::MouseEvent &me) {}
+    virtual bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id) {}
+    virtual bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id) {}
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) = 0;
+    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
 private:
 
 };
