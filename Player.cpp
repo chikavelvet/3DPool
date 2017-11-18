@@ -38,3 +38,11 @@ bool Player::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hb)
     hitBall = false;
     return true;
 }
+
+bool Player::endCurrentTurn(void){
+    cueStickDelta = 0;
+    cueStickRotationX = 0;
+    cueStickRotationY = 0;
+    hitBall = false;
+    return true;    
+}

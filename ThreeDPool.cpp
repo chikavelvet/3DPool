@@ -476,7 +476,7 @@ void ThreeDPool::setUpGUI(void) {
         remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
         gameScreen->addChild(remainingBallWin);
 
-        if (isMultiplayer) {
+        // if (isMultiplayer) {
             // Opponent Stroke counter
             CEGUI::Window *oppTitle = wmgr.createWindow("TaharezLook/StaticText", "OppTitle");
             oppTitle->setText("Opponent: ");
@@ -503,7 +503,7 @@ void ThreeDPool::setUpGUI(void) {
             oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
             oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
             gameScreen->addChild(oppRemainingBallWin);
-        }
+        // }
 
         CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
         youWin->setText("You Win!");
@@ -525,6 +525,12 @@ void ThreeDPool::createMultiplayer(void)
     createScene();
 }
 
+void ThreeDPool::endCurrentTurn(void){
+    player1Turn = !player1Turn;
+    player1->endCurrentTurn();
+    player2->endCurrentTurn();
+}
+
 //---------------------------------------------------------------------------
 void ThreeDPool::createScene(void)
 {
@@ -538,14 +544,15 @@ void ThreeDPool::createScene(void)
     
     // Set up Players //
     player1 = new ManualPlayer();
+    player2 = new ManualPlayer();
     
     if (isMultiplayer)
         if (isAI)
             player2 = new AIPlayer();
         else
             player2 = new NetworkPlayer();
-    else
-        player2 = NULL;
+    // else
+    //     player2 = NULL;
 
     cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
     cueBall = cueBallObject->getBody();
@@ -719,12 +726,19 @@ void ThreeDPool::addPockets() {
 void ThreeDPool::incrementStrokeCount() {    
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("StrokeCount");
     std::stringstream ss;
     
-    ++strokes;
-    ss << "Strokes: " << strokes;
-    strokesWin->setText(ss.str());
+    if (player1Turn) {
+        CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("StrokeCount");
+        ++strokes;
+        ss << "Strokes: " << strokes;
+        strokesWin->setText(ss.str());
+    } else {
+        CEGUI::Window* oppStrokesWin = sheet->getChild("GameScreen")->getChild("OppStrokeCount");
+        ++opponentStrokes;
+        ss << "Opp Strokes: " << opponentStrokes;
+        oppStrokesWin->setText(ss.str());
+    }
     
     if (isMultiplayer) {
         if (isServer) {
@@ -745,20 +759,31 @@ void ThreeDPool::incrementStrokeCount() {
 void ThreeDPool::decrementRemainingBallCount() {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
     std::stringstream ss;
     
     if (soundOn)
         Mix_PlayChannel(-1, pocket, 0);
     
-    --remainingBalls;
-    ss << "Remaining: " << remainingBalls;
-    remainingBallWin->setText(ss.str());
+    if (player1Turn) {
+        CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
+        --remainingBalls;
+        ss << "Remaining: " << remainingBalls;
+        remainingBallWin->setText(ss.str());
+    } else {
+        CEGUI::Window* oppRemainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
+        --oppRemainingBalls;
+        ss << "Opp Remaining: " << oppRemainingBalls;
+        oppRemainingBallWin->setText(ss.str());
+    }
     
     if (remainingBalls < 1 && oppRemainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("Player 1 Wins!");
         gameEnded = true;
         youWin->show();
+    } else if (oppRemainingBalls < 1 && remainingBalls > 0) {
+        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("Player 2 Wins");
+        gameEnded = true;
+        youWin->show();  
     }
     
     if (isMultiplayer) {
@@ -1166,7 +1191,10 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         bool ballsStopped = true;
         
         bool done = cueStickObject->readjustStickToCueball(adjustingStick, ballsStopped);
-        if (done) cameraFollowStick();
+        if (done){
+            endCurrentTurn();
+            cameraFollowStick();   
+        } 
 
         // adjustingCamera = true;
     } else if(adjustingCamera){

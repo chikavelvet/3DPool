@@ -40,6 +40,7 @@ public:
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) = 0;
     virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
+    virtual bool endCurrentTurn(void);
 private:
 
 };

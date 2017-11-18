@@ -107,6 +107,8 @@ protected:
 
     void updateBallSpeedSum(void);
 
+    void endCurrentTurn(void);
+
     
     bool guiInitialized;
     bool mainMenuScreenCreated;
