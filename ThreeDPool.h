@@ -52,8 +52,12 @@ class ThreeDPool : public BaseApplication
 public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
+    
+    int redBallsRemaining;
+    int blueBallsRemaining;
 
 protected:
+    friend class GUIManager;
     virtual void createScene(void);
     virtual void createMultiplayer(void);
     virtual void createMainMenu();
@@ -91,6 +95,7 @@ protected:
     
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(void);
+    void increaseScore(void);
     void updateOppStrokeCount(int newVal);
     void updateOppRemainingBallCount(int newVal);
     
@@ -144,6 +149,7 @@ protected:
     
     int strokes;
     int opponentStrokes;
+    int score;
     
     Player* player1;
     Player* player2;

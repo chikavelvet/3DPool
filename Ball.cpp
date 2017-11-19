@@ -6,8 +6,9 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         std::map<size_t,objType>& typeMap, 
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
         std::string color,
+        bool isRed,
         bool isCue) :
-        initialX(x), initialY(y), initialZ(z)
+        initialX(x), initialY(y), initialZ(z), redBall(isRed)
 {    
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z), 

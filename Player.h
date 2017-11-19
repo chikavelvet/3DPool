@@ -26,11 +26,16 @@ protected:
     float cueStickRotationX;
     float cueStickRotationY;
     bool hitBall;
+    bool targetRedBall;
+    int score;
+    int strokes;
 
 public:
     Player();
     Player(const Player& orig);
     virtual ~Player();    
+    
+    void setRedBall(bool isRed) { targetRedBall = isRed; }
 
     virtual bool keyPressed(const OIS::KeyEvent &arg) {}
     virtual bool keyReleased(const OIS::KeyEvent &arg) {}

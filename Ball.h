@@ -40,9 +40,12 @@ public:
         std::map<size_t, objType> &typeMap,
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
         std::string color,
+        bool isRed,
         bool isCue = false);
 
     Ogre::Vector3 getPosition();
+    
+    bool redBall;
 
     btRigidBody* getBody();
     Simulator* getSimulator();

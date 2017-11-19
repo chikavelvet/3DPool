@@ -39,4 +39,3 @@ private:
 };
 
 #endif /* MANUALPLAYER_H */
-

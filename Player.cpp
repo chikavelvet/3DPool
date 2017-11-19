@@ -17,7 +17,9 @@ Player::Player() :
     cueStickDelta(0),
     cueStickRotationX(0),
     cueStickRotationY(0),
-    hitBall(false)
+    hitBall(false),
+    score(0),
+    strokes(0)
 {
 }
 
