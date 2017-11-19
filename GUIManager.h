@@ -17,7 +17,8 @@
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/Renderer.h>
 
-const std::string MAIN_MENU;
+const std::string MAIN_MENU = "MainMenuScreen";
+const std::string MP_LOBBY = "MPLobbyScreen";
     
 class ThreeDPool;
 
@@ -27,13 +28,18 @@ protected:
     CEGUI::OgreRenderer* mRenderer;
     std::map<std::string, CEGUI::Window*> screens;
     
+    CEGUI::WindowManager* wmgr;
+    CEGUI::GUIContext* context;
+    CEGUI::Window* sheet;
+    
     void hideAllScreens();
 public:
     GUIManager(ThreeDPool* _game);
     GUIManager(const GUIManager& orig);
     virtual ~GUIManager();
     
-    void createMainMenu();
+    void createMainMenu(void);
+    void createMPLobby(void);
 private:
 
 };
