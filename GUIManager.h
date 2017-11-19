@@ -14,7 +14,12 @@
 #ifndef GUIMANAGER_H
 #define GUIMANAGER_H
 
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/Renderer.h>
+
 class GUIManager {
+protected:
+    CEGUI::OgreRenderer* mRenderer;
 public:
     GUIManager();
     GUIManager(const GUIManager& orig);

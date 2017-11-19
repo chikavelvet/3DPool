@@ -60,7 +60,6 @@ ThreeDPool::ThreeDPool(void) :
         gameStarted(false),
         isMultiplayer(false),
         isAI(false),
-        guiInitialized(false),
         mainMenuScreenCreated(false),
         mpLobbyScreenCreated(false),
         gameScreenCreated(false),
@@ -86,36 +85,14 @@ bool ThreeDPool::setup(void)
     if (!BaseApplication::setup())
         return false;
 
+    mGUIMgr = new GUIManager();
     createMainMenu();
 
     return true;
 };
 
-void ThreeDPool::initGUI()
-{
-    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
-    CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
-    CEGUI::Font::setDefaultResourceGroup("Fonts");
-    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
-    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
-    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-
-    CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
-    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
-
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    context.setRootWindow(sheet);
-    
-    guiInitialized = true;
-}
-
 void ThreeDPool::hideAllScreens() 
 {
-    if (!guiInitialized)
-        initGUI();
-    
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
@@ -131,9 +108,6 @@ void ThreeDPool::hideAllScreens()
 
 void ThreeDPool::createMainMenu() 
 {       
-    if (!guiInitialized)
-        initGUI();
-    
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
@@ -221,9 +195,6 @@ void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e)
 
 void ThreeDPool::createMPLobby(void) 
 { 
-    if (!guiInitialized)
-        initGUI();
-    
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
@@ -424,10 +395,8 @@ void ThreeDPool::hideEnterIPWindow()
     isWaiting = false;
 }
 
-void ThreeDPool::setUpGUI(void) {    
-    if (!guiInitialized)
-           initGUI();
-
+void ThreeDPool::setUpGUI(void) 
+{    
     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();

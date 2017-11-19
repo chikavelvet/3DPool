@@ -57,7 +57,6 @@ protected:
     virtual void createScene(void);
     virtual void createMultiplayer(void);
     virtual void createMainMenu();
-    virtual void initGUI(void);
     virtual void createMPLobby(void);
     virtual void createCamera(void);
     virtual bool setup(void);
@@ -111,13 +110,11 @@ protected:
 
     void endCurrentTurn(void);
 
-    
-    bool guiInitialized;
     bool mainMenuScreenCreated;
     bool mpLobbyScreenCreated;
     bool gameScreenCreated;
     
-    CEGUI::OgreRenderer* mRenderer;
+    GUIManager* mGUIMgr;
         
     PlayerCamera* pCamera;
     NetManager* nm;
