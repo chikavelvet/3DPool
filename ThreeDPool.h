@@ -42,6 +42,8 @@ class Simulator;
 #include "AIPlayer.h"
 #include "NetworkPlayer.h"
 
+#include "GUIManager.h"
+
 class PlayerCamera;
 //---------------------------------------------------------------------------
 
