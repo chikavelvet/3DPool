@@ -72,7 +72,8 @@ ThreeDPool::ThreeDPool(void) :
         gameEnded(false),
         player1(NULL),
         player2(NULL),
-        player1Turn(true)
+        player1Turn(true),
+        ballsAssignedToPlayers(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -435,26 +436,43 @@ void ThreeDPool::setUpGUI(void)
         strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
 
         gameScreen->addChild(strokesWin);
+        strokesWin->hide();
 
-        // Remaining Ball Counter
-        CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
+        // Red Remaining Ball Counter
+        CEGUI::Window *redBallsRemainingWin = wmgr.createWindow("TaharezLook/StaticText", "RedBallsRemaining");
         std::stringstream ss3;
-        ss3 << "Remaining: " << remainingBalls;
-        remainingBallWin->setText(ss3.str());
+        ss3 << "Red: " << redBallsRemaining;
+        redBallsRemainingWin->setText(ss3.str());
         // remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         // remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
-        remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
-        gameScreen->addChild(remainingBallWin);
-
+        redBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        redBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
+        gameScreen->addChild(redBallsRemainingWin);
+        
+        // Blue Remaining Ball Counter
+        CEGUI::Window *blueBallsRemainingWin = wmgr.createWindow("TaharezLook/StaticText", "BlueBallsRemaining");
+        std::stringstream ss4;
+        ss4 << "Blue: " << blueBallsRemaining;
+        blueBallsRemainingWin->setText(ss4.str());
+        blueBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        blueBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.70, 0)));
+        gameScreen->addChild(blueBallsRemainingWin);
+        
+        // Opponent Remaining Ball Counter
+        CEGUI::Window *targettingColorWin = wmgr.createWindow("TaharezLook/StaticText", "TargettingColor");
+        targettingColorWin->setText("Targetting: All");
+        targettingColorWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        targettingColorWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
+        gameScreen->addChild(targettingColorWin);
+        
         // if (isMultiplayer) {
-            // Opponent Stroke counter
-            CEGUI::Window *oppTitle = wmgr.createWindow("TaharezLook/StaticText", "OppTitle");
-            oppTitle->setText("Opponent: ");
-            oppTitle->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppTitle->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
+            // Opponent Title
+            CEGUI::Window *activePlayer = wmgr.createWindow("TaharezLook/StaticText", "ActivePlayer");
+            activePlayer->setText("Player 1's Turn");
+            activePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+            activePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
 
-            gameScreen->addChild(oppTitle);
+            gameScreen->addChild(activePlayer);            
 
             // Opponent Stroke counter
             CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
@@ -465,21 +483,15 @@ void ThreeDPool::setUpGUI(void)
             oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.6, 0)));
 
             gameScreen->addChild(oppStrokesWin);
+            oppStrokesWin->hide();
 
-            // Opponent Remaining Ball Counter
-            CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
-            std::stringstream ss4;
-            ss4 << "Remaining: " << oppRemainingBalls;
-            oppRemainingBallWin->setText(ss4.str());
-            oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
-            gameScreen->addChild(oppRemainingBallWin);
+
         // }
 
         CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
         youWin->setText("You Win!");
-        youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
-        youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
+        youWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+        youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.475, 0)));
 
         youWin->hide();
         gameScreen->addChild(youWin);
@@ -498,6 +510,25 @@ void ThreeDPool::createMultiplayer(void)
 
 void ThreeDPool::endCurrentTurn(void){
     player1Turn = !player1Turn;
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
+        
+    activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
+    
+    if (ballsAssignedToPlayers) {
+        CEGUI::Window* targettingColorWin = sheet->getChild("GameScreen/TargettingColor");
+        std::string targetting;
+        
+        if (player1Turn) {
+            targetting = player1->targetRedBall ? "Targetting: Red" : "Targetting: Blue";
+        } else {
+            targetting = player2->targetRedBall ? "Targetting: Red" : "Targetting: Blue";
+        }
+        
+        targettingColorWin->setText(targetting);
+    }
+
     player1->endCurrentTurn();
     player2->endCurrentTurn();
 }
@@ -728,7 +759,7 @@ void ThreeDPool::incrementStrokeCount() {
     }
 }
 
-void ThreeDPool::decrementRemainingBallCount() {
+void ThreeDPool::decrementRemainingBallCount(bool redBall) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
     std::stringstream ss;
@@ -736,42 +767,57 @@ void ThreeDPool::decrementRemainingBallCount() {
     if (soundOn)
         Mix_PlayChannel(-1, pocket, 0);
     
-    if (player1Turn) {
-        CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
-        --remainingBalls;
-        ss << "Remaining: " << remainingBalls;
-        remainingBallWin->setText(ss.str());
+    
+//    if (player1Turn) {
+//        CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
+//        --remainingBalls;
+//        ss << "Remaining: " << remainingBalls;
+//        remainingBallWin->setText(ss.str());
+//    } else {
+//        CEGUI::Window* oppRemainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
+//        --oppRemainingBalls;
+//        ss << "Opp Remaining: " << oppRemainingBalls;
+//        oppRemainingBallWin->setText(ss.str());
+//    }
+    
+    if (redBall) {
+        CEGUI::Window* redBallWin = sheet->getChild("GameScreen")->getChild("RedBallsRemaining");
+        --redBallsRemaining;
+        ss << "Red: " << redBallsRemaining;
+        redBallWin->setText(ss.str());
+        if (redBallsRemaining < 1 && blueBallsRemaining > 0) {
+            CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+            youWin->setText("Red Player Wins!");
+            gameEnded = true;
+            youWin->show();
+        }
     } else {
-        CEGUI::Window* oppRemainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
-        --oppRemainingBalls;
-        ss << "Opp Remaining: " << oppRemainingBalls;
-        oppRemainingBallWin->setText(ss.str());
-    }
-    
-    if (remainingBalls < 1 && oppRemainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("Player 1 Wins!");
-        gameEnded = true;
-        youWin->show();
-    } else if (oppRemainingBalls < 1 && remainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("Player 2 Wins");
-        gameEnded = true;
-        youWin->show();  
-    }
-    
-    if (isMultiplayer) {
-        if (isServer) {
-            std::stringstream ss2;
-            ss2 << "remaining " << remainingBalls;
-            std::string msg = ss2.str();
-            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-        }
-        else {
-            std::stringstream ss2;
-            ss2 << "remaining " << remainingBalls;
-            std::string msg = ss2.str();
-            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+        CEGUI::Window* blueBallWin = sheet->getChild("GameScreen")->getChild("BlueBallsRemaining");
+        --blueBallsRemaining;
+        ss << "Blue: " << blueBallsRemaining;
+        blueBallWin->setText(ss.str());
+        if (blueBallsRemaining < 1 && redBallsRemaining > 0) {
+            CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+            youWin->setText("Blue Player Wins!");
+            gameEnded = true;
+            youWin->show();
         }
     }
+    
+//    if (isMultiplayer) {
+//        if (isServer) {
+//            std::stringstream ss2;
+//            ss2 << "remaining " << remainingBalls;
+//            std::string msg = ss2.str();
+//            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+//        }
+//        else {
+//            std::stringstream ss2;
+//            ss2 << "remaining " << remainingBalls;
+//            std::string msg = ss2.str();
+//            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+//        }
+//    }
 }
 
 void ThreeDPool::updateOppStrokeCount(int newVal) {    
@@ -1073,13 +1119,6 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     return true;
 }
 
-// void ThreeDPool::updateBallSpeedSum(void){
-//     ballSpeedSum = btVector3(0.f, 0.f, 0.f);
-//     for(Ball* curBall: balls){
-//         ballSpeedSum += curBall->getBody()->getLinearVelocity();
-//     }
-// }
-
 void ThreeDPool::networkLoop () {
     if (isServer) {
         if (nm->scanForActivity()) {
@@ -1213,24 +1252,6 @@ void ThreeDPool::physicsLoop()
         pCamera->moveCameraToStick(cueStickObject);
         needToUpdateCamera = false;
     }
-    /*
-    int length = physicsEngine->getDynamicsWorld()->getCollisionObjectArray().size();
-    for (int i = 0; i< length; i++) {
-        btCollisionObject* obj = physicsEngine->getDynamicsWorld()->getCollisionObjectArray()[i];
-        btRigidBody* body = btRigidBody::upcast(obj);
-        if (body && body->getMotionState()){
-            btTransform trans;
-            body->getMotionState()->getWorldTransform(trans);
-            void *userPointer = body->getUserPointer();
-            if (userPointer) {
-                btQuaternion orientation = trans.getRotation();
-                Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode*>(userPointer);
-                
-                sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));                
-                sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-            }
-        }
-    }*/
 
     int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
     
@@ -1276,7 +1297,13 @@ void ThreeDPool::physicsLoop()
             
             ball->removeFromWorld();
             
-            decrementRemainingBallCount();
+            if (!ballsAssignedToPlayers) {
+                getActivePlayer()->setRedBall(ball->redBall);
+                getInactivePlayer()->setRedBall(!(ball->redBall));
+                ballsAssignedToPlayers = true;
+            }
+            
+            decrementRemainingBallCount(ball->redBall);
         }
         
             

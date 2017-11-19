@@ -22,12 +22,12 @@
 
 class Player {
 protected:
+    friend class ThreeDPool;
     float cueStickDelta;
     float cueStickRotationX;
     float cueStickRotationY;
     bool hitBall;
     bool targetRedBall;
-    int score;
     int strokes;
 
 public:
@@ -46,6 +46,7 @@ public:
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) = 0;
     virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
     virtual bool endCurrentTurn(void);
+    
 private:
 
 };

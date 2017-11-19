@@ -94,7 +94,7 @@ protected:
     virtual void hostMultiplayer ();
     
     void incrementStrokeCount(void);
-    void decrementRemainingBallCount(void);
+    void decrementRemainingBallCount(bool redBall);
     void increaseScore(void);
     void updateOppStrokeCount(int newVal);
     void updateOppRemainingBallCount(int newVal);
@@ -114,6 +114,9 @@ protected:
     void updateBallSpeedSum(void);
 
     void endCurrentTurn(void);
+    
+    Player* getActivePlayer (void) { return player1Turn ? player1 : player2; }
+    Player* getInactivePlayer (void) { return player1Turn ? player2 : player1; }
 
     bool mainMenuScreenCreated;
     bool mpLobbyScreenCreated;
@@ -139,6 +142,8 @@ protected:
     bool player1Turn;
     bool gameStarted;
     bool gameEnded;
+    
+    bool ballsAssignedToPlayers;
     
     bool isMultiplayer;
     bool isWaiting;
