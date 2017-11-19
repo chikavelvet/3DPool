@@ -19,6 +19,7 @@
 
 const std::string MAIN_MENU = "MainMenuScreen";
 const std::string MP_LOBBY = "MPLobbyScreen";
+const std::string BACKGROUND = "DefaultBackground";
     
 class ThreeDPool;
 
@@ -32,14 +33,17 @@ protected:
     CEGUI::GUIContext* context;
     CEGUI::Window* sheet;
     
-    void hideAllScreens();
+    void hideAllScreens(void);
+    void createMPLobby(void);
+    void showEnterIPWindow(void);
+    void hideEnterIPWindow(void);
+    void onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e);
 public:
     GUIManager(ThreeDPool* _game);
     GUIManager(const GUIManager& orig);
     virtual ~GUIManager();
     
     void createMainMenu(void);
-    void createMPLobby(void);
 private:
 
 };

@@ -146,7 +146,7 @@ void GUIManager::createMPLobby()
         joinGame->setText("Join Game");
         joinGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         joinGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.8, 0)));
-        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::showEnterIPWindow, game));
+        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::showEnterIPWindow, this));
         mpLobby->addChild(joinGame);
         
         //--------Enter Server IP-------//
@@ -155,7 +155,7 @@ void GUIManager::createMPLobby()
         enterIP->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
         enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
         enterIP->setAlwaysOnTop(true);
-        enterIP->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::hideEnterIPWindow, game));
+        enterIP->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&GUIManager::hideEnterIPWindow, this));
         enterIP->hide();
         mpLobby->addChild(enterIP);
                 
@@ -163,7 +163,7 @@ void GUIManager::createMPLobby()
         CEGUI::Editbox *ipEnterBox = static_cast<CEGUI::Editbox*>(wmgr->createWindow("TaharezLook/Editbox", "IPEnterBox"));
         ipEnterBox->setSize(CEGUI::USize(CEGUI::UDim(0.5, 0), CEGUI::UDim(0.2, 0)));
         ipEnterBox->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25, 0), CEGUI::UDim(0.4, 0)));
-        ipEnterBox->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber(&ThreeDPool::onIPEnterBoxKeyPressed, game));
+        ipEnterBox->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber(&GUIManager::onIPEnterBoxKeyPressed, this));
         enterIP->addChild(ipEnterBox);
         
         //------------Go Button---------//
@@ -195,5 +195,39 @@ void GUIManager::createMPLobby()
         hideAllScreens();
         sheet->getChild(MP_LOBBY)->show();
         sheet->getChild("DefaultBackground")->show();
+    }
+}
+
+void GUIManager::showEnterIPWindow()
+{
+    CEGUI::Window* enterIP = this->screens[MP_LOBBY]->getChild("EnterIPWindow");
+    
+    game->cancelWaiting();
+    
+    enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
+    enterIP->show();
+}
+
+void GUIManager::hideEnterIPWindow()
+{
+    game->isWaiting = false;
+    this->screens[MP_LOBBY]->getChild("EnterIPWindow")->hide();
+}
+
+void GUIManager::onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e)
+{
+    using namespace CEGUI;
+    
+    //Cast it to a key event
+    const KeyEventArgs& key = static_cast<const KeyEventArgs&>(e);
+    
+    if (key.scancode == Key::Return) {
+        game->joinMultiplayer();
+    } else if (key.scancode == Key::Backspace) {
+        CEGUI::Window* ipEnterBox = sheet->getChild(MP_LOBBY + "/EnterIPWindow/IPEnterBox");
+
+        std::string text = ipEnterBox->getText().c_str();
+        std::string backspacedText = text.substr(0, text.length() - 1);
+        ipEnterBox->setText(backspacedText);
     }
 }

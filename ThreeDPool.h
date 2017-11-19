@@ -56,8 +56,8 @@ protected:
     friend class GUIManager;
     virtual void createScene(void);
     virtual void createMultiplayer(void);
-    virtual void createMainMenu();
-    virtual void createMPLobby(void);
+//    virtual void createMainMenu();
+//    virtual void createMPLobby(void);
     virtual void createCamera(void);
     virtual bool setup(void);
     virtual bool configure(void);
@@ -81,11 +81,11 @@ protected:
     void displayQuitCursor(void);
     void hideQuitCursor(void);
     
-    virtual void showEnterIPWindow(void);
-    virtual void hideEnterIPWindow(void);
+//    virtual void showEnterIPWindow(void);
+//    virtual void hideEnterIPWindow(void);
     virtual void startWaiting(void);
     virtual void cancelWaiting(void);
-    virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
+//    virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
     virtual void joinMultiplayer ();
     virtual void hostMultiplayer ();
     
