@@ -19,16 +19,17 @@
 
 const std::string MAIN_MENU;
     
+class ThreeDPool;
+
 class GUIManager {
 protected:
-    
-//    ThreeDPool* game;
+    ThreeDPool* game;
     CEGUI::OgreRenderer* mRenderer;
     std::map<std::string, CEGUI::Window*> screens;
     
     void hideAllScreens();
 public:
-    GUIManager();
+    GUIManager(ThreeDPool* _game);
     GUIManager(const GUIManager& orig);
     virtual ~GUIManager();
     

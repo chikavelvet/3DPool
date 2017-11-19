@@ -38,13 +38,9 @@ class Simulator;
 #include "Pocket.h"
 
 #include "Player.h"
-#include "ManualPlayer.h"
-#include "AIPlayer.h"
-#include "NetworkPlayer.h"
-
-#include "GUIManager.h"
 
 class PlayerCamera;
+class GUIManager;
 //---------------------------------------------------------------------------
 
 class ThreeDPool : public BaseApplication

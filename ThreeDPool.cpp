@@ -22,6 +22,7 @@ http://www.ogre3d.org/wiki/
 #include "ManualPlayer.h"
 #include "AIPlayer.h"
 #include "NetworkPlayer.h"
+#include "GUIManager.h"
 
 Ogre::Vector3 cameraOffset;
 Stick* cueStickObject;
@@ -87,9 +88,9 @@ bool ThreeDPool::setup(void)
     if (!BaseApplication::setup())
         return false;
 
-    mGUIMgr = new GUIManager();
-//    mGUIMgr->createMainMenu();
-    createMainMenu();
+    mGUIMgr = new GUIManager(this);
+    mGUIMgr->createMainMenu();
+//    createMainMenu();
 
     return true;
 };
