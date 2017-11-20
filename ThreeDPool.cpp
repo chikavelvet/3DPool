@@ -23,6 +23,25 @@ http://www.ogre3d.org/wiki/
 #include "AIPlayer.h"
 #include "NetworkPlayer.h"
 #include "GUIManager.h"
+#include "Simulator.h"
+#include "Ball.h"
+#include "Stick.h"
+#include "Room.h"
+#include "PlayerCamera.h"
+#include "Pocket.h"
+#include "Player.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
+#include "NetManager.h"
+
+#include <OgreParticleIterator.h>
+#include <OgreParticleSystem.h>
+#include <OgreParticleSystemManager.h>
+#include <OgreParticle.h>
+
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/Renderer.h>
+
 
 Ogre::Vector3 cameraOffset;
 Stick* cueStickObject;

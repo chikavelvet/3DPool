@@ -13,6 +13,8 @@
 
 #include "GUIManager.h"
 #include "ThreeDPool.h"
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/Renderer.h>
 
 GUIManager::GUIManager(ThreeDPool* _game) : 
     game(_game)

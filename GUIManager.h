@@ -14,14 +14,22 @@
 #ifndef GUIMANAGER_H
 #define GUIMANAGER_H
 
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/RendererModules/Ogre/Renderer.h>
+#include <string>
+#include <map>
 
 const std::string MAIN_MENU = "MainMenuScreen";
 const std::string MP_LOBBY = "MPLobbyScreen";
 const std::string BACKGROUND = "DefaultBackground";
     
 class ThreeDPool;
+
+namespace CEGUI {
+    class OgreRenderer;
+    class WindowManager;
+    class GUIContext;
+    class Window;
+    class EventArgs;
+}
 
 class GUIManager {
 protected:

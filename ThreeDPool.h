@@ -19,29 +19,32 @@ http://www.ogre3d.org/wiki/
 #define __ThreeDPool_h_
 
 #include "BaseApplication.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
-#include "NetManager.h"
+#include <btBulletDynamicsCommon.h>
 #include <map>
-#include <OgreParticleIterator.h>
-#include <OgreParticleSystem.h>
-#include <OgreParticleSystemManager.h>
-#include <OgreParticle.h>
+#include "Enums.h"
 
+//--Forward Declarations--//
+//----Game Objects--------//
 class GameObject;
-#include "Simulator.h"
-class Simulator; 
-#include "Ball.h"
-#include "Stick.h"
-#include "Room.h"
-#include "PlayerCamera.h"
-#include "Pocket.h"
-
-#include "Player.h"
-
 class PlayerCamera;
+class Player;
+class Stick;
+class Room;
+class Pocket;
+class Ball;
+
+//----Game Managers-------//
+class Simulator; 
 class GUIManager;
-//---------------------------------------------------------------------------
+class NetManager;
+
+//----SDL-mix-------------//
+class Mix_Chunk;
+
+//----CEGUI---------------//
+namespace CEGUI {
+    class EventArgs;
+}
 
 class ThreeDPool : public BaseApplication
 {
@@ -56,8 +59,6 @@ protected:
     friend class GUIManager;
     virtual void createScene(void);
     virtual void createMultiplayer(void);
-//    virtual void createMainMenu();
-//    virtual void createMPLobby(void);
     virtual void createCamera(void);
     virtual bool setup(void);
     virtual bool configure(void);
@@ -81,11 +82,8 @@ protected:
     void displayQuitCursor(void);
     void hideQuitCursor(void);
     
-//    virtual void showEnterIPWindow(void);
-//    virtual void hideEnterIPWindow(void);
     virtual void startWaiting(void);
     virtual void cancelWaiting(void);
-//    virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
     virtual void joinMultiplayer ();
     virtual void hostMultiplayer ();
     
