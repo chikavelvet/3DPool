@@ -21,7 +21,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
                           STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z),
             STICK_DEFAULT::GRAPHICS::MESH, STICK_DEFAULT::GRAPHICS::MATERIAL);
     
-    rootNode = graphics->rootNode;
+    Ogre::SceneNode* rootNode = graphics->rootNode;
     
     physics = new PhysicsComponent(this, _simulator,
             STICK_DEFAULT::PHYSICS::MASS, STICK_DEFAULT::PHYSICS::INERTIA,
@@ -87,7 +87,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
         simulator->getDynamicsWorld()->addRigidBody(body);
         geom->setVisible(true);
 
-        Ogre::Vector3 stickDirection(rootNode->getPosition() 
+        Ogre::Vector3 stickDirection(graph->rootNode->getPosition() 
                     - cueBall->getNode()->getPosition());
         stickDirection.normalise();
 

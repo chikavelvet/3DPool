@@ -8,7 +8,7 @@
 
 class Room : public GameObject {
 protected:
-    static const float offset;
+    static const float OFFSET;
     
     std::vector<Wall*> physicalWalls;
     std::vector<Wall*> visualWalls;

@@ -1,7 +1,9 @@
 
 #include "PlayerCamera.h"
 
-Ogre::Camera* PlayerCamera::getCamera() {
+const Ogre::Vector3 PlayerCamera::cameraOffsetFromStick(0, 10, 30);
+
+Ogre::Camera* PlayerCamera::getCamera() const {
     return this->cam;
 }
 
@@ -16,7 +18,7 @@ bool PlayerCamera::moveCameraToStick (Stick* const cueStick) {
     
     cam->setPosition(stickPos);
     cam->setOrientation(stickDir);
-    cam->moveRelative(Ogre::Vector3(0, 10, 30));
+    cam->moveRelative(cameraOffsetFromStick);
 
     return true;
 }

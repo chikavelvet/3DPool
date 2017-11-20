@@ -39,12 +39,6 @@ namespace WALL_DEFAULT {
 
 class Wall : public GameObject {
 protected:
-    Wall(Ogre::String _name, Ogre::SceneManager* _sceneMgr,
-            Simulator* _simulator,
-            Ogre::Vector3 normal,
-            float d1, float d2,
-            float posx, float posy, float posz,
-            Ogre::Vector3 up, std::map<size_t, objType>& typeMap);
     Wall(Simulator* _simulator, 
         btVector3 _origin, 
         Ogre::Vector3 normal,
@@ -57,7 +51,6 @@ protected:
         Ogre::Vector3 up, 
         std::string color);
 public:
-    
     static Wall* MakePhysicalWall (
         Simulator* _simulator, 
         btVector3 _origin, 

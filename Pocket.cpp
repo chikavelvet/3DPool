@@ -11,13 +11,7 @@ Pocket::Pocket(Ogre::SceneManager* _sceneMgr,
         Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
         std::string _name, 
-        std::map<size_t,objType>& typeMap) :
-GameObject(_name, _sceneMgr, _simulator,
-            0, btVector3(0, 0, 0),
-            0.0, 0.0,
-            0.0, 0.0,
-            false, false,
-            COL_POCKET, collisionType(COL_CUEBALL | COL_BALL))
+        std::map<size_t,objType>& typeMap)
 {   
     graphics = new GraphicsComponent(this, _sceneMgr, _name,
             Ogre::Vector3(x, y, z), 
@@ -28,7 +22,7 @@ GameObject(_name, _sceneMgr, _simulator,
             POCKET_DEFAULT::GRAPHICS::MESH,
             POCKET_DEFAULT::GRAPHICS::MATERIAL);
 
-    rootNode = graphics->rootNode;
+    Ogre::SceneNode* rootNode = graphics->rootNode;
     rootNode->setVisible(false);
     
     physics = new PhysicsComponent(this, _simulator,

@@ -7,49 +7,49 @@
 #include "Room.h"
 #include "Simulator.h"
 
-const float Room::offset = 0.0;
+const float Room::OFFSET = 0.0;
 
 Room::Room(Ogre::SceneManager* _sceneMgr, Simulator* _simulator) :
             physicalWalls(),
             visualWalls()
 {
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,             0, 480 - offset), Ogre::Vector3::NEGATIVE_UNIT_Z, 426, 480  ));
+        _simulator, btVector3(            0,             0, 480 - OFFSET), Ogre::Vector3::NEGATIVE_UNIT_Z, 426, 480  ));
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,             0, 480 - offset), Ogre::Vector3::NEGATIVE_UNIT_Z, 480, 426  ));
+        _simulator, btVector3(            0,             0, 480 - OFFSET), Ogre::Vector3::NEGATIVE_UNIT_Z, 480, 426  ));
 
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(-240 + offset,             0,       233.25), Ogre::Vector3::UNIT_X,          480, 439.5));  
+        _simulator, btVector3(-240 + OFFSET,             0,       233.25), Ogre::Vector3::UNIT_X,          480, 439.5));  
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(-240 + offset,             0,      -233.25), Ogre::Vector3::UNIT_X,          480, 439.5));    
+        _simulator, btVector3(-240 + OFFSET,             0,      -233.25), Ogre::Vector3::UNIT_X,          480, 439.5));    
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(-240 + offset,             0,            0), Ogre::Vector3::UNIT_X,          426, 426  ));
+        _simulator, btVector3(-240 + OFFSET,             0,            0), Ogre::Vector3::UNIT_X,          426, 426  ));
 
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,  240 - offset,       233.25), Ogre::Vector3::NEGATIVE_UNIT_Y, 480, 439.5));     
+        _simulator, btVector3(            0,  240 - OFFSET,       233.25), Ogre::Vector3::NEGATIVE_UNIT_Y, 480, 439.5));     
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,  240 - offset,      -233.25), Ogre::Vector3::NEGATIVE_UNIT_Y, 480, 439.5));
+        _simulator, btVector3(            0,  240 - OFFSET,      -233.25), Ogre::Vector3::NEGATIVE_UNIT_Y, 480, 439.5));
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,           240,   0 - offset), Ogre::Vector3::NEGATIVE_UNIT_Y, 426, 960  ));
+        _simulator, btVector3(            0,           240,   0 - OFFSET), Ogre::Vector3::NEGATIVE_UNIT_Y, 426, 960  ));
 
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3( 240 - offset,             0,       233.25), Ogre::Vector3::NEGATIVE_UNIT_X, 480, 439.5));     
+        _simulator, btVector3( 240 - OFFSET,             0,       233.25), Ogre::Vector3::NEGATIVE_UNIT_X, 480, 439.5));     
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3( 240 - offset,             0,      -233.25), Ogre::Vector3::NEGATIVE_UNIT_X, 480, 439.5));
+        _simulator, btVector3( 240 - OFFSET,             0,      -233.25), Ogre::Vector3::NEGATIVE_UNIT_X, 480, 439.5));
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3( 240 - offset,             0,            0), Ogre::Vector3::NEGATIVE_UNIT_X, 426, 960  ));
+        _simulator, btVector3( 240 - OFFSET,             0,            0), Ogre::Vector3::NEGATIVE_UNIT_X, 426, 960  ));
 
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0, -240 + offset,       233.25), Ogre::Vector3::UNIT_Y,          480, 439.5));     
+        _simulator, btVector3(            0, -240 + OFFSET,       233.25), Ogre::Vector3::UNIT_Y,          480, 439.5));     
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0, -240 + offset,      -233.25), Ogre::Vector3::UNIT_Y,          480, 439.5));
+        _simulator, btVector3(            0, -240 + OFFSET,      -233.25), Ogre::Vector3::UNIT_Y,          480, 439.5));
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0, -240 + offset,            0), Ogre::Vector3::UNIT_Y,          426, 960  ));
+        _simulator, btVector3(            0, -240 + OFFSET,            0), Ogre::Vector3::UNIT_Y,          426, 960  ));
 
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,             0, -480 + offset), Ogre::Vector3::UNIT_Z,          426, 480  ));
+        _simulator, btVector3(            0,             0, -480 + OFFSET), Ogre::Vector3::UNIT_Z,          426, 480  ));
     physicalWalls.push_back(Wall::MakePhysicalWall(
-        _simulator, btVector3(            0,             0, -480 - offset), Ogre::Vector3::UNIT_Z,          480, 426  ));
+        _simulator, btVector3(            0,             0, -480 - OFFSET), Ogre::Vector3::UNIT_Z,          480, 426  ));
 
     //ONE
     visualWalls.push_back(Wall::MakeVisualWall(
