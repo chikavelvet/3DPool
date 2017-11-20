@@ -17,10 +17,6 @@
 #include <string>
 #include <map>
 
-const std::string MAIN_MENU = "MainMenuScreen";
-const std::string MP_LOBBY = "MPLobbyScreen";
-const std::string BACKGROUND = "DefaultBackground";
-    
 class ThreeDPool;
 
 namespace CEGUI {
@@ -33,6 +29,10 @@ namespace CEGUI {
 
 class GUIManager {
 protected:
+    static const std::string MAIN_MENU,
+                             MP_LOBBY,
+                             BACKGROUND;
+    
     ThreeDPool* game;
     CEGUI::OgreRenderer* mRenderer;
     std::map<std::string, CEGUI::Window*> screens;

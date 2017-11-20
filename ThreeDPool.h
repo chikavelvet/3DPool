@@ -57,6 +57,12 @@ public:
 
 protected:
     friend class GUIManager;
+    
+    static const float CUE_STICK_MAX,
+                       CUE_STICK_MIN,
+                       STICK_POWER_MULT;
+    static const int   BALL_SPEED_SUM_FREQUENCY;
+    
     virtual void createScene(void);
     virtual void createMultiplayer(void);
     virtual void createCamera(void);
@@ -125,6 +131,9 @@ protected:
     int cameraCounter;
     Ogre::Vector3 newLookAt;
     Ogre::Vector3 newCamPos;
+    Ogre::Vector3 cameraOffset;
+    Ogre::Vector3 preFreeLookCameraPosition;
+    Ogre::Vector3 preFreeLookCameraDirection;
     Ogre::Real mMoveSpeed;
     bool hitBall;
     bool LMBDown;
@@ -136,6 +145,7 @@ protected:
     bool player1Turn;
     bool gameStarted;
     bool gameEnded;
+    bool isServer;
     
     bool ballsAssignedToPlayers;
     
@@ -152,6 +162,10 @@ protected:
     
     Player* player1;
     Player* player2;
+    
+    Stick* cueStick;
+    Ball* cueBall;
+    Room* room;
 
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;

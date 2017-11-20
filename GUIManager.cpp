@@ -16,6 +16,10 @@
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/Renderer.h>
 
+const std::string GUIManager::MAIN_MENU  = "MainMenuScreen",
+                  GUIManager::MP_LOBBY   = "MPLobbyScreen",
+                  GUIManager::BACKGROUND = "DefaultBackground";
+
 GUIManager::GUIManager(ThreeDPool* _game) : 
     game(_game)
 {

@@ -1,4 +1,5 @@
 #include "Stick.h"
+#include "Ball.h"
 #include "GraphicsComponent.h"
 #include "PhysicsComponent.h"
 
@@ -7,11 +8,11 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
              btScalar x, btScalar y, btScalar z,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
-             btRigidBody* _cueBall, std::map<size_t, objType> &typeMap, Ogre::SceneNode* _cueBallNode) :
+             Ball* _cueBall, std::map<size_t, objType> &typeMap) :
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
-        cueBall(_cueBall), cueBallNode(_cueBallNode)
+        cueBall(_cueBall)
 {
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z),
@@ -50,11 +51,13 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
         Simulator* simulator = phys->simulator;
         Ogre::Entity* geom   = graph->geom;
         
+        btRigidBody* cueBallBody = cueBall->getBody();
+        
         bool cueStickStopped = body->getLinearVelocity().length() < 0.05f
                             && body->getTotalForce().length() < 0.05f;
 
-        bool cueBallStopped = cueBall->getLinearVelocity().length() < 1.f
-                           && cueBall->getTotalForce().length() < 1.f;
+        bool cueBallStopped = cueBallBody->getLinearVelocity().length() < 1.f
+                           && cueBallBody->getTotalForce().length() < 1.f;
 
         if (cueStickStopped) {
             simulator->getDynamicsWorld()->removeRigidBody(body);
@@ -66,13 +69,13 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
         if (!turnIsOver)
             return false;
 
-        cueBall->setLinearVelocity(btVector3(0, 0, 0));
-        cueBall->setAngularVelocity(btVector3(0, 0, 0));
-        cueBall->clearForces();
-        cueBall->setLinearVelocity(btVector3(0, 0, 0));
-        cueBall->setAngularVelocity(btVector3(0, 0, 0));
+        cueBallBody->setLinearVelocity(btVector3(0, 0, 0));
+        cueBallBody->setAngularVelocity(btVector3(0, 0, 0));
+        cueBallBody->clearForces();
+        cueBallBody->setLinearVelocity(btVector3(0, 0, 0));
+        cueBallBody->setAngularVelocity(btVector3(0, 0, 0));
 
-        btVector3 ballPos = cueBall->getCenterOfMassPosition();
+        btVector3 ballPos = cueBallBody->getCenterOfMassPosition();
         btTransform newTransform(btQuaternion(0, 0, 0, 1), 
                 btVector3(ballPos.getX(), ballPos.getY(), ballPos.getZ() + cueStickMin));
         body->setCenterOfMassTransform(newTransform);
@@ -85,7 +88,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
         geom->setVisible(true);
 
         Ogre::Vector3 stickDirection(rootNode->getPosition() 
-                    - cueBallNode->getPosition());
+                    - cueBall->getNode()->getPosition());
         stickDirection.normalise();
 
         // guideLineNode->setPosition(-stickDirection * (cueStickMin*2.f));
@@ -120,7 +123,7 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
 
 
         Ogre::Vector3 stickDirection(rootNode->getPosition() 
-                    - cueBallNode->getPosition());
+                    - cueBall->getNode()->getPosition());
         stickDirection.normalise();
 
         // guideLineNode->setPosition(stickDirection * (cueStickTotal + cueStickMin));
@@ -142,7 +145,7 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
 
             if (LMBDown) {
                 btVector3 movement = btVector3(body->getCenterOfMassPosition() 
-                    - cueBall->getCenterOfMassPosition()).normalize() * cueStickDelta;
+                    - cueBall->getBody()->getCenterOfMassPosition()).normalize() * cueStickDelta;
                 body->translate(movement);
             }
 
@@ -195,7 +198,7 @@ void Stick::rotateToMouseXInput (float& deltaRotationX) {
         
         btRigidBody* body    = phys->body;
         
-        btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
+        btVector3 difference = cueBall->getBody()->getCenterOfMassPosition() - body->getCenterOfMassPosition();
         body->translate(difference);
 
         btVector3 yAxis(0.0, 1.0, 0.0);
@@ -227,7 +230,8 @@ void Stick::rotateToMouseYInput (float& deltaRotationY) {
         
         btRigidBody* body    = phys->body;
         
-        btVector3 difference = cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition();
+        btVector3 difference = cueBall->getBody()->getCenterOfMassPosition() 
+                - body->getCenterOfMassPosition();
         body->translate(difference);
 
         btVector3 xAxis(1.0, 0.0, 0.0);

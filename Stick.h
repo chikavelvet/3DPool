@@ -8,6 +8,7 @@
 #include <OgreParticle.h>
 
 class GameObject;
+class Ball;
 
 namespace STICK_DEFAULT {
     namespace GRAPHICS {
@@ -38,8 +39,7 @@ private:
     float cueStickMax;
     float cueStickMin;
     float powerMultiplier;
-    btRigidBody* cueBall;
-    Ogre::SceneNode* cueBallNode;
+    Ball* cueBall;
     Ogre::ParticleSystem* guideLineParticle;
     Ogre::SceneNode* guideLineNode;
 
@@ -48,7 +48,7 @@ public:
             btScalar x, btScalar y, btScalar z, 
             std::string _name, 
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
-            btRigidBody* _cueBall, std::map<size_t, objType> &typeMap, Ogre::SceneNode* _cueBallNode);
+            Ball* _cueBall, std::map<size_t, objType> &typeMap);
 
     bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped);
 
