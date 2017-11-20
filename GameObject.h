@@ -10,22 +10,14 @@
 #include <OgreSceneManager.h>
 #include <OgreRenderWindow.h>
 #include <OgreConfigFile.h>
-// #include "BaseApplication.h"
-#include "Simulator.h"
 #include "Enums.h"
-#include "ComponentNotFoundException.h"
-#include "GraphicsComponent.h"
-#include "PhysicsComponent.h"
 
 class CollisionContext;
 class BulletContactCallback;
 class Simulator;
-
-//const int cueBallType = 0,
-//          ballType    = 1,
-//          roomType    = 2, 
-//          pocketType  = 4, 
-//          stickType   = 5;
+class ComponentNotFoundException;
+class GraphicsComponent;
+class PhysicsComponent;
 
 class GameObject {
 protected:        
@@ -74,8 +66,8 @@ public:
     virtual PhysicsComponent* getPhysics();
     virtual GraphicsComponent* getGraphics();
     
-    virtual btRigidBody* getBody(){ return body; }
-    virtual Ogre::SceneNode* getNode() { return rootNode; }
+    virtual btRigidBody* getBody();
+    virtual Ogre::SceneNode* getNode();
     
     virtual void removeObject(void);
 };

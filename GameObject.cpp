@@ -1,4 +1,8 @@
 #include "GameObject.h"
+#include "ComponentNotFoundException.h"
+#include "GraphicsComponent.h"
+#include "PhysicsComponent.h"
+#include "Simulator.h"
 
 GameObject::GameObject (const Ogre::String& _name, Ogre::SceneManager* _sceneMgr,
             Simulator* _simulator, btScalar _mass, btVector3 _inertia, 
@@ -74,4 +78,12 @@ GraphicsComponent* GameObject::getGraphics() {
     if (!graphics)
         throw ComponentNotFoundException("Graphics");
     return graphics;
+}
+
+btRigidBody* GameObject::getBody() {
+    return getPhysics()->body;
+}
+
+Ogre::SceneNode* GameObject::getNode() {
+    return getGraphics()->rootNode;
 }
