@@ -26,11 +26,11 @@ protected:
     PhysicsComponent* physics;
     GraphicsComponent* graphics;
 public:    
-    virtual PhysicsComponent* getPhysics();
-    virtual GraphicsComponent* getGraphics();
+    PhysicsComponent* getPhysics() const;
+    GraphicsComponent* getGraphics() const;
     
-    virtual btRigidBody* getBody();
-    virtual Ogre::SceneNode* getNode();
+    btRigidBody* getBody() const;
+    Ogre::SceneNode* getNode() const;
 };
 
 #endif

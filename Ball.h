@@ -46,11 +46,6 @@ public:
     Ogre::Vector3 getPosition();
     
     bool redBall;
-
-    btRigidBody* getBody();
-    Simulator* getSimulator();
-//
-    Ogre::SceneNode* getNode();
     
     void removeFromWorld (void);
     void resetCueBall (void);

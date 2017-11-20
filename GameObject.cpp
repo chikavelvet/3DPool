@@ -9,22 +9,22 @@ GameObject::GameObject ()
     
 }
 
-PhysicsComponent* GameObject::getPhysics() {
+PhysicsComponent* GameObject::getPhysics() const {
     if (!physics)
         throw ComponentNotFoundException("Physics");
     return physics;
 }
 
-GraphicsComponent* GameObject::getGraphics() {
+GraphicsComponent* GameObject::getGraphics() const {
     if (!graphics)
         throw ComponentNotFoundException("Graphics");
     return graphics;
 }
 
-btRigidBody* GameObject::getBody() {
+btRigidBody* GameObject::getBody() const {
     return getPhysics()->body;
 }
 
-Ogre::SceneNode* GameObject::getNode() {
+Ogre::SceneNode* GameObject::getNode() const {
     return getGraphics()->rootNode;
 }

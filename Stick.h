@@ -61,11 +61,8 @@ public:
     void rotateToMouseXInput(float& deltaRotationX);
 
     void rotateToMouseYInput(float& deltaRotationY);
-    
-    btRigidBody* getBody();
-    Ogre::SceneNode* getNode();
-    
-    Ogre::Vector3 getPosition();
+        
+    Ogre::Vector3 getPosition() const;
 };
 
 #endif // ifndef __Stick_h_

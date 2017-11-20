@@ -78,15 +78,3 @@ void Ball::resetCueBall() {
         std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
     }
 }
-
-btRigidBody* Ball::getBody() {
-    return getPhysics()->body;
-}
-
-Simulator* Ball::getSimulator() {
-    return getPhysics()->simulator;
-}
-
-Ogre::SceneNode* Ball::getNode() {
-    return getGraphics()->rootNode;
-}

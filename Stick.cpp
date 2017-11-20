@@ -81,9 +81,6 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
         body->setCenterOfMassTransform(newTransform);
         adjustingStick = false;
 
-    //    std::cout << "Node: " << rootNode->getPosition() << std::endl;
-    //    std::cout << "Body: " << body->getCenterOfMassPosition();
-
         simulator->getDynamicsWorld()->addRigidBody(body);
         geom->setVisible(true);
 
@@ -115,18 +112,10 @@ void Stick::chargeStick (bool adjustingStick, float& cueStickTotal,
         body->activate(true);
 
         guideLineNode->setOrientation(Ogre::Quaternion(-1.f, 1.f, 0.f, 0.f));
-        // guideLineNode->setOrientation(rootNode->getOrientation());
-
-        // std::cout << guideLineNode->_getDerivedOrientation() << std::endl;
-    //    std::cout << body->getOrientation() << std::endl;
-    //    std::cout << rootNode->_getDerivedOrientation() << std::endl;
-
 
         Ogre::Vector3 stickDirection(rootNode->getPosition() 
                     - cueBall->getNode()->getPosition());
         stickDirection.normalise();
-
-        // guideLineNode->setPosition(stickDirection * (cueStickTotal + cueStickMin));
 
         guideLineNode->setPosition(0.f, 0.f, -(cueStickTotal + (cueStickMin  * 3.f)));
         guideLineNode->setVisible(true);
@@ -257,22 +246,14 @@ void Stick::rotateToMouseYInput (float& deltaRotationY) {
     }
 }
 
-Ogre::Vector3 Stick::getPosition() {
+Ogre::Vector3 Stick::getPosition() const {
     try {
-        GraphicsComponent* graph = getGraphics();
+        GraphicsComponent* graph  = getGraphics();
         
-        Ogre::SceneNode* rootNode   = graph->rootNode;
+        Ogre::SceneNode* rootNode = graph->rootNode;
         
         return rootNode->getPosition();
     } catch (ComponentNotFoundException& e) {
         
     }
-}
-
-btRigidBody* Stick::getBody() {
-    return getPhysics()->body;
-}
-
-Ogre::SceneNode* Stick::getNode() {
-    return getGraphics()->rootNode;
 }
