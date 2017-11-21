@@ -29,9 +29,7 @@ namespace CEGUI {
 
 class GUIManager {
 protected:
-    static const std::string MAIN_MENU,
-                             MP_LOBBY,
-                             BACKGROUND;
+    static const std::string lookNFeelClass;
     
     ThreeDPool* game;
     CEGUI::OgreRenderer* mRenderer;
@@ -46,12 +44,29 @@ protected:
     void showEnterIPWindow(void);
     void hideEnterIPWindow(void);
     void onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e);
+    
+    void makeBackground(const std::string& filename);
+    
+    void makeScreen(const std::string& name);
+    
+    CEGUI::Window* makeWindow(const std::string& parentScreen,
+        const std::string& type, const std::string& name,
+        float xRelSize, float yRelSize, 
+        float xRelPos, float yRelPos,
+        bool useLookNFeel = true);
+    
 public:
+    static const std::string MAIN_MENU,
+                             MP_LOBBY,
+                             BACKGROUND,
+                             GAME_SCREEN;
+    
     GUIManager(ThreeDPool* _game);
     GUIManager(const GUIManager& orig);
     virtual ~GUIManager();
     
     void createMainMenu(void);
+    void setUpGUI(void);
 private:
 
 };

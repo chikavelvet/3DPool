@@ -192,122 +192,13 @@ void ThreeDPool::joinMultiplayer ()
     nm->initNetManager();
     nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
     nm->startClient();
-    
-//    std::string msg = "Client Request";
-//    nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
-    
+        
     isWaiting = true;
-    
-//    createMultiplayer();
 }
 
 void ThreeDPool::hostMultiplayer () 
 {
     createMultiplayer();
-}
-
-void ThreeDPool::setUpGUI(void) 
-{    
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    
-    if (!gameScreenCreated) {
-        hideAllScreens();
-        CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
-
-        //----Game Screen----//
-        CEGUI::Window* gameScreen = wmgr.createWindow("DefaultWindow", "GameScreen");
-        gameScreen->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
-        gameScreen->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        
-        sheet->addChild(gameScreen);
-
-        //----Quit Button----//
-        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
-        quit->setText("Quit");    
-
-        // In UDim, only set one of the two params, the other should be 0
-        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
-
-        quit->hide();
-        gameScreen->addChild(quit);
-
-        // Stroke counter
-        CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
-        std::stringstream ss;
-        ss << "Strokes: " << strokes;
-        strokesWin->setText(ss.str());
-        strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
-
-        gameScreen->addChild(strokesWin);
-        strokesWin->hide();
-
-        // Red Remaining Ball Counter
-        CEGUI::Window *redBallsRemainingWin = wmgr.createWindow("TaharezLook/StaticText", "RedBallsRemaining");
-        std::stringstream ss3;
-        ss3 << "Red: " << redBallsRemaining;
-        redBallsRemainingWin->setText(ss3.str());
-        // remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        // remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
-        redBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        redBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
-        gameScreen->addChild(redBallsRemainingWin);
-        
-        // Blue Remaining Ball Counter
-        CEGUI::Window *blueBallsRemainingWin = wmgr.createWindow("TaharezLook/StaticText", "BlueBallsRemaining");
-        std::stringstream ss4;
-        ss4 << "Blue: " << blueBallsRemaining;
-        blueBallsRemainingWin->setText(ss4.str());
-        blueBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        blueBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.70, 0)));
-        gameScreen->addChild(blueBallsRemainingWin);
-        
-        // Opponent Remaining Ball Counter
-        CEGUI::Window *targettingColorWin = wmgr.createWindow("TaharezLook/StaticText", "TargettingColor");
-        targettingColorWin->setText("Targetting: All");
-        targettingColorWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        targettingColorWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
-        gameScreen->addChild(targettingColorWin);
-        
-        // if (isMultiplayer) {
-            // Opponent Title
-            CEGUI::Window *activePlayer = wmgr.createWindow("TaharezLook/StaticText", "ActivePlayer");
-            activePlayer->setText("Player 1's Turn");
-            activePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            activePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
-
-            gameScreen->addChild(activePlayer);            
-
-            // Opponent Stroke counter
-            CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
-            std::stringstream ss2;
-            ss2 << "Strokes: " << opponentStrokes;
-            oppStrokesWin->setText(ss2.str());
-            oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.6, 0)));
-
-            gameScreen->addChild(oppStrokesWin);
-            oppStrokesWin->hide();
-
-
-        // }
-
-        CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
-        youWin->setText("You Win!");
-        youWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.475, 0)));
-
-        youWin->hide();
-        gameScreen->addChild(youWin);
-        
-    } else {
-        hideAllScreens();
-        sheet->getChild("GameScreen")->show();
-    }
 }
 
 void ThreeDPool::createMultiplayer(void)
@@ -379,7 +270,7 @@ void ThreeDPool::createScene(void)
     redBallsRemaining = redBalls.size();
     blueBallsRemaining = blueBalls.size();
     oppRemainingBalls = remainingBalls;
-    setUpGUI();
+    mGUIMgr->setUpGUI();
     setUpSounds();
 }
 
@@ -432,46 +323,6 @@ void ThreeDPool::playBGM() {
 
 
 void ThreeDPool::addBallPyramid() {
-    // 1st Layer
-    /*balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  -5, -255, "b2",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,   5, -255, "b3",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  15, -255, "b4",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5, -15, -255, "b5",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,  -5, -255, "b6",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,   5, -255, "b7",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,  15, -255, "b8",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5, -15, -255, "b9",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,  -5, -255, "b10", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,   5, -255, "b11", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,  15, -255, "b12", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15, -15, -255, "b13", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,  -5, -255, "b14", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,   5, -255, "b15", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,  15, -255, "b16", typeMap, pocketMap, "Example/Red"));
-    
-    // 2nd Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10, -10, -245, "b17", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10,   0, -245, "b18", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10,  10, -245, "b19", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0, -10, -245, "b20", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0,   0, -245, "b21", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0,  10, -245, "b22", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10, -10, -245, "b23", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10,   0, -245, "b24", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10,  10, -245, "b25", typeMap, pocketMap, "Example/Purple"));
-    
-    // 3rd Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, -5, -235, "b26", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5,  5, -235, "b27", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  5, -5, -235, "b28", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  5,  5, -235, "b29", typeMap, pocketMap, "Example/Orange"));
-    
-    // 4th Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
-
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));*/
-    
     blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Blue", false));
 
     redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -235, "b2", typeMap, pocketMap, "Example/Red", true));
@@ -486,6 +337,7 @@ void ThreeDPool::addBallPyramid() {
     redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 15, -15, -255, "b9", typeMap, pocketMap, "Example/Red", true));
     blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -15, 15, -255, "b10", typeMap, pocketMap, "Example/Blue", false));
 
+    // Easy-in Ball
     //balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "bTest", typeMap, pocketMap, "Example/GreenOther"));
 }
 
