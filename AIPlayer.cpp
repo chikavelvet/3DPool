@@ -65,6 +65,14 @@ void AIPlayer::decideShot()
     
     for(std::vector<Ball*>::iterator ballIt = ourBalls.begin(); ballIt != ourBalls.end(); ++ballIt) {
         Ball* curBall = *ballIt;
+
+
+        /*DOESN'T PICK A BALL UNTIL ALL BALLS HAVE STOPPED MOVING!*/
+        if(abs(curBall->getBody()->getLinearVelocity().length()) > 0.0f){
+            decided = false;
+            return;
+        }
+
         std::cout << curBall << std::endl;
         if(!curBall->getGraphics()->geom->isVisible())
             continue;
