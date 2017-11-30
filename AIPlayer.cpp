@@ -39,8 +39,6 @@ AIPlayer::~AIPlayer() {
 
 void AIPlayer::decideShot()
 {
-    std::cout << "Deciding Shot" << std::endl;
-    
     Ogre::SceneNode* cueBallNode = game->cueBall->getNode();
     
     std::vector<Pocket*> pockets = game->pockets;//pockets
@@ -60,16 +58,16 @@ void AIPlayer::decideShot()
     Ball* bestBall;
     double bestChance = 0.0;
     
-    for(std::vector<Ball*>::iterator ball_it = ourBalls.begin(); ball_it != ourBalls.end(); ++ball_it) {
-        Ball* curBall = *ball_it;
+    for(std::vector<Ball*>::iterator ballIt = ourBalls.begin(); ballIt != ourBalls.end(); ++ballIt) {
+        Ball* curBall = *ballIt;
         std::cout << curBall << std::endl;
         if(!curBall->getGraphics()->geom->isVisible())
             continue;
-        std::cout << "Next Ball" << std::endl;
 
         Ogre::SceneNode* ballNode = curBall->getNode();
         
-        for(Pocket* curPocket : pockets){
+        for(std::vector<Pocket*>::iterator pocketIt = pockets.begin(); pocketIt != pockets.end(); ++pocketIt) {
+            Pocket* curPocket = *pocketIt;
             Ogre::SceneNode* pocketNode = curPocket->getNode();
             
             Ogre::Vector3 A = ballNode->getPosition() - cueBallNode->getPosition();
