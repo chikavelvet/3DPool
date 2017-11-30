@@ -29,7 +29,9 @@ protected:
     Ogre::Vector3 cueToChosen;
 
     bool decided;
+    bool rotatingStick;
     float rotDelta;
+    float chargeDelta;
 
     void decideShot();
     
@@ -40,8 +42,12 @@ public:
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) {}
     virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
+    virtual bool endCurrentTurn(void);
+
+
 private:
-    float closestChoice(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
+    float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
+    float guessStickCharge();
     void calculateXYRotation();
 
 };

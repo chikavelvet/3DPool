@@ -155,9 +155,6 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
             
             body->activate(true);
 
-            // btVector3 direction(cueBall->getCenterOfMassPosition() - body->getCenterOfMassPosition());
-            // direction.normalize();
-
             btVector3 zAxis(0.0, 0.0, 1.0);
             btQuaternion q = body->getCenterOfMassTransform().getRotation();
             btVector3 direction = btMatrix3x3(q) * zAxis;

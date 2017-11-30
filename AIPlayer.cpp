@@ -25,10 +25,14 @@
 #include "Pocket.h"
 #include "Stick.h"
 
+#include <algorithm>
+
 AIPlayer::AIPlayer(ThreeDPool* _game) :
         game(_game),
         decided(false),
-        rotDelta(0.03f)
+        rotDelta(0.015f),
+        chargeDelta(0.01f),
+        rotatingStick(true)
 {
 }
 
@@ -117,17 +121,33 @@ void AIPlayer::calculateXYRotation() {
     Ogre::Vector3 x2 = Ogre::Quaternion(Ogre::Degree( 0), stickYAxis) * stickDir;
     Ogre::Vector3 x3 = Ogre::Quaternion(Ogre::Degree( rotDelta), stickYAxis) * stickDir;
     
-    cueStickRotationX = closestChoice(x1, x2, x3);    
+    cueStickRotationX = guessStickRotation(x1, x2, x3);    
     
     Ogre::Vector3 y1 = Ogre::Quaternion(Ogre::Degree(-rotDelta), stickXAxis) * stickDir;
     Ogre::Vector3 y2 = Ogre::Quaternion(Ogre::Degree( 0), stickXAxis) * stickDir;
     Ogre::Vector3 y3 = Ogre::Quaternion(Ogre::Degree( rotDelta), stickXAxis) * stickDir;
     
-    cueStickRotationY = closestChoice(y1, y2, y3);
+    cueStickRotationY = guessStickRotation(y1, y2, y3);
+
+    if(cueStickRotationX == 0 && cueStickRotationY == 0)
+        rotatingStick = false;
+}
+
+float AIPlayer::guessStickCharge (){
+    if(game->cueStickTotal > 60.0f){
+        cueStickDelta = -1.0f * std::min(chargeDelta, game->cueStickTotal - 60.0f);//if the difference is less than 1, do less than 1
+    }
+    else if(game->cueStickTotal < 60.0f){
+        cueStickDelta = 1.0f * std::min(chargeDelta, 60.0f - game->cueStickTotal);//if the difference is less than 1, do less than 1
+    }
+    else {        
+        cueStickDelta = 0.0f;
+        hitBall = true;        
+    }
 }
 
 
-float AIPlayer::closestChoice (const Ogre::Vector3& x, 
+float AIPlayer::guessStickRotation (const Ogre::Vector3& x, 
         const Ogre::Vector3& y, const Ogre::Vector3& z)
 {
     Ogre::Degree a1 = cueToChosen.angleBetween(x);
@@ -149,9 +169,22 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
     if (!decided)
         decideShot();
 
-    calculateXYRotation();
-    hitBall = false;
-    // cueStickDelta = 75.0f;    
+    if(rotatingStick){
+        calculateXYRotation();
+        hitBall = false;
+    }
+    else if(!hitBall){
+        guessStickCharge();
+    }
+
 
     Player::giveGamePlayerInput(csd, csrx, csry, hitBall);
+}
+
+
+bool AIPlayer::endCurrentTurn(void){
+    if(!Player::endCurrentTurn())
+        return false;
+
+    rotatingStick = true;
 }
