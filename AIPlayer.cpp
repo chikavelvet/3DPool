@@ -27,7 +27,8 @@
 
 AIPlayer::AIPlayer(ThreeDPool* _game) :
         game(_game),
-        decided(false)
+        decided(false),
+        rotDelta(0.03f)
 {
 }
 
@@ -83,9 +84,7 @@ void AIPlayer::decideShot()
                 if(chance > bestChance){
                     bestChance = chance;
                     bestPocket = curPocket;
-                    bestBall = curBall;
-                    
-                    std::cout << "Chose a Best" << std::endl;
+                    bestBall = curBall;                    
                 }
             }
         }
@@ -100,31 +99,11 @@ void AIPlayer::decideShot()
     decided = true;
     
     std::cout << chosenBall->getGraphics()->name << std::endl;
+
+    std::cout << "Chose a Best" << std::endl;
 }
 
-float AIPlayer::closestChoice (const Ogre::Vector3& x, 
-        const Ogre::Vector3& y, const Ogre::Vector3& z)
-{
-    Ogre::Degree a1 = cueToChosen.angleBetween(x);
-    Ogre::Degree a2 = cueToChosen.angleBetween(y);
-    Ogre::Degree a3 = cueToChosen.angleBetween(z);
-    
-    if (a1 <= a2 && a1 <= a3)
-        return -1;
-    else if (a2 <= a1 && a2 <= a3)
-        return 0;
-    else if (a3 <= a1 && a3 <= a2)
-        return 1;
-}
-
-bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall)
-{
-//    Pocket* chosenPocket;
-//    Ball* chosenBall;
-    if (!decided)
-        decideShot();
-//    cueStickDelta = 75f;
-    
+void AIPlayer::calculateXYRotation() {
     Ogre::Vector3 stickDir   = game->cueStick->getNode()->getOrientation()
                              * Ogre::Vector3::NEGATIVE_UNIT_Z;
     
@@ -134,17 +113,45 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
     Ogre::Vector3 stickXAxis = game->cueStick->getNode()->getOrientation()
                              * Ogre::Vector3::UNIT_X;
     
-    Ogre::Vector3 x1 = Ogre::Quaternion(Ogre::Degree(-1), stickYAxis) * stickDir;
+    Ogre::Vector3 x1 = Ogre::Quaternion(Ogre::Degree(-rotDelta), stickYAxis) * stickDir;
     Ogre::Vector3 x2 = Ogre::Quaternion(Ogre::Degree( 0), stickYAxis) * stickDir;
-    Ogre::Vector3 x3 = Ogre::Quaternion(Ogre::Degree( 1), stickYAxis) * stickDir;
+    Ogre::Vector3 x3 = Ogre::Quaternion(Ogre::Degree( rotDelta), stickYAxis) * stickDir;
     
-    csrx = closestChoice(x1, x2, x3);    
+    cueStickRotationX = closestChoice(x1, x2, x3);    
     
-    Ogre::Vector3 y1 = Ogre::Quaternion(Ogre::Degree(-1), stickXAxis) * stickDir;
+    Ogre::Vector3 y1 = Ogre::Quaternion(Ogre::Degree(-rotDelta), stickXAxis) * stickDir;
     Ogre::Vector3 y2 = Ogre::Quaternion(Ogre::Degree( 0), stickXAxis) * stickDir;
-    Ogre::Vector3 y3 = Ogre::Quaternion(Ogre::Degree( 1), stickXAxis) * stickDir;
+    Ogre::Vector3 y3 = Ogre::Quaternion(Ogre::Degree( rotDelta), stickXAxis) * stickDir;
     
-    csry = closestChoice(y1, y2, y3);
+    cueStickRotationY = closestChoice(y1, y2, y3);
+}
+
+
+float AIPlayer::closestChoice (const Ogre::Vector3& x, 
+        const Ogre::Vector3& y, const Ogre::Vector3& z)
+{
+    Ogre::Degree a1 = cueToChosen.angleBetween(x);
+    Ogre::Degree a2 = cueToChosen.angleBetween(y);
+    Ogre::Degree a3 = cueToChosen.angleBetween(z);
     
+    if (a1 <= a2 && a1 <= a3)
+        return -rotDelta;
+    else if (a2 <= a1 && a2 <= a3)
+        return 0;
+    else if (a3 <= a1 && a3 <= a2)
+        return rotDelta;
+}
+
+bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall)
+{
+//    Pocket* chosenPocket;
+//    Ball* chosenBall;
+    if (!decided)
+        decideShot();
+
+    calculateXYRotation();
+    hitBall = false;
+    // cueStickDelta = 75.0f;    
+
     Player::giveGamePlayerInput(csd, csrx, csry, hitBall);
 }

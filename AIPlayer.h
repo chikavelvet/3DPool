@@ -27,8 +27,9 @@ protected:
     Pocket* chosenPocket;
     Ball* chosenBall;
     Ogre::Vector3 cueToChosen;
-    
+
     bool decided;
+    float rotDelta;
 
     void decideShot();
     
@@ -41,6 +42,7 @@ public:
     virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
 private:
     float closestChoice(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
+    void calculateXYRotation();
 
 };
 

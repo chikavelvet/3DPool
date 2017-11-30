@@ -853,6 +853,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         player1->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
     } else {
         player2->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+        // std::cout << "cueStickDelta: " << cueStickDelta << " cueStickRotationX: " << cueStickRotationX << " cueStickRotationY: " << cueStickRotationY << std::endl;
     }
 
     if(adjustingStick) {
