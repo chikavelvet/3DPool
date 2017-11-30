@@ -185,7 +185,7 @@ void Stick::rotateToMouseXInput (float& deltaRotationX) {
     try {
         PhysicsComponent* phys = getPhysics();
         
-        btRigidBody* body    = phys->body;
+        btRigidBody* body = phys->body;
         
         btVector3 difference = cueBall->getBody()->getCenterOfMassPosition() - body->getCenterOfMassPosition();
         body->translate(difference);

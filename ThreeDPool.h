@@ -57,6 +57,7 @@ public:
 
 protected:
     friend class GUIManager;
+    friend class AIPlayer;
     
     static const float CUE_STICK_MAX,
                        CUE_STICK_MIN,
@@ -148,6 +149,10 @@ protected:
     
     bool ballsAssignedToPlayers;
     
+    std::vector<Ball*> blueBalls;
+    std::vector<Ball*> redBalls;
+    std::vector<Pocket*> pockets;
+    
     bool isMultiplayer;
     bool isWaiting;
     std::string hostName;
@@ -173,7 +178,7 @@ protected:
 
     std::map<size_t, objType> typeMap;
     std::map<Ogre::SceneNode*, Ball*> pocketMap;
-
+    
     btVector3 ballSpeedSum;
     int frameCounter;
 };

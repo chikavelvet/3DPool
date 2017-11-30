@@ -47,8 +47,8 @@ const float ThreeDPool::CUE_STICK_MAX            = 150.0,
             ThreeDPool::STICK_POWER_MULT         = 10.0;
 const int   ThreeDPool::BALL_SPEED_SUM_FREQUENCY = 100;
 
-std::vector<Ball*> redBalls;
-std::vector<Ball*> blueBalls;
+//std::vector<Ball*> redBalls;
+//std::vector<Ball*> blueBalls;
 
 int remainingBalls;
 int oppRemainingBalls;
@@ -209,6 +209,9 @@ void ThreeDPool::createMultiplayer(void)
 
 void ThreeDPool::endCurrentTurn(void){
     player1Turn = !player1Turn;
+    
+    adjustingCamera = false;
+    
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
     CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
@@ -245,11 +248,12 @@ void ThreeDPool::createScene(void)
     
     // Set up Players //
     player1 = new ManualPlayer();
-    player2 = new ManualPlayer();
+//    player2 = new ManualPlayer();
+    player2 = new AIPlayer(this);
     
     if (isMultiplayer)
         if (isAI)
-            player2 = new AIPlayer();
+            player2 = new AIPlayer(this);
         else
             player2 = new NetworkPlayer();
 
@@ -343,43 +347,43 @@ void ThreeDPool::addBallPyramid() {
 
 void ThreeDPool::addPockets() {
     // 12 Pockets
-    Pocket* p1 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, -240, 480,
-            "p1", typeMap);
-    Pocket* p2 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, -240, 0,
-            "p2", typeMap);
-    Pocket* p3 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, -240, -480,
-            "p3", typeMap);
-    Pocket* p4 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, 240, 480,
-            "p4", typeMap);
-    Pocket* p5 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, 240, 0,
-            "p5", typeMap);
-    Pocket* p6 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, 240, -480,
-            "p6", typeMap);
-    Pocket* p7 = new Pocket(mSceneMgr, physicsEngine, 
-            240, -240, 480,
-            "p7", typeMap);
-    Pocket* p8 = new Pocket(mSceneMgr, physicsEngine, 
-            240, -240, 0,
-            "p8", typeMap);
-    Pocket* p9 = new Pocket(mSceneMgr, physicsEngine, 
-            240, -240, -480,
-            "p9", typeMap);
-    Pocket* p10 = new Pocket(mSceneMgr, physicsEngine, 
-            240, 240, 480,
-            "p10", typeMap);
-    Pocket* p11 = new Pocket(mSceneMgr, physicsEngine, 
-            240, 240, 0,
-            "p11", typeMap);
-    Pocket* p12 = new Pocket(mSceneMgr, physicsEngine, 
-            240, 240, -480,
-            "p12", typeMap);
     
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, 480,
+            "p1", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, 0,
+            "p2", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, -480,
+            "p3", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, 480,
+            "p4", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, 0,
+            "p5", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, -480,
+            "p6", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, 480,
+            "p7", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, 0,
+            "p8", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, -480,
+            "p9", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, 480,
+            "p10", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, 0,
+            "p11", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, -480,
+            "p12", typeMap));
 }
 
 void ThreeDPool::incrementStrokeCount() {    
@@ -867,6 +871,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 
         // adjustingCamera = true;
     } else if(adjustingCamera){
+        // TODO: Make this work after you hit the ball
         using namespace Ogre;
         Vector3 camDirVec = Vector3::ZERO;
         Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
@@ -890,8 +895,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             incrementStrokeCount();
         cueStick->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
 
-    }
-    else {
+    } else {
         cueStick->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         needToUpdateCamera = true;
         cueStick->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);

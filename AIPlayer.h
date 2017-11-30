@@ -15,15 +15,32 @@
 #define AIPLAYER_H
 
 #include "Player.h"
+#include "OgreVector3.h"
+
+class ThreeDPool;
+class Ball;
+class Pocket;
 
 class AIPlayer : public Player {
+protected:
+    ThreeDPool* game;
+    Pocket* chosenPocket;
+    Ball* chosenBall;
+    Ogre::Vector3 cueToChosen;
+    
+    bool decided;
+
+    void decideShot();
+    
 public:
-    AIPlayer();
+    AIPlayer(ThreeDPool* _game);
     AIPlayer(const AIPlayer& orig);
     virtual ~AIPlayer();
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) {}
+    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
 private:
+    float closestChoice(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
 
 };
 
