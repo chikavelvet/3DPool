@@ -5,7 +5,7 @@
 ### by No Good Devs
 **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
----?size=auto auto
+---?size=80% 80%
 
 @title[Introduction]
 
@@ -60,8 +60,7 @@
 	- Dynamic AI
  - UI Improvements
 
----?size=auto auto
-
+---?size=80% 80%
 @title[Conclusion]
 
 ## Still not a swimming pool.
