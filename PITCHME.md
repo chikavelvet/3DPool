@@ -12,7 +12,7 @@
 ## What is Pool?
 ![SwimmingPool](presentation/pool.jpg)
 
----
++++
 
 @title[Other Pool]
 ## No. The other pool.
