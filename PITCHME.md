@@ -5,18 +5,16 @@
 ### by No Good Devs
 **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
----?image=presentation/pool.jpg&size=80% 80%
+---?image=presentation/pool.jpg
 
 @title[Introduction]
 
 ## What is Pool?
-![SwimmingPool](presentation/pool.jpg)
 
-+++
++++?image=material/ThreeDPoolBackground.png
 
 @title[Other Pool]
 ## No. The other pool.
-![Background](material/ThreeDPoolBackground.png)
 
 ---
 
