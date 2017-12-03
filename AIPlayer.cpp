@@ -151,7 +151,10 @@ void AIPlayer::calculateXYRotation() {
 
 //    std::cout << "Got here" << std::endl;
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
-        rotatingStick = false;
+//        if (rotDelta > ROT_DELTA_MIN) {
+//            rotDelta /= 4;
+//        } else 
+            rotatingStick = false;
     }
 }
 
@@ -175,30 +178,16 @@ float AIPlayer::guessStickRotation (const Ogre::Vector3& x,
     Ogre::Degree a2 = cueToDest.angleBetween(y);
     Ogre::Degree a3 = cueToDest.angleBetween(z);
     
-    
-//    Ogre::Degree chosenRot;
-    
     if (a1 <= a2 && a1 <= a3)
         return -rotDelta;
     else if (a2 <= a1 && a2 <= a3)
         return 0;
     else if (a3 <= a1 && a3 <= a2)
         return rotDelta;
-
-//    if (a1 <= a2 && a1 <= a3)
-//        chosenRot = a1;
-//    else if (a2 <= a1 && a2 <= a3)
-//        chosenRot = a2;
-//    else if (a3 <= a1 && a3 <= a2)
-//        chosenRot = a3;
-//    
-//    return chosenRot;
 }
 
 bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall)
 {
-//    Pocket* chosenPocket;
-//    Ball* chosenBall;
     if (!decided)
         if (!decideShot())
             return false;
