@@ -1,118 +1,67 @@
 @title[Title Slide]
 
-# PhoneDB
-### The Most Extensive Database
-### of Phones in the World*
-\*Terms and Conditions Apply
-
-### https://phonedb.info
+# 3DPool
+### With AI
+### by No Good Devs
+| **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin** |
 
 ---
 
-@title[Team Introduction]
+@title[Introduction]
 
-# Meet the Team
-|  **Brian Cui**  |   **Xuming Zeng**  | **Jonathan Fisher** |
-|:---------------:|:------------------:|:-------------------:|
-| **Matt Gmitro** | **Ricardo Delfin** |  **Trey Gonsoulin** |
+## What is Pool?
+![SwimmingPool](presentation/pool.jpg)
 
 ---
 
-@title[PhoneDB Introduction]
+@title[Other Pool]
+## No. The other pool.
+![Background](material/ThreeDPoolBackground.png)
 
-## Let's Talk Phones
-### ...and operating systems, brands, & carriers
+@title[AI]
 
----
+# AI Progress
 
-@title[Demonstration]
++++
 
-# Demonstration
-### https://phonedb.info
+@title[Thought Process]
 
----
-
-@title[Tech Stack]
-
-## Tech Stack
-|   Frontend   |       Backend       |        Tools        |
-|:------------:|:-------------------:|:-------------------:|
-| React/Router |   Python 3 + Flask  | Trello, PlanItPoker |
-| Fuse.js      | SQLAlchemy + SQLite | Webpack, Babel, NPM |
-
----
-@title[Self Critique]
-
-# Self Critique
-
----
-@title[What We Did Well]
-
-## What did we do well?
- - Beautiful animated responsive page design
- - Lightning fast fuzzy search
- - Support for incomplete data (no `null`!)
- - Project specifications fully met
-
----
-@title[What Did We Learn]
-
-## What did we learn?
- - **Be flexible**: database schema constantly evolves
- - **Be rich**: Google Cloud Platform is *outrageously expensive*
- - **Be practical**: Webpack is *unintuitive* and *overengineered*
-
----
-@title[What We Can Do Better]
-
-## What can we do better?
- - Improve page load times (client, server caching)
- - Further refine data set, possibly with additional sources
- - Local image hosting instead of bandwidth theft
-
----
-@title[What Puzzles Us]
-
-## What puzzles us?
- - Who are all these mysterious Chinese manufacturers?
- - ...and where can we get information on them?
- - Why did PDADB.net rename to PHONEDB.net mid-development?
+## How does our AI think?
+ - Objective:
+	- Pick a good ball and a pocket (shot)
+ - What makes a shot good?
+	- Which color balls
+ 	- Proximity to pockets
+	- Angle of shot
+ - Where to hit the ball
 
 ---
 
-@title[Critique of NFLDB]
-# Critique of NFLDB
-### http://nflsdb.com
+@title[Code Structure]
+
+## Code Structure/Design:
+ - Design Goals
+ - Player class hierarchy
+ - Component-based design
 
 ---
 
-### What did they do well?
- - Consistent UI design across the page
- - Accurate and consistent media for models
- - Logically structured catregories for NFL data
+@title[Plans for the Future]
 
----
-
-### What did we learn from their website?
- - Sorting by related models can be effective
-
----
-
-### What can they do better?
- - Fix pagination to display all pages and stop when out
- - Fix search to extend to all data models
- - Fix filtering to and sorting (sometimes does nothing)
- - Polish UI and fix menu rendering on mobile
-
----
-
-### What puzzles us about their website? 
- - "None" filter option filters out everything
- - Reloading the page always results in 404
- - How did they end up with 7 team members?
+## Plans for the Future:
+ - Faster to slower AI movement
+ - Distance-based AI power
+ - AI difficulty
+	- Achieved by rotation offset
+	- Multiple levels
+	- Dynamic AI
+ - UI Improvements
 
 ---
 
 @title[Conclusion]
 
-## The End.
+## Still not a swimming pool.
+![SwimmingPool](presentation/pool.jpg)
+
+
