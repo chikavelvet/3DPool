@@ -73,7 +73,7 @@ void AIPlayer::decideShot()
             return;
         }
 
-        std::cout << curBall << std::endl;
+//        std::cout << curBall << std::endl;
         if(!curBall->getGraphics()->geom->isVisible())
             continue;
 
@@ -110,9 +110,9 @@ void AIPlayer::decideShot()
     
     decided = true;
     
-    std::cout << chosenBall->getGraphics()->name << std::endl;
+//    std::cout << chosenBall->getGraphics()->name << std::endl;
 
-    std::cout << "Chose a Best" << std::endl;
+//    std::cout << "Chose a Best" << std::endl;
 }
 
 void AIPlayer::calculateXYRotation() {
@@ -195,4 +195,5 @@ bool AIPlayer::endCurrentTurn(void){
         return false;
 
     rotatingStick = true;
+    decided = false;
 }
