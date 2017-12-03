@@ -5,11 +5,14 @@
 ### by No Good Devs
 **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
----?image=presentation/pool.jpg
-
-@title[Introduction]
+---
+@title[What is Pool]
 
 ## What is Pool?
+
++++?image=presentation/pool.jpg
+
+@title[Pool]
 
 +++?image=material/ThreeDPoolBackground.png
 
