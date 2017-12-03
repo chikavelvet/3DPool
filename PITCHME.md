@@ -1,9 +1,9 @@
 @title[Title Slide]
 
 # 3DPool
-### With AI
+## With AI
 ### by No Good Devs
-| **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin** |
+**Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
 ---
 
