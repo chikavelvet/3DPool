@@ -41,11 +41,6 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
     physics->body->setRollingFriction(BALL_DEFAULT::PHYSICS::ROLLING_FRICTION);
 }
 
-Ogre::Vector3 Ball::getPosition() {
-    btVector3 btPos = getBody()->getCenterOfMassPosition();
-    return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
-}
-
 void Ball::removeFromWorld() {
     try {
         GraphicsComponent* graph = getGraphics();

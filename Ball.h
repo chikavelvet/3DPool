@@ -42,8 +42,6 @@ public:
         std::string color,
         bool isRed,
         bool isCue = false);
-
-    Ogre::Vector3 getPosition();
     
     bool redBall;
     

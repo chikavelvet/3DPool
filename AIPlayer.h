@@ -26,14 +26,20 @@ protected:
     ThreeDPool* game;
     Pocket* chosenPocket;
     Ball* chosenBall;
-    Ogre::Vector3 cueToChosen;
+    Ogre::Vector3 cueToDest;
 
     bool decided;
     bool rotatingStick;
     float rotDelta;
     float chargeDelta;
+    
+    static const float ROT_DELTA_MIN;
+    static const float ROT_DELTA_START;
 
-    void decideShot();
+    bool decideShot();
+    float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
+    float guessStickCharge();
+    void calculateXYRotation();
     
 public:
     AIPlayer(ThreeDPool* _game);
@@ -46,9 +52,6 @@ public:
 
 
 private:
-    float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
-    float guessStickCharge();
-    void calculateXYRotation();
 
 };
 
