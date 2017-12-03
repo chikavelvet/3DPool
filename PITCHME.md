@@ -5,7 +5,7 @@
 ### by No Good Devs
 **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
----
+---?size=auto 90%
 
 @title[Introduction]
 
@@ -59,7 +59,7 @@
 	- Dynamic AI
  - UI Improvements
 
----
+---?size=auto 90%
 
 @title[Conclusion]
 
