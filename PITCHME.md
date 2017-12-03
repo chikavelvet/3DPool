@@ -5,7 +5,7 @@
 ### by No Good Devs
 **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
----?size=auto 90%
+---?size=auto 80%
 
 @title[Introduction]
 
@@ -53,13 +53,14 @@
 ## Plans for the Future:
  - Faster to slower AI movement
  - Distance-based AI power
+ - Determing clear paths for AI
  - AI difficulty
 	- Achieved by rotation offset
 	- Multiple levels
 	- Dynamic AI
  - UI Improvements
 
----?size=auto 90%
+---?size=auto 80%
 
 @title[Conclusion]
 
