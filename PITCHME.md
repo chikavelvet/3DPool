@@ -5,7 +5,7 @@
 ### by No Good Devs
 **Casey Bigelow** | **Rishi Amarnani** | **Trey Gonsoulin**
 
----?size=80% 80%
+---?image=presentation/pool.jpg&size=80% 80%
 
 @title[Introduction]
 
