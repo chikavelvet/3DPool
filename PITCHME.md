@@ -52,13 +52,11 @@
 @title[Plans for the Future]
 
 ## Plans for the Future:
- - Faster to slower AI movement
  - Distance-based AI power
  - Determining clear paths for AI
- - AI difficulty
+ - AI difficulty settings
 	- Achieved by rotation offset
-	- Multiple levels
-	- Dynamic AI
+	- Adaptive Difficulty
  - UI Improvements
 
 ---?size=80% 80%
