@@ -30,9 +30,11 @@ protected:
 
     bool decided;
     bool rotatingStick;
+    int noRotCount;
     float rotDelta;
     float chargeDelta;
     
+    static const int NO_ROT_COUNT_THRESHOLD;
     static const float ROT_DELTA_MIN;
     static const float ROT_DELTA_START;
 

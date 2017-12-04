@@ -28,14 +28,16 @@
 #include <algorithm>
 
 //const float AIPlayer::ROT_DELTA_START = 0.03;
-const float AIPlayer::ROT_DELTA_START = 0.003;
-const float AIPlayer::ROT_DELTA_MIN = 0.0001;
+const float AIPlayer::ROT_DELTA_START = 0.05;
+const float AIPlayer::ROT_DELTA_MIN = 0.00001;
+const int AIPlayer::NO_ROT_COUNT_THRESHOLD = 5;
 
 AIPlayer::AIPlayer(ThreeDPool* _game) :
         game(_game),
         decided(false),
         rotDelta(ROT_DELTA_START),
         chargeDelta(0.01f),
+        noRotCount(0),
         rotatingStick(true)
 {
 }
@@ -77,7 +79,6 @@ bool AIPlayer::decideShot()
             return false;
         }
 
-//        std::cout << curBall << std::endl;
         if(!curBall->getGraphics()->geom->isVisible())
             continue;
 
@@ -131,8 +132,6 @@ void AIPlayer::calculateXYRotation() {
     Ogre::Vector3 stickDir   = game->cueStick->getNode()->getOrientation()
                              * Ogre::Vector3::NEGATIVE_UNIT_Z;
        
-//    std::cout << Ogre::Degree(cueToDest.angleBetween(stickDir)) << std::endl;
-    
     Ogre::Vector3 stickYAxis = game->cueStick->getNode()->getOrientation() 
                              * Ogre::Vector3::UNIT_Y;
     
@@ -149,12 +148,20 @@ void AIPlayer::calculateXYRotation() {
     
     cueStickRotationY = guessStickRotation(y1, stickDir, y3);
 
-//    std::cout << "Got here" << std::endl;
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
-//        if (rotDelta > ROT_DELTA_MIN) {
-//            rotDelta /= 4;
-//        } else 
+        ++noRotCount;
+        std::cout << "adding it" << std::endl;
+        if(rotDelta > ROT_DELTA_MIN)
+            rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
+        else
             rotatingStick = false;
+
+        if(noRotCount >= NO_ROT_COUNT_THRESHOLD)
+            rotatingStick = false;
+    }
+    else {
+        std::cout << "resetting it" << cueStickRotationX << " " << cueStickRotationY << std::endl;
+        noRotCount = 0;
     }
 }
 
@@ -178,19 +185,18 @@ float AIPlayer::guessStickRotation (const Ogre::Vector3& x,
     Ogre::Degree a2 = cueToDest.angleBetween(y);
     Ogre::Degree a3 = cueToDest.angleBetween(z);
     
-    if (a1 <= a2 && a1 <= a3)
+    if (a2 <= a1 && a2 <= a3)
+        return 0.0f;
+    else if (a1 <= a2 && a1 <= a3)
         return -rotDelta;
-    else if (a2 <= a1 && a2 <= a3)
-        return 0;
-    else if (a3 <= a1 && a3 <= a2)
+    else
         return rotDelta;
 }
 
 bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall)
 {
     if (!decided)
-        if (!decideShot())
-            return false;
+        decideShot();
     
     if(rotatingStick){
         calculateXYRotation();
@@ -211,6 +217,7 @@ bool AIPlayer::endCurrentTurn(void){
     if(!Player::endCurrentTurn())
         return false;
 
+    noRotCount = 0;
     rotDelta = ROT_DELTA_START;
     rotatingStick = true;
     decided = false;
