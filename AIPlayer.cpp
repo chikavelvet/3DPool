@@ -150,7 +150,7 @@ void AIPlayer::calculateXYRotation() {
 
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
         ++noRotCount;
-        std::cout << "adding it" << std::endl;
+//        std::cout << "adding it" << std::endl;
         if(rotDelta > ROT_DELTA_MIN)
             rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
         else
@@ -160,7 +160,7 @@ void AIPlayer::calculateXYRotation() {
             rotatingStick = false;
     }
     else {
-        std::cout << "resetting it" << cueStickRotationX << " " << cueStickRotationY << std::endl;
+//        std::cout << "resetting it" << cueStickRotationX << " " << cueStickRotationY << std::endl;
         noRotCount = 0;
     }
 }

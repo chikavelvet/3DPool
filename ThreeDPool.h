@@ -147,6 +147,13 @@ protected:
     bool gameEnded;
     bool isServer;
     
+    bool firstBallHit;
+    bool ballInThisTurn;
+    bool scratched;
+    
+    bool firstAssignment;
+    bool redBallToAssign;
+    
     bool ballsAssignedToPlayers;
     
     std::vector<Ball*> blueBalls;

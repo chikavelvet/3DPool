@@ -84,7 +84,9 @@ ThreeDPool::ThreeDPool(void) :
         player1(NULL),
         player2(NULL),
         player1Turn(true),
-        ballsAssignedToPlayers(false)
+        ballsAssignedToPlayers(false),
+        ballInThisTurn(false),
+        firstBallHit(true)
 {
 }
 //---------------------------------------------------------------------------
@@ -208,7 +210,13 @@ void ThreeDPool::createMultiplayer(void)
 }
 
 void ThreeDPool::endCurrentTurn(void){
-    player1Turn = !player1Turn;
+    if (scratched || !ballInThisTurn)
+        player1Turn = !player1Turn;
+    
+    // Reset flags
+    ballInThisTurn  = false;
+    scratched       = false;
+    firstBallHit    = true;
     
     adjustingCamera = false;
     
@@ -219,6 +227,13 @@ void ThreeDPool::endCurrentTurn(void){
     activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
     
     if (ballsAssignedToPlayers) {
+        
+        if (firstAssignment) {        
+            getActivePlayer()->setRedBall(redBallToAssign);
+            getInactivePlayer()->setRedBall(!redBallToAssign);
+            firstAssignment = false;
+        }
+        
         CEGUI::Window* targettingColorWin = sheet->getChild("GameScreen/TargettingColor");
         std::string targetting;
         
@@ -947,6 +962,19 @@ void ThreeDPool::physicsLoop()
                 if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold)
                     if (soundsToPlay-- > 0)
                         Mix_PlayChannel(-1, ball_ball, 0);
+                
+                if (firstBallHit && ballsAssignedToPlayers) {
+                    // Check if the right group
+                    void* usr = obAType == ballType ? obA->getUserPointer() : obB->getUserPointer();
+                    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(usr);
+
+                    Ball* ball = pocketMap[node];
+                    
+                    if (ball->redBall != getActivePlayer()->targetRedBall)
+                        scratched = true;
+                    
+                    firstBallHit = false;
+                }
             }
         }
         
@@ -959,12 +987,18 @@ void ThreeDPool::physicsLoop()
             ball->removeFromWorld();
             
             if (!ballsAssignedToPlayers) {
-                getActivePlayer()->setRedBall(ball->redBall);
-                getInactivePlayer()->setRedBall(!(ball->redBall));
+                redBallToAssign = ball->redBall;
                 ballsAssignedToPlayers = true;
-            }
+                firstAssignment = true;
+            } 
+//            else {
+//                if (ball->redBall != getActivePlayer()->targetRedBall)
+//                    scratched = true;
+//            }
             
             decrementRemainingBallCount(ball->redBall);
+            
+            ballInThisTurn = true;
         }
         
             
@@ -977,6 +1011,7 @@ void ThreeDPool::physicsLoop()
             incrementStrokeCount();
             
             cueBall->resetCueBall();
+            scratched = true;
         }
     }
 }
