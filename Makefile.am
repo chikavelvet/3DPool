@@ -6,7 +6,7 @@ CEGUI_LIBS = -L/lusr/opt/cegui-0.8.7/lib -lCEGUIOgreRenderer-0 -lOgreMain -lpthr
 
 
 bin_PROGRAMS = ThreeDPool
-ThreeDPool_CPPFLAGS = -I$(top_srcdir)
+ThreeDPool_CPPFLAGS = -I$(top_srcdir) 
 ThreeDPool_SOURCES = Ball.cpp ControlListener.cpp GameObject.cpp OgreMotionState.cpp Component.cpp PhysicsComponent.cpp GraphicsComponent.cpp ComponentNotFoundException.cpp GUIManager.cpp Player.cpp ManualPlayer.cpp NetworkPlayer.cpp AIPlayer.cpp PlayerCamera.cpp PlayingField.cpp Simulator.cpp Room.cpp Wall.cpp BaseApplication.cpp ThreeDPool.cpp Stick.cpp Pocket.cpp NetManager.cpp
 ThreeDPool_CXXFLAGS = $(OGRE_CFLAGS) $(OIS_CFLAGS) $(bullet_CFLAGS) $(CEGUI_CFLAGS) $(SDL_CFLAGS)
 ThreeDPool_LDADD = $(OGRE_LIBS) $(OIS_LIBS) $(bullet_LIBS) $(CEGUI_LIBS) $(SDL_LIBS) -lSDL -lSDL_mixer -lSDL_net

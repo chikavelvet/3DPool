@@ -24,6 +24,7 @@
 #include "Ball.h"
 #include "Pocket.h"
 #include "Stick.h"
+#include <random>
 
 #include <algorithm>
 
@@ -171,21 +172,32 @@ void AIPlayer::calculateXYRotation() {
     
     cueStickRotationY = guessStickRotation(y1, stickDir, y3);
 
-    if(noRotCount >= NO_ROT_COUNT_THRESHOLD)
-        rotatingStick = false;
+    if(noRotCount >= NO_ROT_COUNT_THRESHOLD) {
+        applyDifficulty();
+    }
 
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
         ++noRotCount;
 //        std::cout << "adding it" << std::endl;
-        if(rotDelta > ROT_DELTA_MIN)
-            rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
-        else
-            rotatingStick = false;
+//        if(rotDelta > ROT_DELTA_MIN)
+        rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
+//        else {
+//            applyDifficulty();
+//        }
     }
     else {
 //        std::cout << "resetting it" << cueStickRotationX << " " << cueStickRotationY << std::endl;
         noRotCount = 0;
     }
+}
+
+void AIPlayer::applyDifficulty() {
+    float randXOffset = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 2)) - 1;
+    float randYOffset = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 2)) - 1;
+//    cueStickRotationX = randXOffset;
+//    cueStickRotationY = randYOffset;
+    
+    rotatingStick = false;
 }
 
 float AIPlayer::guessStickCharge (){
@@ -197,7 +209,7 @@ float AIPlayer::guessStickCharge (){
     }
     else {        
         cueStickDelta = 0.0f;
-        hitBall = true;        
+        hitBall = true;
     }
 }
 
@@ -225,12 +237,13 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
         calculateXYRotation();
         hitBall = false;
     }
-    else if(!hitBall){
+                
+    if(!hitBall){
         guessStickCharge();
     }
         
-    if (hitBall)
-        std::cout << cueToDest.normalisedCopy() << " " << game->cueStick->getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z << std::endl << chosenBall->getNode()->getPosition() << " " << chosenPocket->getNode()->getPosition() << std::endl;
+//    if (hitBall)
+//        std::cout << cueToDest.normalisedCopy() << " " << game->cueStick->getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z << std::endl << chosenBall->getNode()->getPosition() << " " << chosenPocket->getNode()->getPosition() << std::endl;
 
     Player::giveGamePlayerInput(csd, csrx, csry, hitBall);
 }

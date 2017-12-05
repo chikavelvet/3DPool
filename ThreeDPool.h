@@ -168,6 +168,7 @@ protected:
     int port;
     
     bool isAI;
+    int AIDifficulty;
     
     int strokes;
     int opponentStrokes;

@@ -87,7 +87,8 @@ ThreeDPool::ThreeDPool(void) :
         ballsAssignedToPlayers(false),
         ballInThisTurn(false),
         firstBallHit(true),
-        letTurnEnd(true)
+        letTurnEnd(true),
+        AIDifficulty(1)
 {
 }
 //---------------------------------------------------------------------------
@@ -935,7 +936,6 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         if (cueStickTotal > CUE_STICK_MIN) 
             incrementStrokeCount();
         cueStick->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
-
     } else {
         cueStick->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         needToUpdateCamera = true;

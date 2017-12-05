@@ -42,6 +42,7 @@ protected:
     float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
     float guessStickCharge();
     void calculateXYRotation();
+    void applyDifficulty();
     
 public:
     AIPlayer(ThreeDPool* _game);
