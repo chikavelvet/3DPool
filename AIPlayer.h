@@ -29,10 +29,12 @@ protected:
     Ogre::Vector3 cueToDest;
 
     bool decided;
+    bool decidedChargeGoal;
     bool rotatingStick;
     int noRotCount;
     float rotDelta;
     float chargeDelta;
+    float chargeGoal;
     
     static const int NO_ROT_COUNT_THRESHOLD;
     static const float ROT_DELTA_MIN;
@@ -43,6 +45,7 @@ protected:
     float guessStickCharge();
     void calculateXYRotation();
     void applyDifficulty();
+    void calculateStickChargeGoal();
     
 public:
     AIPlayer(ThreeDPool* _game);
