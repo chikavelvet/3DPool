@@ -173,7 +173,7 @@ void AIPlayer::calculateXYRotation() {
     cueStickRotationY = guessStickRotation(y1, stickDir, y3);
 
     if(noRotCount >= NO_ROT_COUNT_THRESHOLD) {
-        applyDifficulty();
+        rotatingStick = false;
     }
 
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
@@ -216,7 +216,8 @@ void AIPlayer::calculateStickChargeGoal(){
     std::cout << "gets here" << std::endl;
     float chargeMin = 60.0f, chargeMax = 150.0f;
     float shotDistance = cueToDest.length() + Ogre::Vector3(chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition()).length();
-    chargeGoal = 100.0f * (shotDistance/1200.0f);
+    std::cout << shotDistance << std::endl;
+    chargeGoal = 120.0f * (shotDistance/1200.0f);
 
     /*Basically clamp*/
     chargeGoal = std::min(chargeGoal, chargeMax);
