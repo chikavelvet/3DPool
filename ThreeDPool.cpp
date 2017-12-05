@@ -87,7 +87,7 @@ ThreeDPool::ThreeDPool(void) :
         ballsAssignedToPlayers(false),
         ballInThisTurn(false),
         firstBallHit(true),
-        letTurnEnd(false)
+        letTurnEnd(true)
 {
 }
 //---------------------------------------------------------------------------
@@ -218,7 +218,9 @@ void ThreeDPool::endCurrentTurn(void){
     ballInThisTurn  = false;
     scratched       = false;
     firstBallHit    = true;
-    letTurnEnd      = false;
+    
+    // Changed this to true to remove space to continue functionality
+    letTurnEnd      = true;
     
     adjustingCamera = false;
     

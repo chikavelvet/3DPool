@@ -63,7 +63,7 @@ bool AIPlayer::decideShot()
         ourBalls = std::vector<Ball*>(game->redBalls);
         ourBalls.insert(ourBalls.end(), game->blueBalls.begin(), game->blueBalls.end());
         oppBalls = std::vector<Ball*>();    
-    }    
+    }
 
     Pocket* bestPocket_150 = NULL;
     Ball* bestBall_150 = NULL;
