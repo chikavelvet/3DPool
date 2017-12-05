@@ -65,20 +65,27 @@ bool AIPlayer::decideShot()
         oppBalls = std::vector<Ball*>();    
     }    
 
-    Pocket* bestPocket;
-    Ball* bestBall;
-    double bestChance = 0.0;
+    Pocket* bestPocket_150 = NULL;
+    Ball* bestBall_150 = NULL;
+    double bestDist_150 = 1500.0;
+    
+    Pocket* bestPocket_110 = NULL;
+    Ball* bestBall_110 = NULL;
+    double bestDist_110 = 1500.0;
+    
+    Pocket* bestPocket_lower = NULL;
+    Ball* bestBall_lower = NULL;
+    double bestDist_lower = 1500.0;
     
     for(std::vector<Ball*>::iterator ballIt = ourBalls.begin(); ballIt != ourBalls.end(); ++ballIt) {
         Ball* curBall = *ballIt;
-
 
         /*DOESN'T PICK A BALL UNTIL ALL BALLS HAVE STOPPED MOVING!*/
         if(curBall->getBody()->getLinearVelocity().length() > 0.0f){
             decided = false;
             return false;
         }
-
+        
         if(!curBall->getGraphics()->geom->isVisible())
             continue;
 
@@ -93,21 +100,37 @@ bool AIPlayer::decideShot()
 //            Ogre::Vector3 cueBallToPocketV = pocketNode->getPosition() - cueBallNode->getPosition();
             
             Ogre::Degree AtoB = ballToCueBallV.angleBetween(ballToPocketV);//alignment
+            Ogre::Real proximity = ballToPocketV.length();
             
-            if(AtoB > Ogre::Degree(Ogre::Real(100))) {
-                Ogre::Real proximity = ballToPocketV.length();
-                Ogre::Real chance = AtoB.valueDegrees() / proximity;
-                
-                if(chance > bestChance){
-                    bestChance = chance;
-                    bestPocket = curPocket;
-                    bestBall = curBall;                    
+            if (AtoB >= Ogre::Degree(150)) {
+                if (proximity < bestDist_150) {
+                    bestDist_150 = proximity;
+                    bestPocket_150 = curPocket;
+                    bestBall_150 = curBall;
+                }
+            }
+            else if (AtoB >= Ogre::Degree(110)) {
+                if (proximity < bestDist_110) {
+                    bestDist_110 = proximity;
+                    bestPocket_110 = curPocket;
+                    bestBall_110 = curBall;
+                }
+            }
+            else { // all other shots
+                if (proximity < bestDist_lower) {
+                    bestDist_lower = proximity;
+                    bestPocket_lower = curPocket;
+                    bestBall_lower = curBall;
                 }
             }
         }
         
-        chosenPocket = bestPocket;
-        chosenBall = bestBall;
+        chosenPocket = bestPocket_150 != NULL ? bestPocket_150 
+                                              : (bestPocket_110 != NULL ? bestPocket_110 
+                                                                        : bestPocket_lower);
+        chosenBall = bestBall_150 != NULL ? bestBall_150 
+                                          : (bestBall_110 != NULL ? bestBall_110 
+                                                                  : bestBall_lower);
         
         Ogre::Vector3 direction = chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition(); 
         direction.normalise();
@@ -148,15 +171,15 @@ void AIPlayer::calculateXYRotation() {
     
     cueStickRotationY = guessStickRotation(y1, stickDir, y3);
 
+    if(noRotCount >= NO_ROT_COUNT_THRESHOLD)
+        rotatingStick = false;
+
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
         ++noRotCount;
 //        std::cout << "adding it" << std::endl;
         if(rotDelta > ROT_DELTA_MIN)
             rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
         else
-            rotatingStick = false;
-
-        if(noRotCount >= NO_ROT_COUNT_THRESHOLD)
             rotatingStick = false;
     }
     else {

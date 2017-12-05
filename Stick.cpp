@@ -42,7 +42,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     guideLineNode->attachObject(guideLineParticle);
 }
 
-bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
+bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, bool& letTurnEnd) {
     try {
         GraphicsComponent* graph = getGraphics();
         PhysicsComponent* phys = getPhysics();
@@ -64,7 +64,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped) {
             geom->setVisible(false);
         }
 
-        bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped;
+        bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped && letTurnEnd;
 
         if (!turnIsOver)
             return false;

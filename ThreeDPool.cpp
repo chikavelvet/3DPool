@@ -86,7 +86,8 @@ ThreeDPool::ThreeDPool(void) :
         player1Turn(true),
         ballsAssignedToPlayers(false),
         ballInThisTurn(false),
-        firstBallHit(true)
+        firstBallHit(true),
+        letTurnEnd(false)
 {
 }
 //---------------------------------------------------------------------------
@@ -217,6 +218,7 @@ void ThreeDPool::endCurrentTurn(void){
     ballInThisTurn  = false;
     scratched       = false;
     firstBallHit    = true;
+    letTurnEnd      = false;
     
     adjustingCamera = false;
     
@@ -229,8 +231,8 @@ void ThreeDPool::endCurrentTurn(void){
     if (ballsAssignedToPlayers) {
         
         if (firstAssignment) {        
-            getActivePlayer()->setRedBall(redBallToAssign);
-            getInactivePlayer()->setRedBall(!redBallToAssign);
+            getActivePlayer()->setRedBall(!redBallToAssign);
+            getInactivePlayer()->setRedBall(redBallToAssign);
             firstAssignment = false;
         }
         
@@ -638,6 +640,10 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
                 nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
                 std::cout << "Sent " << msg << std::endl;
             }
+            break;
+        case OIS::KC_SPACE:
+            letTurnEnd = true;
+            break;
     }
     return true;
 }
@@ -879,13 +885,30 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         // bool ballsStopped = ballSpeedSum.length() < 0.1f;
         bool ballsStopped = true;
         
-        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped);
-        if (done){
+        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped, letTurnEnd);
+        if (done && letTurnEnd){
             endCurrentTurn();
             cameraFollowStick();   
-        } 
+        } else if (adjustingCamera) {
+            using namespace Ogre;
+            Vector3 camDirVec = Vector3::ZERO;
+            Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
+                mMoveSpeed : mMoveSpeed / 2;
 
-        // adjustingCamera = true;
+            if (mKeyboard->isKeyDown(OIS::KC_W))
+                camDirVec += (mCamera->getDirection() * thisMove);
+
+            if (mKeyboard->isKeyDown(OIS::KC_S))
+                camDirVec -= (mCamera->getDirection() * thisMove);
+
+            if (mKeyboard->isKeyDown(OIS::KC_A))
+                camDirVec -= (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+
+            if (mKeyboard->isKeyDown(OIS::KC_D))
+                camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+
+            mCamera->move(camDirVec * evt.timeSinceLastFrame);
+        }
     } else if(adjustingCamera){
         // TODO: Make this work after you hit the ball
         using namespace Ogre;

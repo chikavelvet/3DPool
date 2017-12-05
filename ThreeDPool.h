@@ -147,6 +147,8 @@ protected:
     bool gameEnded;
     bool isServer;
     
+    bool letTurnEnd;
+    
     bool firstBallHit;
     bool ballInThisTurn;
     bool scratched;
