@@ -38,7 +38,9 @@ AIPlayer::AIPlayer(ThreeDPool* _game) :
         rotDelta(ROT_DELTA_START),
         chargeDelta(0.01f),
         noRotCount(0),
-        rotatingStick(true)
+        rotatingStick(true),
+        decidedChargeGoal(false),
+        chargeGoal(50.0f)
 {
 }
 
@@ -80,7 +82,6 @@ bool AIPlayer::decideShot()
     for(std::vector<Ball*>::iterator ballIt = ourBalls.begin(); ballIt != ourBalls.end(); ++ballIt) {
         Ball* curBall = *ballIt;
 
-        /*DOESN'T PICK A BALL UNTIL ALL BALLS HAVE STOPPED MOVING!*/
         if(curBall->getBody()->getLinearVelocity().length() > 0.0f){
             decided = false;
             return false;
@@ -97,7 +98,6 @@ bool AIPlayer::decideShot()
             
             Ogre::Vector3 ballToCueBallV = cueBallNode->getPosition() - ballNode->getPosition();
             Ogre::Vector3 ballToPocketV = pocketNode->getPosition() - ballNode->getPosition();
-//            Ogre::Vector3 cueBallToPocketV = pocketNode->getPosition() - cueBallNode->getPosition();
             
             Ogre::Degree AtoB = ballToCueBallV.angleBetween(ballToPocketV);//alignment
             Ogre::Real proximity = ballToPocketV.length();
@@ -176,30 +176,42 @@ void AIPlayer::calculateXYRotation() {
 
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
         ++noRotCount;
-//        std::cout << "adding it" << std::endl;
         if(rotDelta > ROT_DELTA_MIN)
             rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
         else
             rotatingStick = false;
     }
     else {
-//        std::cout << "resetting it" << cueStickRotationX << " " << cueStickRotationY << std::endl;
         noRotCount = 0;
     }
 }
 
 float AIPlayer::guessStickCharge (){
-    if(game->cueStickTotal > 60.0f){
-        cueStickDelta = -1.0f * std::min(chargeDelta, game->cueStickTotal - 60.0f);//if the difference is less than 1, do less than 1
+    if(game->cueStickTotal > chargeGoal){
+        cueStickDelta = -1.0f * std::min(chargeDelta, game->cueStickTotal - chargeGoal);//if the difference is less than 1, do less than 1
     }
-    else if(game->cueStickTotal < 60.0f){
-        cueStickDelta = 1.0f * std::min(chargeDelta, 60.0f - game->cueStickTotal);//if the difference is less than 1, do less than 1
+    else if(game->cueStickTotal < chargeGoal){
+        cueStickDelta = 1.0f * std::min(chargeDelta, chargeGoal - game->cueStickTotal);//if the difference is less than 1, do less than 1
     }
     else {        
         cueStickDelta = 0.0f;
         hitBall = true;        
     }
 }
+
+void AIPlayer::calculateStickChargeGoal(){
+    std::cout << "gets here" << std::endl;
+    float chargeMin = 60.0f, chargeMax = 150.0f;
+    float shotDistance = cueToDest.length() + Ogre::Vector3(chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition()).length();
+    chargeGoal = 100.0f * (shotDistance/1200.0f);
+
+    /*Basically clamp*/
+    chargeGoal = std::min(chargeGoal, chargeMax);
+    chargeGoal = std::max(chargeGoal, chargeMin);
+
+    std::cout << "setting charge goal to " << chargeGoal << std::endl;
+}
+
 
 float AIPlayer::guessStickRotation (const Ogre::Vector3& x, 
         const Ogre::Vector3& y, const Ogre::Vector3& z)
@@ -226,6 +238,10 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
         hitBall = false;
     }
     else if(!hitBall){
+        if(!decidedChargeGoal){
+            calculateStickChargeGoal();
+            decidedChargeGoal = true;
+        }
         guessStickCharge();
     }
         
@@ -244,4 +260,5 @@ bool AIPlayer::endCurrentTurn(void){
     rotDelta = ROT_DELTA_START;
     rotatingStick = true;
     decided = false;
+    decidedChargeGoal = false;
 }
