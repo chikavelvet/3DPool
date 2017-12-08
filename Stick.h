@@ -50,7 +50,7 @@ public:
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
             Ball* _cueBall, std::map<size_t, objType> &typeMap);
 
-    bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped, bool& letTurnEnd);
+    bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped, const bool& letTurnEnd, const bool& scratched, const bool& scratchedOnBall);
 
     void chargeStick (bool adjustingStick, float& cueStickTotal, float& cueStickDelta, bool LMBDown);
 

@@ -29,7 +29,7 @@
 #include <algorithm>
 
 const float AIPlayer::ROT_DELTA_START = 0.05;
-const float AIPlayer::ROT_DELTA_MIN = 0.00001;
+const float AIPlayer::ROT_DELTA_MIN = 0.0000001;
 const int AIPlayer::NO_ROT_COUNT_THRESHOLD = 5;
 
 const int AIPlayer::EASY_DIFFICULTY_OFFSET = 8;
@@ -40,6 +40,8 @@ const float AIPlayer::EASY_DIFFICULTY_PERFECT_PERCENTAGE   = 0.1;
 const float AIPlayer::MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE = 0.3;
 const float AIPlayer::HARD_DIFFICULTY_PERFECT_PERCENTAGE   = 0.5;
 
+const int AIPlayer::ROTATIONS_MAX = 4000;
+
 AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         game(_game),
         decided(false),
@@ -49,8 +51,8 @@ AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         rotatingStick(true),
         decidedChargeGoal(false),
         chargeGoal(50.0f),
-        difficulty(_difficulty)
-
+        difficulty(_difficulty),
+        rotations(0)
 {
     assert(difficulty == 2 || difficulty == 1 || difficulty == 0); //Difficulty must be easy, medium, or hard
     switch (difficulty) {
@@ -111,7 +113,6 @@ bool AIPlayer::decideShot()
 
         if(curBall->getBody()->getLinearVelocity().length() > 0.0f){
             decided = false;
-//            std::cout << "stopped because BALLS STILL MOVING" << std::endl;
             return false;
         }
         
@@ -202,22 +203,18 @@ void AIPlayer::calculateXYRotation() {
     
     cueStickRotationY = guessStickRotation(y1, stickDir, y3);
 
-    if(noRotCount >= NO_ROT_COUNT_THRESHOLD) {
+    if(noRotCount >= NO_ROT_COUNT_THRESHOLD || rotations > ROTATIONS_MAX) {
         rotatingStick = false;
     }
 
     if(cueStickRotationX == 0 && cueStickRotationY == 0) {
         ++noRotCount;
-//        std::cout << "adding it" << std::endl;
-//        if(rotDelta > ROT_DELTA_MIN)
         rotDelta = std::max(ROT_DELTA_MIN, rotDelta/10.0f);
-//        else {
-//            applyDifficulty();
-//        }
     }
     else {
         noRotCount = 0;
     }
+    ++rotations;
 }
 
 float AIPlayer::randNum(){
@@ -238,7 +235,7 @@ void AIPlayer::applyDifficulty() {
     }
 }
 
-float AIPlayer::guessStickCharge (){
+float AIPlayer::guessStickCharge () {
     if(game->cueStickTotal > chargeGoal){
         cueStickDelta = -1.0f * std::min(chargeDelta, game->cueStickTotal - chargeGoal);//if the difference is less than 1, do less than 1
     }
@@ -314,6 +311,8 @@ bool AIPlayer::endCurrentTurn(void){
         return false;
 
     noRotCount = 0;
+    std::cout << "Rotations: " << rotations << std::endl;
+    rotations = 0;
     rotDelta = ROT_DELTA_START;
     rotatingStick = true;
     decided = false;

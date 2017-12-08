@@ -55,7 +55,7 @@ void Ball::removeFromWorld() {
     }
 }
 
-void Ball::resetCueBall() {  
+void Ball::removeCueBall() {
     try {
         PhysicsComponent* phys = getPhysics();
         
@@ -63,13 +63,29 @@ void Ball::resetCueBall() {
         phys->body->setLinearVelocity(btVector3(0, 0, 0));
 
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
+        
+    } catch (ComponentNotFoundException& e) {
+        std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
+    }
+}
 
+void Ball::addCueBall() {
+    try {
+        PhysicsComponent* phys = getPhysics();
+        
         btTransform newTransform(btQuaternion(0, 0, 0, 1), 
             btVector3(initialX, initialY, initialZ));
         phys->body->setCenterOfMassTransform(newTransform);
 
         phys->simulator->getDynamicsWorld()->addRigidBody(phys->body, phys->coltype, phys->collidesWith);
+        
+        phys->body->getMotionState()->setWorldTransform(phys->body->getCenterOfMassTransform());
     } catch (ComponentNotFoundException& e) {
         std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
     }
+}
+
+void Ball::resetCueBall() {  
+    this->removeCueBall();
+    this->addCueBall();
 }

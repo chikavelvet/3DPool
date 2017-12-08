@@ -81,11 +81,13 @@ ThreeDPool::ThreeDPool(void) :
         ballSpeedSum(0, 0, 0),
         frameCounter(0),
         gameEnded(false),
+        gamePaused(false),
         player1(NULL),
         player2(NULL),
         player1Turn(true),
         ballsAssignedToPlayers(false),
-        scratched(false),
+        scratchedInPocket(false),
+        scratchedOnBall(false),
         firstAssignment(false),
         ballInThisTurn(false),
         firstBallHit(true),
@@ -231,14 +233,15 @@ bool ThreeDPool::ballsStopped() {
 }
 
 void ThreeDPool::endCurrentTurn(void){    
-    std::cout << scratched << " " << ballInThisTurn << std::endl;
-    if (scratched || !ballInThisTurn)
+    std::cout << scratchedInPocket << " " << ballInThisTurn << std::endl;
+    if (scratchedInPocket || scratchedOnBall || !ballInThisTurn)
         player1Turn = !player1Turn;
     
     // Reset flags
-    ballInThisTurn  = false;
-    scratched       = false;
-    firstBallHit    = true;
+    ballInThisTurn    = false;
+    scratchedInPocket = false;
+    scratchedOnBall   = false;
+    firstBallHit      = true;
     
     // Changed this to true to remove space to continue functionality
     letTurnEnd      = true;
@@ -557,6 +560,8 @@ void ThreeDPool::displayQuitCursor () {
     
     context.getMouseCursor().show();
     quit->show();
+    
+    gamePaused = true;
 }
 
 void ThreeDPool::hideQuitCursor () {
@@ -566,6 +571,8 @@ void ThreeDPool::hideQuitCursor () {
     
     context.getMouseCursor().hide();
     quit->hide();
+    
+    gamePaused = false;
 }
 
 void ThreeDPool::createFrameListener() {
@@ -807,7 +814,7 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
     if (gameStarted) {
-        if(gameEnded)
+        if(gameEnded || gamePaused)
            return true;    
         
         player1->frameUpdate(evt);
@@ -909,7 +916,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         // bool ballsStopped = ballSpeedSum.length() < 0.1f;
 //        bool ballsStopped = true;
         
-        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped(), letTurnEnd);
+        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped(), letTurnEnd, scratchedInPocket, scratchedOnBall);
         if (done && letTurnEnd){
             endCurrentTurn();   
         } else if (adjustingCamera) {
@@ -1016,7 +1023,7 @@ void ThreeDPool::physicsLoop()
                     Ball* ball = pocketMap[node];
                     
                     if (ball->redBall != getActivePlayer()->targetRedBall)
-                        scratched = true;
+                        scratchedOnBall = true;
                     
                     firstBallHit = false;
                 }
@@ -1050,9 +1057,10 @@ void ThreeDPool::physicsLoop()
             Ball* cueBall = pocketMap[node];
             
             incrementStrokeCount();
+                        
+            cueBall->removeCueBall();
             
-            cueBall->resetCueBall();
-            scratched = true;
+            scratchedInPocket = true;
         }
     }
 }

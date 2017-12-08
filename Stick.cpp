@@ -42,7 +42,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     guideLineNode->attachObject(guideLineParticle);
 }
 
-bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, bool& letTurnEnd) {
+bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, const bool& letTurnEnd, const bool& scratched, const bool& scratchedOnBall) {
     try {
         GraphicsComponent* graph = getGraphics();
         PhysicsComponent* phys = getPhysics();
@@ -68,6 +68,11 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, boo
 
         if (!turnIsOver)
             return false;
+        
+        if (scratched)
+            cueBall->addCueBall();
+        else if (scratchedOnBall)
+            cueBall->resetCueBall();
 
         cueBallBody->setLinearVelocity(btVector3(0, 0, 0));
         cueBallBody->setAngularVelocity(btVector3(0, 0, 0));

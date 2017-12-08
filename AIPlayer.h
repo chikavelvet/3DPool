@@ -38,10 +38,13 @@ protected:
     float chargeDelta;
     float chargeGoal;
 
+    int rotations;
 
     int difficulty;
     int maxDifficultyOffset;
     float perfectPercentage;
+    
+    static const int ROTATIONS_MAX;
 
     static const int NO_ROT_COUNT_THRESHOLD;
     static const float ROT_DELTA_MIN;

@@ -147,13 +147,16 @@ protected:
     bool player1Turn;
     bool gameStarted;
     bool gameEnded;
+    bool gamePaused;
     bool isServer;
     
     bool letTurnEnd;
     
     bool firstBallHit;
     bool ballInThisTurn;
-    bool scratched;
+    
+    bool scratchedInPocket;
+    bool scratchedOnBall;
     
     bool firstAssignment;
     bool redBallToAssign;

@@ -46,6 +46,8 @@ public:
     bool redBall;
     
     void removeFromWorld (void);
+    void removeCueBall (void);
+    void addCueBall (void);
     void resetCueBall (void);
     
     void setAsCue (void);
