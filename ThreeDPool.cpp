@@ -85,10 +85,12 @@ ThreeDPool::ThreeDPool(void) :
         player2(NULL),
         player1Turn(true),
         ballsAssignedToPlayers(false),
+        scratched(false),
+        firstAssignment(false),
         ballInThisTurn(false),
         firstBallHit(true),
         letTurnEnd(true),
-        AIDifficulty(1)
+        AIDifficulty(0)
 {
 }
 //---------------------------------------------------------------------------
@@ -212,6 +214,7 @@ void ThreeDPool::createMultiplayer(void)
 }
 
 void ThreeDPool::endCurrentTurn(void){
+    std::cout << scratched << " " << ballInThisTurn << std::endl;
     if (scratched || !ballInThisTurn)
         player1Turn = !player1Turn;
     
@@ -232,8 +235,7 @@ void ThreeDPool::endCurrentTurn(void){
     activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
     
     if (ballsAssignedToPlayers) {
-        
-        if (firstAssignment) {        
+        if (firstAssignment) {
             getActivePlayer()->setRedBall(!redBallToAssign);
             getInactivePlayer()->setRedBall(redBallToAssign);
             firstAssignment = false;
@@ -988,7 +990,7 @@ void ThreeDPool::physicsLoop()
                     if (soundsToPlay-- > 0)
                         Mix_PlayChannel(-1, ball_ball, 0);
                 
-                if (firstBallHit && ballsAssignedToPlayers) {
+                if (firstBallHit && ballsAssignedToPlayers && !firstAssignment) {
                     // Check if the right group
                     void* usr = obAType == ballType ? obA->getUserPointer() : obB->getUserPointer();
                     Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(usr);
@@ -1015,11 +1017,7 @@ void ThreeDPool::physicsLoop()
                 redBallToAssign = ball->redBall;
                 ballsAssignedToPlayers = true;
                 firstAssignment = true;
-            } 
-//            else {
-//                if (ball->redBall != getActivePlayer()->targetRedBall)
-//                    scratched = true;
-//            }
+            }
             
             decrementRemainingBallCount(ball->redBall);
             

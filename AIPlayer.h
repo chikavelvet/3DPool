@@ -17,6 +17,8 @@
 #include "Player.h"
 #include "OgreVector3.h"
 
+#define CALC_OFFSET(x) x
+
 class ThreeDPool;
 class Ball;
 class Pocket;
@@ -39,7 +41,7 @@ protected:
 
     int difficulty;
     int maxDifficultyOffset;
-
+    float perfectPercentage;
 
     static const int NO_ROT_COUNT_THRESHOLD;
     static const float ROT_DELTA_MIN;
@@ -48,7 +50,10 @@ protected:
     static const int EASY_DIFFICULTY_OFFSET;
     static const int MEDIUM_DIFFICULTY_OFFSET;
     static const int HARD_DIFFICULTY_OFFSET;
-
+    
+    static const float EASY_DIFFICULTY_PERFECT_PERCENTAGE;
+    static const float MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE;
+    static const float HARD_DIFFICULTY_PERFECT_PERCENTAGE;
 
     bool decideShot();
     float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);

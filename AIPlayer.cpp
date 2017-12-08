@@ -36,6 +36,9 @@ const int AIPlayer::EASY_DIFFICULTY_OFFSET = 8;
 const int AIPlayer::MEDIUM_DIFFICULTY_OFFSET = 4;
 const int AIPlayer::HARD_DIFFICULTY_OFFSET = 2;
 
+const float AIPlayer::EASY_DIFFICULTY_PERFECT_PERCENTAGE   = 0.1;
+const float AIPlayer::MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE = 0.3;
+const float AIPlayer::HARD_DIFFICULTY_PERFECT_PERCENTAGE   = 0.5;
 
 AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         game(_game),
@@ -49,11 +52,21 @@ AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         difficulty(_difficulty)
 
 {
-
     assert(difficulty == 2 || difficulty == 1 || difficulty == 0); //Difficulty must be easy, medium, or hard
-    maxDifficultyOffset = (difficulty==2) ? HARD_DIFFICULTY_OFFSET : //set aiming offset based on difficulty level
-                                            (difficulty==1) ? MEDIUM_DIFFICULTY_OFFSET :
-                                                            EASY_DIFFICULTY_OFFSET;
+    switch (difficulty) {
+        case 2:
+            maxDifficultyOffset = HARD_DIFFICULTY_OFFSET;
+            perfectPercentage = HARD_DIFFICULTY_PERFECT_PERCENTAGE;
+            break;
+        case 1:
+            maxDifficultyOffset = MEDIUM_DIFFICULTY_OFFSET;
+            perfectPercentage = MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE;
+            break;
+        case 0:
+            maxDifficultyOffset = EASY_DIFFICULTY_OFFSET;
+            perfectPercentage = EASY_DIFFICULTY_PERFECT_PERCENTAGE;
+            break;
+    }
 }
 
 AIPlayer::AIPlayer(const AIPlayer& orig) {
@@ -64,7 +77,7 @@ AIPlayer::~AIPlayer() {
 
 bool AIPlayer::decideShot()
 {
-    std::cout << "started deciding shot" << std::endl;
+//    std::cout << "started deciding shot" << std::endl;
 
     Ogre::SceneNode* cueBallNode = game->cueBall->getNode();
     
@@ -98,7 +111,7 @@ bool AIPlayer::decideShot()
 
         if(curBall->getBody()->getLinearVelocity().length() > 0.0f){
             decided = false;
-            std::cout << "stopped because BALLS STILL MOVING" << std::endl;
+//            std::cout << "stopped because BALLS STILL MOVING" << std::endl;
             return false;
         }
         
@@ -208,17 +221,18 @@ void AIPlayer::calculateXYRotation() {
 }
 
 float AIPlayer::randNum(){
-    return static_cast<float>(rand())/static_cast<float>(RAND_MAX) * maxDifficultyOffset;
+    float r = static_cast<float>(rand())/static_cast<float>(RAND_MAX) * maxDifficultyOffset;
+    return r - (maxDifficultyOffset / 2);
     // return static_cast<float>(rand() % maxDifficultyOffset); 
 }
 
 void AIPlayer::applyDifficulty() {
-    if(  static_cast<float>(rand())/static_cast<float>(RAND_MAX) < 0.75f){ //Messes up 75% of the time (by a random amount)
+    if(  static_cast<float>(rand())/static_cast<float>(RAND_MAX) > perfectPercentage) { //Messes up some % of the time (by a random amount)
         Ogre::Vector3 difficultyOffset(randNum(), randNum(), randNum());
         cueToDest += difficultyOffset;
         std::cout << "applying offset: " << difficultyOffset.x << " " << difficultyOffset.y << " " << difficultyOffset.z << std::endl;        
     }
-    else{ //Hits a perfect shot 25% of the time
+    else{ //Hits a perfect shot the rest of the time
         std::cout << "hit PERFECT shot";
     }
 }
