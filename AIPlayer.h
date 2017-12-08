@@ -62,7 +62,7 @@ protected:
     float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
     float guessStickCharge();
     void calculateXYRotation();
-    void applyDifficulty();
+    void applyDifficulty(Ogre::Vector3& dest);
     bool calculateStickChargeGoal();
     float randNum();
     

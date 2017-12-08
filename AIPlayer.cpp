@@ -153,22 +153,24 @@ bool AIPlayer::decideShot()
                 }
             }
         }
-        
-        chosenPocket = bestPocket_150 != NULL ? bestPocket_150 
-                                              : (bestPocket_110 != NULL ? bestPocket_110 
-                                                                        : bestPocket_lower);
-        chosenBall = bestBall_150 != NULL ? bestBall_150 
-                                          : (bestBall_110 != NULL ? bestBall_110 
-                                                                  : bestBall_lower);
-        
-        Ogre::Vector3 direction = chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition(); 
-        direction.normalise();
-        
-        float radius = 5.0f;
-        Ogre::Vector3 dest = chosenBall->getNode()->getPosition() - (direction * radius * 2.0f);
-
-        cueToDest = dest - game->cueBall->getNode()->getPosition();
     }
+    
+    chosenPocket = bestPocket_150 != NULL ? bestPocket_150 
+                                          : (bestPocket_110 != NULL ? bestPocket_110 
+                                                                    : bestPocket_lower);
+    chosenBall = bestBall_150 != NULL ? bestBall_150 
+                                      : (bestBall_110 != NULL ? bestBall_110 
+                                                              : bestBall_lower);
+
+    Ogre::Vector3 direction = chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition(); 
+    direction.normalise();
+
+    float radius = 5.0f;
+    Ogre::Vector3 dest = chosenBall->getNode()->getPosition() - (direction * radius * 2.0f);
+
+    applyDifficulty(dest); //applies random offsets to dest in the x, y, and z directions
+
+    cueToDest = dest - game->cueBall->getNode()->getPosition();
     
     Ogre::Vector3 chosenToCue(game->cueBall->getNode()->getPosition() - chosenBall->getNode()->getPosition());
     Ogre::Vector3 chosenBallToPocket(chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition());
@@ -176,9 +178,6 @@ bool AIPlayer::decideShot()
     std::cout << "Angle Between best ball and best pocket: " << 
             Ogre::Degree(chosenToCue.angleBetween(chosenBallToPocket)) << std::endl;
 
-
-    applyDifficulty(); //applies random offsets to cueToDest in the x, y, and z directions
-        
     decided = true;
     return true;
 }
@@ -223,12 +222,12 @@ float AIPlayer::randNum(){
     // return static_cast<float>(rand() % maxDifficultyOffset); 
 }
 
-void AIPlayer::applyDifficulty() {
+void AIPlayer::applyDifficulty(Ogre::Vector3& dest) {
     float randPercent = static_cast<float>(rand())/static_cast<float>(RAND_MAX);
     std::cout << "Randome Percentage: " << randPercent << " vs " << perfectPercentage << std::endl;
     if(randPercent > perfectPercentage) { //Messes up some % of the time (by a random amount)
         Ogre::Vector3 difficultyOffset(randNum(), randNum(), randNum());
-        cueToDest += difficultyOffset;
+        dest += difficultyOffset;
         std::cout << "applying offset: " << difficultyOffset.x << " " << difficultyOffset.y << " " << difficultyOffset.z << std::endl;        
     } else { //Hits a perfect shot the rest of the time
         std::cout << "hit PERFECT shot";
