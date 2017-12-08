@@ -213,7 +213,24 @@ void ThreeDPool::createMultiplayer(void)
     createScene();
 }
 
-void ThreeDPool::endCurrentTurn(void){
+bool ThreeDPool::ballsStopped() {
+    if (cueBall->getBody()->getLinearVelocity().length() > 0.0)
+            return false;
+    
+    for(std::vector<Ball*>::iterator ballIt = redBalls.begin(); ballIt != redBalls.end(); ++ballIt) {
+        if((*ballIt)->getBody()->getLinearVelocity().length() > 0.0f){
+            return false;
+        }
+    }
+    
+    for(std::vector<Ball*>::iterator ballIt = blueBalls.begin(); ballIt != blueBalls.end(); ++ballIt) {
+        if((*ballIt)->getBody()->getLinearVelocity().length() > 0.0f){
+            return false;
+        }
+    }
+}
+
+void ThreeDPool::endCurrentTurn(void){    
     std::cout << scratched << " " << ballInThisTurn << std::endl;
     if (scratched || !ballInThisTurn)
         player1Turn = !player1Turn;
@@ -255,6 +272,8 @@ void ThreeDPool::endCurrentTurn(void){
 
     player1->endCurrentTurn();
     player2->endCurrentTurn();
+    
+    cameraFollowStick();
 }
 
 //---------------------------------------------------------------------------
@@ -271,11 +290,11 @@ void ThreeDPool::createScene(void)
     // Set up Players //
     player1 = new ManualPlayer();
 //    player2 = new ManualPlayer();
-    player2 = new AIPlayer(this, 1);
+    player2 = new AIPlayer(this, AIDifficulty);
     
     if (isMultiplayer)
         if (isAI)
-            player2 = new AIPlayer(this, 1);
+            player2 = new AIPlayer(this, AIDifficulty);
         else
             player2 = new NetworkPlayer();
 
@@ -888,12 +907,11 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         }
         
         // bool ballsStopped = ballSpeedSum.length() < 0.1f;
-        bool ballsStopped = true;
+//        bool ballsStopped = true;
         
-        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped, letTurnEnd);
+        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped(), letTurnEnd);
         if (done && letTurnEnd){
-            endCurrentTurn();
-            cameraFollowStick();   
+            endCurrentTurn();   
         } else if (adjustingCamera) {
             using namespace Ogre;
             Vector3 camDirVec = Vector3::ZERO;

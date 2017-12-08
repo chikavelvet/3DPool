@@ -115,6 +115,8 @@ protected:
 
     void endCurrentTurn(void);
     
+    bool ballsStopped();
+    
     Player* getActivePlayer (void) { return player1Turn ? player1 : player2; }
     Player* getInactivePlayer (void) { return player1Turn ? player2 : player1; }
 

@@ -227,12 +227,13 @@ float AIPlayer::randNum(){
 }
 
 void AIPlayer::applyDifficulty() {
-    if(  static_cast<float>(rand())/static_cast<float>(RAND_MAX) > perfectPercentage) { //Messes up some % of the time (by a random amount)
+    float randPercent = static_cast<float>(rand())/static_cast<float>(RAND_MAX);
+    std::cout << "Randome Percentage: " << randPercent << " vs " << perfectPercentage << std::endl;
+    if(randPercent > perfectPercentage) { //Messes up some % of the time (by a random amount)
         Ogre::Vector3 difficultyOffset(randNum(), randNum(), randNum());
         cueToDest += difficultyOffset;
         std::cout << "applying offset: " << difficultyOffset.x << " " << difficultyOffset.y << " " << difficultyOffset.z << std::endl;        
-    }
-    else{ //Hits a perfect shot the rest of the time
+    } else { //Hits a perfect shot the rest of the time
         std::cout << "hit PERFECT shot";
     }
 }
