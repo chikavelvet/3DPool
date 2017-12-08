@@ -28,12 +28,16 @@
 
 #include <algorithm>
 
-//const float AIPlayer::ROT_DELTA_START = 0.03;
 const float AIPlayer::ROT_DELTA_START = 0.05;
 const float AIPlayer::ROT_DELTA_MIN = 0.00001;
 const int AIPlayer::NO_ROT_COUNT_THRESHOLD = 5;
 
-AIPlayer::AIPlayer(ThreeDPool* _game) :
+const int AIPlayer::EASY_DIFFICULTY_OFFSET = 8;
+const int AIPlayer::MEDIUM_DIFFICULTY_OFFSET = 4;
+const int AIPlayer::HARD_DIFFICULTY_OFFSET = 2;
+
+
+AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         game(_game),
         decided(false),
         rotDelta(ROT_DELTA_START),
@@ -41,8 +45,15 @@ AIPlayer::AIPlayer(ThreeDPool* _game) :
         noRotCount(0),
         rotatingStick(true),
         decidedChargeGoal(false),
-        chargeGoal(50.0f)
+        chargeGoal(50.0f),
+        difficulty(_difficulty)
+
 {
+
+    assert(difficulty == 2 || difficulty == 1 || difficulty == 0); //Difficulty must be easy, medium, or hard
+    maxDifficultyOffset = (difficulty==2) ? HARD_DIFFICULTY_OFFSET : //set aiming offset based on difficulty level
+                                            (difficulty==1) ? MEDIUM_DIFFICULTY_OFFSET :
+                                                            EASY_DIFFICULTY_OFFSET;
 }
 
 AIPlayer::AIPlayer(const AIPlayer& orig) {
@@ -53,6 +64,8 @@ AIPlayer::~AIPlayer() {
 
 bool AIPlayer::decideShot()
 {
+    std::cout << "started deciding shot" << std::endl;
+
     Ogre::SceneNode* cueBallNode = game->cueBall->getNode();
     
     std::vector<Pocket*> pockets = game->pockets;//pockets
@@ -85,6 +98,7 @@ bool AIPlayer::decideShot()
 
         if(curBall->getBody()->getLinearVelocity().length() > 0.0f){
             decided = false;
+            std::cout << "stopped because BALLS STILL MOVING" << std::endl;
             return false;
         }
         
@@ -147,6 +161,9 @@ bool AIPlayer::decideShot()
 
     std::cout << "Angle Between best ball and best pocket: " << 
             Ogre::Degree(chosenToCue.angleBetween(chosenBallToPocket)) << std::endl;
+
+
+    applyDifficulty(); //applies random offsets to cueToDest in the x, y, and z directions
         
     decided = true;
     return true;
@@ -190,13 +207,20 @@ void AIPlayer::calculateXYRotation() {
     }
 }
 
+float AIPlayer::randNum(){
+    return static_cast<float>(rand())/static_cast<float>(RAND_MAX) * maxDifficultyOffset;
+    // return static_cast<float>(rand() % maxDifficultyOffset); 
+}
+
 void AIPlayer::applyDifficulty() {
-    float randXOffset = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 2)) - 1;
-    float randYOffset = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 2)) - 1;
-//    cueStickRotationX = randXOffset;
-//    cueStickRotationY = randYOffset;
-    
-    rotatingStick = false;
+    if(  static_cast<float>(rand())/static_cast<float>(RAND_MAX) < 0.75f){ //Messes up 75% of the time (by a random amount)
+        Ogre::Vector3 difficultyOffset(randNum(), randNum(), randNum());
+        cueToDest += difficultyOffset;
+        std::cout << "applying offset: " << difficultyOffset.x << " " << difficultyOffset.y << " " << difficultyOffset.z << std::endl;        
+    }
+    else{ //Hits a perfect shot 25% of the time
+        std::cout << "hit PERFECT shot";
+    }
 }
 
 float AIPlayer::guessStickCharge (){
@@ -212,7 +236,7 @@ float AIPlayer::guessStickCharge (){
     }
 }
 
-void AIPlayer::calculateStickChargeGoal(){
+bool AIPlayer::calculateStickChargeGoal(){
     std::cout << "gets here" << std::endl;
     float chargeMin = 60.0f, chargeMax = 150.0f;
     float shotDistance = cueToDest.length() + Ogre::Vector3(chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition()).length();
@@ -224,6 +248,7 @@ void AIPlayer::calculateStickChargeGoal(){
     chargeGoal = std::max(chargeGoal, chargeMin);
 
     std::cout << "setting charge goal to " << chargeGoal << std::endl;
+    return true;
 }
 
 float AIPlayer::guessStickRotation (const Ogre::Vector3& x, 
@@ -244,7 +269,8 @@ float AIPlayer::guessStickRotation (const Ogre::Vector3& x,
 bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall)
 {
     if (!decided)
-        decideShot();
+        if(!decideShot())
+            return false;
     
     if(rotatingStick){
         calculateXYRotation();
@@ -253,7 +279,8 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
 
     else if(!hitBall){
         if(!decidedChargeGoal){
-            calculateStickChargeGoal();
+            if(!calculateStickChargeGoal())
+                return false;
             decidedChargeGoal = true;
         }
         guessStickCharge();
@@ -263,6 +290,7 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
 //        std::cout << cueToDest.normalisedCopy() << " " << game->cueStick->getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z << std::endl << chosenBall->getNode()->getPosition() << " " << chosenPocket->getNode()->getPosition() << std::endl;
 
     Player::giveGamePlayerInput(csd, csrx, csry, hitBall);
+    return true;
 }
 
 

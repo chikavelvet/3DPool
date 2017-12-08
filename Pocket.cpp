@@ -37,7 +37,7 @@ Pocket::Pocket(Ogre::SceneManager* _sceneMgr,
             POCKET_DEFAULT::PHYSICS::COLTYPE, 
             POCKET_DEFAULT::PHYSICS::COLLIDES_WITH,
             btVector3(x, y, z), POCKET_DEFAULT::PHYSICS::ROTATION,
-            new btSphereShape(27), 
+            new btSphereShape(27),
             rootNode);
        
     typeMap[((size_t) rootNode)] = pocketType;

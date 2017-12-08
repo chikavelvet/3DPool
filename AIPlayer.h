@@ -35,20 +35,31 @@ protected:
     float rotDelta;
     float chargeDelta;
     float chargeGoal;
-    
+
+
+    int difficulty;
+    int maxDifficultyOffset;
+
+
     static const int NO_ROT_COUNT_THRESHOLD;
     static const float ROT_DELTA_MIN;
     static const float ROT_DELTA_START;
+
+    static const int EASY_DIFFICULTY_OFFSET;
+    static const int MEDIUM_DIFFICULTY_OFFSET;
+    static const int HARD_DIFFICULTY_OFFSET;
+
 
     bool decideShot();
     float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
     float guessStickCharge();
     void calculateXYRotation();
     void applyDifficulty();
-    void calculateStickChargeGoal();
+    bool calculateStickChargeGoal();
+    float randNum();
     
 public:
-    AIPlayer(ThreeDPool* _game);
+    AIPlayer(ThreeDPool* _game, int _difficulty);
     AIPlayer(const AIPlayer& orig);
     virtual ~AIPlayer();
     

@@ -269,11 +269,11 @@ void ThreeDPool::createScene(void)
     // Set up Players //
     player1 = new ManualPlayer();
 //    player2 = new ManualPlayer();
-    player2 = new AIPlayer(this);
+    player2 = new AIPlayer(this, 1);
     
     if (isMultiplayer)
         if (isAI)
-            player2 = new AIPlayer(this);
+            player2 = new AIPlayer(this, 1);
         else
             player2 = new NetworkPlayer();
 
