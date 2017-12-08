@@ -236,8 +236,8 @@ void ThreeDPool::endCurrentTurn(void){
     
     if (ballsAssignedToPlayers) {
         if (firstAssignment) {
-            getActivePlayer()->setRedBall(!redBallToAssign);
-            getInactivePlayer()->setRedBall(redBallToAssign);
+            getActivePlayer()->setRedBall(redBallToAssign);
+            getInactivePlayer()->setRedBall(!redBallToAssign);
             firstAssignment = false;
         }
         
