@@ -87,7 +87,7 @@ ThreeDPool::ThreeDPool(void) :
         player1Turn(true),
         ballsAssignedToPlayers(false),
         scratchedInPocket(false),
-        scratchedOnBall(false),
+        scratchedOnBall(true),
         firstAssignment(false),
         ballInThisTurn(false),
         firstBallHit(true),
@@ -234,13 +234,14 @@ bool ThreeDPool::ballsStopped() {
 
 void ThreeDPool::endCurrentTurn(void){    
     std::cout << scratchedInPocket << " " << ballInThisTurn << std::endl;
+        
     if (scratchedInPocket || scratchedOnBall || !ballInThisTurn)
         player1Turn = !player1Turn;
     
     // Reset flags
     ballInThisTurn    = false;
     scratchedInPocket = false;
-    scratchedOnBall   = false;
+    scratchedOnBall   = true;
     firstBallHit      = true;
     
     // Changed this to true to remove space to continue functionality
@@ -1022,11 +1023,13 @@ void ThreeDPool::physicsLoop()
 
                     Ball* ball = pocketMap[node];
                     
-                    if (ball->redBall != getActivePlayer()->targetRedBall)
-                        scratchedOnBall = true;
+                    if (ball->redBall == getActivePlayer()->targetRedBall)
+                        scratchedOnBall = false;
                     
                     firstBallHit = false;
                 }
+                
+                
             }
         }
         
