@@ -65,7 +65,9 @@ protected:
     void applyDifficulty(Ogre::Vector3& dest);
     bool calculateStickChargeGoal();
     float randNum();
-    
+    std::vector<Ogre::Ray> makeRays(Ogre::Vector3 centerOrigin, Ogre::Vector3 direction);
+    bool noBallsBlocking(Ogre::Vector3 cueBallDest, Ball* candidateBall, Pocket* candidatePocket);
+
 public:
     AIPlayer(ThreeDPool* _game, int _difficulty);
     AIPlayer(const AIPlayer& orig);

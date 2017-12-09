@@ -16,6 +16,8 @@
 #include <OgreVector3.h>
 #include <OgreSceneNode.h>
 #include <OGRE/OgreQuaternion.h>
+#include <OgreMath.h>
+#include <OgreRay.h>
 
 #include "AIPlayer.h"
 #include "ThreeDPool.h"
@@ -77,6 +79,81 @@ AIPlayer::AIPlayer(const AIPlayer& orig) {
 AIPlayer::~AIPlayer() {
 }
 
+std::vector<Ogre::Ray> AIPlayer::makeRays(Ogre::Vector3 centerOrigin, Ogre::Vector3 direction){
+    std::vector<Ogre::Ray> rays;
+    Ogre::Vector3 xAxis = direction * Ogre::Vector3::UNIT_X;
+    Ogre::Vector3 yAxis = direction * Ogre::Vector3::UNIT_Y;
+
+    float radius = 5.0f;
+    for(int angle = 0; angle < 360; angle += 45){
+        Ogre::Vector3 xOffset = Ogre::Math::Cos(Ogre::Degree(angle)) * radius * xAxis;
+        Ogre::Vector3 yOffset = Ogre::Math::Sin(Ogre::Degree(angle)) * radius * yAxis;
+        rays.push_back(Ogre::Ray(centerOrigin + xOffset + yOffset, direction));
+    }
+    return rays;
+}
+
+bool AIPlayer::noBallsBlocking(Ogre::Vector3 cueBallDest, Ball* candidateBall, Pocket* candidatePocket){
+    
+    /*Variables we will need in our intersection tests*/
+    Ogre::SceneNode* cueBallNode = game->cueBall->getNode();
+    std::vector<Ball*> allBalls = std::vector<Ball*>(game->redBalls);   allBalls.insert(allBalls.end(), game->blueBalls.begin(), game->blueBalls.end());
+    allBalls.erase(std::remove(allBalls.begin(), allBalls.end(), candidateBall), allBalls.end());
+    // allBalls.remove(candidateBall);
+    float ballRadius = 5.0f;
+    
+    /*First conduct checks along line from cueball to destination*/
+    Ogre::Vector3 origin(cueBallNode->getPosition());
+    Ogre::Vector3 dest(cueBallDest);
+    Ogre::Vector3 direction(dest - origin);
+    std::vector<Ogre::Ray> rays(makeRays(origin, direction)); //9 rays: 8 rays around the cue ball, 1 in the center
+
+    Ogre::Sphere destSphere(dest, 0.1f);
+    std::pair<bool,Ogre::Real> intersection = Ogre::Ray(origin, direction).intersects(destSphere);
+    assert(intersection.first);
+    Ogre::Real tStop = intersection.second; //figure out where along the ray the raycasting should stop
+
+    for(std::vector<Ball*>::iterator ballIt = allBalls.begin(); ballIt != allBalls.end(); ++ballIt) {
+        Ball* curBall = *ballIt;
+        Ogre::Sphere ballSphere(curBall->getNode()->getPosition(), ballRadius); //a sphere representation of the ball
+        for(Ogre::Ray curRay: rays){
+            intersection = curRay.intersects(ballSphere);
+            if(intersection.first){
+                if(intersection.second < tStop){//the intersection only counts if it happens before dest
+                    return false;
+                }
+            }
+        }
+    }
+
+    /*Next conduct checks along line from targetball to pocket*/
+    origin = Ogre::Vector3(candidateBall->getNode()->getPosition());
+    dest = Ogre::Vector3(candidatePocket->getNode()->getPosition());
+    direction = Ogre::Vector3(dest-origin);
+    rays = std::vector<Ogre::Ray>(makeRays(origin, direction));  //9 rays: 8 rays around the cue ball, 1 in the center
+
+    destSphere = Ogre::Sphere(dest, 0.1f);
+    intersection = Ogre::Ray(origin, direction).intersects(destSphere);
+    assert(intersection.first);
+    tStop = intersection.second; //figure out where along the ray the ray casting should stop
+
+    for(std::vector<Ball*>::iterator ballIt = allBalls.begin(); ballIt != allBalls.end(); ++ballIt) {
+        Ball* curBall = *ballIt;
+        Ogre::Sphere ballSphere(curBall->getNode()->getPosition(), ballRadius); //a sphere representation of the ball
+        for(Ogre::Ray curRay: rays){
+            intersection = curRay.intersects(ballSphere);
+            if(intersection.first){
+                if(intersection.second < tStop){//the intersection only counts if it happens before dest
+                    return false;
+                }
+            }
+        }
+    }
+
+
+    return true;
+}
+
 bool AIPlayer::decideShot()
 {
 //    std::cout << "started deciding shot" << std::endl;
@@ -133,24 +210,51 @@ bool AIPlayer::decideShot()
             
             if (AtoB >= Ogre::Degree(150)) {
                 if (proximity < bestDist_150) {
-                    bestDist_150 = proximity;
-                    bestPocket_150 = curPocket;
-                    bestBall_150 = curBall;
-                }
+
+                    Ogre::Vector3 direction = curPocket->getNode()->getPosition() - curBall->getNode()->getPosition(); 
+                    direction.normalise(); float radius = 5.0f;
+                    Ogre::Vector3 dest = curBall->getNode()->getPosition() - (direction * radius * 2.0f);
+                    bool isClearShot = noBallsBlocking(dest, curBall, curPocket);
+
+                    if(isClearShot)
+                    {
+                        bestDist_150 = proximity;
+                        bestPocket_150 = curPocket;
+                        bestBall_150 = curBall;
+                    }
             }
             else if (AtoB >= Ogre::Degree(110)) {
                 if (proximity < bestDist_110) {
-                    bestDist_110 = proximity;
-                    bestPocket_110 = curPocket;
-                    bestBall_110 = curBall;
+
+                    Ogre::Vector3 direction = curPocket->getNode()->getPosition() - curBall->getNode()->getPosition(); 
+                    direction.normalise(); float radius = 5.0f;
+                    Ogre::Vector3 dest = curBall->getNode()->getPosition() - (direction * radius * 2.0f);
+                    bool isClearShot = noBallsBlocking(dest, curBall, curPocket);
+                    
+                    if(isClearShot)
+                    {
+                        bestDist_110 = proximity;
+                        bestPocket_110 = curPocket;
+                        bestBall_110 = curBall;
+                    }
                 }
             }
             else { // all other shots
                 if (proximity < bestDist_lower) {
-                    bestDist_lower = proximity;
-                    bestPocket_lower = curPocket;
-                    bestBall_lower = curBall;
+
+                    Ogre::Vector3 direction = curPocket->getNode()->getPosition() - curBall->getNode()->getPosition(); 
+                    direction.normalise(); float radius = 5.0f;
+                    Ogre::Vector3 dest = curBall->getNode()->getPosition() - (direction * radius * 2.0f);
+                    bool isClearShot = noBallsBlocking(dest, curBall, curPocket);
+                    
+                    if(isClearShot)
+                    {
+                        bestDist_lower = proximity;
+                        bestPocket_lower = curPocket;
+                        bestBall_lower = curBall;
+                    }
                 }
+            }
             }
         }
     }
