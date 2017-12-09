@@ -31,20 +31,6 @@ http://www.ogre3d.org/wiki/
 #include <OgreFrameListener.h>
 #include <Overlay/OgreOverlaySystem.h>
 
-class GameObject;
-#include "Simulator.h"
-class Simulator; 
-#include "Ball.h"
-#include "Stick.h"
-#include "Room.h"
-#include "PlayerCamera.h"
-#include "Pocket.h"
-
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/RendererModules/Ogre/Renderer.h>
-
-#include <btBulletDynamicsCommon.h>
-
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 #  include <OIS/OISEvents.h>
 #  include <OIS/OISInputManager.h>

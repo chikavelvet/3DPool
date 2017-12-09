@@ -19,9 +19,9 @@ PhysicsComponent::PhysicsComponent(GameObject* owner,
         btScalar _restitution, btScalar _friction, 
         btScalar _linearDamping, btScalar _angularDamping, 
         bool _kinematic, bool _needsUpdates, 
-        collisionType _coltype, int _collidesWith, 
+        collisionType _coltype, collisionType _collidesWith, 
         btVector3 _origin, btQuaternion _rotation, btCollisionShape* _shape,
-        void* _userPointer) :
+        Ogre::SceneNode* _rootNode) :
 Component(owner),
         simulator(_simulator),
         shape(_shape),
@@ -35,13 +35,13 @@ Component(owner),
         needsUpdates(_needsUpdates),
         coltype(_coltype),
         collidesWith(_collidesWith),
-        userPointer(_userPointer)
+        rootNode(_rootNode)
 {
     tr.setIdentity();
     tr.setRotation(_rotation);
     tr.setOrigin(_origin);
     
-    motionState = new btDefaultMotionState(tr);
+    motionState = new OgreMotionState(tr, rootNode);
 }
 
 void PhysicsComponent::addToSimulator() {		
@@ -53,8 +53,8 @@ void PhysicsComponent::addToSimulator() {
     rbInfo.m_restitution = restitution;
     rbInfo.m_friction = friction;
     body = new btRigidBody(rbInfo);
-    if (userPointer)
-        body->setUserPointer(userPointer);
+    if (rootNode)
+        body->setUserPointer(static_cast<void*>(rootNode));
     body->setDamping(linearDamping, angularDamping);
 
     if (kinematic) {

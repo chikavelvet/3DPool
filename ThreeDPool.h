@@ -19,36 +19,58 @@ http://www.ogre3d.org/wiki/
 #define __ThreeDPool_h_
 
 #include "BaseApplication.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
-#include "NetManager.h"
+#include <btBulletDynamicsCommon.h>
 #include <map>
-#include <OgreParticleIterator.h>
-#include <OgreParticleSystem.h>
-#include <OgreParticleSystemManager.h>
-#include <OgreParticle.h>
+#include "Enums.h"
 
+//--Forward Declarations--//
+//----Game Objects--------//
+class GameObject;
 class PlayerCamera;
-//---------------------------------------------------------------------------
+class Player;
+class Stick;
+class Room;
+class Pocket;
+class Ball;
+
+//----Game Managers-------//
+class Simulator; 
+class GUIManager;
+class NetManager;
+
+//----SDL-mix-------------//
+class Mix_Chunk;
+
+//----CEGUI---------------//
+namespace CEGUI {
+    class EventArgs;
+}
 
 class ThreeDPool : public BaseApplication
 {
 public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
+    
+    int redBallsRemaining;
+    int blueBallsRemaining;
 
 protected:
+    friend class GUIManager;
+    friend class AIPlayer;
+    
+    static const float CUE_STICK_MAX,
+                       CUE_STICK_MIN,
+                       STICK_POWER_MULT;
+    static const int   BALL_SPEED_SUM_FREQUENCY;
+    
     virtual void createScene(void);
     virtual void createMultiplayer(void);
-    virtual void createMainMenu();
-    virtual void initGUI(void);
-    virtual void createMPLobby(void);
     virtual void createCamera(void);
     virtual bool setup(void);
     virtual bool configure(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
-    void setUpGUI(void);
     void setUpSounds(void);
 
     void gameLoop(const Ogre::FrameEvent& evt);
@@ -66,16 +88,14 @@ protected:
     void displayQuitCursor(void);
     void hideQuitCursor(void);
     
-    virtual void showEnterIPWindow(void);
-    virtual void hideEnterIPWindow(void);
     virtual void startWaiting(void);
     virtual void cancelWaiting(void);
-    virtual void onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e);
     virtual void joinMultiplayer ();
     virtual void hostMultiplayer ();
     
     void incrementStrokeCount(void);
-    void decrementRemainingBallCount(void);
+    void decrementRemainingBallCount(bool redBall);
+    void increaseScore(void);
     void updateOppStrokeCount(int newVal);
     void updateOppRemainingBallCount(int newVal);
     
@@ -93,13 +113,18 @@ protected:
 
     void updateBallSpeedSum(void);
 
+    void endCurrentTurn(void);
     
-    bool guiInitialized;
+    bool ballsStopped();
+    
+    Player* getActivePlayer (void) { return player1Turn ? player1 : player2; }
+    Player* getInactivePlayer (void) { return player1Turn ? player2 : player1; }
+
     bool mainMenuScreenCreated;
     bool mpLobbyScreenCreated;
     bool gameScreenCreated;
     
-    CEGUI::OgreRenderer* mRenderer;
+    GUIManager* mGUIMgr;
         
     PlayerCamera* pCamera;
     NetManager* nm;
@@ -108,6 +133,9 @@ protected:
     int cameraCounter;
     Ogre::Vector3 newLookAt;
     Ogre::Vector3 newCamPos;
+    Ogre::Vector3 cameraOffset;
+    Ogre::Vector3 preFreeLookCameraPosition;
+    Ogre::Vector3 preFreeLookCameraDirection;
     Ogre::Real mMoveSpeed;
     bool hitBall;
     bool LMBDown;
@@ -116,17 +144,47 @@ protected:
     bool adjustingStick;
     bool cursorDisplaying;
     bool soundOn;
-    bool yourTurn;
+    bool player1Turn;
     bool gameStarted;
     bool gameEnded;
+    bool gamePaused;
+    bool isServer;
+    
+    bool letTurnEnd;
+    
+    bool firstBallHit;
+    bool ballInThisTurn;
+    
+    bool scratchedInPocket;
+    bool scratchedOnBall;
+    
+    bool firstAssignment;
+    bool redBallToAssign;
+    
+    bool ballsAssignedToPlayers;
+    
+    std::vector<Ball*> blueBalls;
+    std::vector<Ball*> redBalls;
+    std::vector<Pocket*> pockets;
     
     bool isMultiplayer;
     bool isWaiting;
     std::string hostName;
     int port;
     
+    bool isAI;
+    int AIDifficulty;
+    
     int strokes;
     int opponentStrokes;
+    int score;
+    
+    Player* player1;
+    Player* player2;
+    
+    Stick* cueStick;
+    Ball* cueBall;
+    Room* room;
 
     Mix_Chunk* ball_ball;
     Mix_Chunk* stick_ball;
@@ -135,7 +193,7 @@ protected:
 
     std::map<size_t, objType> typeMap;
     std::map<Ogre::SceneNode*, Ball*> pocketMap;
-
+    
     btVector3 ballSpeedSum;
     int frameCounter;
 };

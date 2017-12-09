@@ -6,14 +6,14 @@
 
 class PlayerCamera : GameObject {
 protected:
-    Ogre::Camera* cam;
+    static const Ogre::Vector3 cameraOffsetFromStick;
     
-//    int cameraOffsetFromStick = 100;
+    Ogre::Camera* cam;
     
 public:
     PlayerCamera (Ogre::Camera* const cam);
     
-    Ogre::Camera* getCamera ();
+    Ogre::Camera* getCamera () const;
     
     bool moveCameraToStick (Stick* const cueStick);
 };

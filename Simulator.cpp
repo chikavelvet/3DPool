@@ -1,4 +1,5 @@
 #include "Simulator.h"
+#include "GameObject.h"
 
 void Simulator::initObjects() {
     collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -13,12 +14,12 @@ void Simulator::initObjects() {
     dynamicsWorld->setGravity(btVector3(0, 0, 0));
 }
 
-void Simulator::addObject (GameObject* o, collisionType coltype, int collidesWith) { 
+void Simulator::addObject (GameObject* o, collisionType coltype, collisionType collidesWith) { 
     objList.push_back(o); 
     dynamicsWorld->addRigidBody(o->getBody(), coltype, collidesWith);       
 }
 
-void Simulator::addObject (GameObject* o, collisionType coltype, int collidesWith, btRigidBody* body) {
+void Simulator::addObject (GameObject* o, collisionType coltype, collisionType collidesWith, btRigidBody* body) {
     objList.push_back(o);
     dynamicsWorld->addRigidBody(body, coltype, collidesWith);
 }

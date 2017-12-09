@@ -6,38 +6,30 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         std::map<size_t,objType>& typeMap, 
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
         std::string color,
+        bool isRed,
         bool isCue) :
-        initialX(x), initialY(y), initialZ(z)
+        initialX(x), initialY(y), initialZ(z), redBall(isRed)
 {    
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z), 
-            Ogre::Vector3(BallDefault::SCALE_FACTOR,
-                          BallDefault::SCALE_FACTOR,
-                          BallDefault::SCALE_FACTOR),
-            "sphere.mesh", color);
-            
-//    geom = sceneMgr->createEntity("sphere.mesh");
-//    geom->setMaterialName(color);
-//    
-//    rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-//    rootNode->attachObject(geom);
-//    rootNode->setPosition(x, y, z);
-//    rootNode->scale(0.05, 0.05, 0.05);
+            Ogre::Vector3(BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
+                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
+                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ),
+            BALL_DEFAULT::GRAPHICS::MESH, color);
     
-    rootNode = getGraphics()->rootNode;
+    Ogre::SceneNode* rootNode = getGraphics()->rootNode;
     
     physics = new PhysicsComponent(this, _simulator, 
-                BallDefault::MASS, BallDefault::INERTIA, 
-                BallDefault::RESTITUTION, BallDefault::FRICTION,
-                BallDefault::LINEAR_DAMPING, BallDefault::ANGULAR_DAMPING,
-                BallDefault::KINEMATIC, BallDefault::NEEDS_UPDATES,
-                isCue ? COL_CUEBALL : COL_BALL, 
-                isCue ? COL_STICK   | COL_BALL | COL_WALL | COL_POCKET
-                      : COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET,
-                btVector3(x, y, z), BallDefault::ROTATION,
-                new btSphereShape(BallDefault::RADIUS),
-                rootNode
-            );
+                BALL_DEFAULT::PHYSICS::MASS, BALL_DEFAULT::PHYSICS::INERTIA, 
+                BALL_DEFAULT::PHYSICS::RESTITUTION, BALL_DEFAULT::PHYSICS::FRICTION,
+                BALL_DEFAULT::PHYSICS::LINEAR_DAMPING, BALL_DEFAULT::PHYSICS::ANGULAR_DAMPING,
+                BALL_DEFAULT::PHYSICS::KINEMATIC, BALL_DEFAULT::PHYSICS::NEEDS_UPDATES,
+                collisionType(isCue ? COL_CUEBALL : COL_BALL), 
+                isCue ? collisionType(COL_STICK   | COL_BALL | COL_WALL | COL_POCKET)
+                      : collisionType(COL_CUEBALL | COL_BALL | COL_WALL | COL_POCKET),
+                btVector3(x, y, z), BALL_DEFAULT::PHYSICS::ROTATION,
+                new btSphereShape(BALL_DEFAULT::PHYSICS::RADIUS),
+                rootNode);
 
     typeMap[((size_t) rootNode)] = isCue ? cueBallType : ballType;
         
@@ -46,12 +38,7 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
     pocketMap[rootNode] = this;
     
     physics->addToSimulator();
-    physics->body->setRollingFriction(BallDefault::ROLLING_FRICTION);
-}
-
-Ogre::Vector3 Ball::getPosition() {
-    btVector3 btPos = getBody()->getCenterOfMassPosition();
-    return Ogre::Vector3(float(btPos.x()), float(btPos.y()), float(btPos.z()));
+    physics->body->setRollingFriction(BALL_DEFAULT::PHYSICS::ROLLING_FRICTION);
 }
 
 void Ball::removeFromWorld() {
@@ -64,11 +51,11 @@ void Ball::removeFromWorld() {
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
         graph->geom->setVisible(false);
     } catch (ComponentNotFoundException& e) {
-        
+        std::cout << "ERROR: " << e.what() << " Ball::removeFromWorld()" << std::endl;
     }
 }
 
-void Ball::resetCueBall() {  
+void Ball::removeCueBall() {
     try {
         PhysicsComponent* phys = getPhysics();
         
@@ -76,25 +63,29 @@ void Ball::resetCueBall() {
         phys->body->setLinearVelocity(btVector3(0, 0, 0));
 
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
+        
+    } catch (ComponentNotFoundException& e) {
+        std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
+    }
+}
 
+void Ball::addCueBall() {
+    try {
+        PhysicsComponent* phys = getPhysics();
+        
         btTransform newTransform(btQuaternion(0, 0, 0, 1), 
             btVector3(initialX, initialY, initialZ));
         phys->body->setCenterOfMassTransform(newTransform);
 
         phys->simulator->getDynamicsWorld()->addRigidBody(phys->body, phys->coltype, phys->collidesWith);
-    } catch (ComponentNotFoundException& e) {
         
+        phys->body->getMotionState()->setWorldTransform(phys->body->getCenterOfMassTransform());
+    } catch (ComponentNotFoundException& e) {
+        std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
     }
 }
 
-btRigidBody* Ball::getBody() {
-    return getPhysics()->body;
-}
-
-Simulator* Ball::getSimulator() {
-    return getPhysics()->simulator;
-}
-
-Ogre::SceneNode* Ball::getNode() {
-    return getGraphics()->rootNode;
+void Ball::resetCueBall() {  
+    this->removeCueBall();
+    this->addCueBall();
 }

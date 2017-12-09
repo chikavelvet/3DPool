@@ -7,6 +7,7 @@
 #include <string>
 #include "BulletContactCallback.h"
 #include "OgreMotionState.h"
+#include <OgreRoot.h>
 //#include "GameObject.h"
 #include "Enums.h"
 
@@ -33,8 +34,8 @@ public:
 		return objList.at(index);
 	}
 
-	void addObject(GameObject* o, collisionType coltype, int collidesWith); 
-        void addObject(GameObject* o, collisionType coltype, int collidesWith, btRigidBody* body);
+	void addObject(GameObject* o, collisionType coltype, collisionType collidesWith); 
+        void addObject(GameObject* o, collisionType coltype, collisionType collidesWith, btRigidBody* body);
         
 	bool removeObject(GameObject* o); 
 	btDiscreteDynamicsWorld* getDynamicsWorld() { return dynamicsWorld; }

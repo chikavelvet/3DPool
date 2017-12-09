@@ -18,6 +18,28 @@
 
 class Simulator;
 
+namespace POCKET_DEFAULT {
+    namespace GRAPHICS {
+        const float       SCALE_FACTOR_XYZ = 0.27;
+        const std::string MESH = "sphere.mesh",
+                          MATERIAL = "Example/Purple";
+    }
+
+    namespace PHYSICS {
+        const int           MASS = 0;
+        const btVector3     INERTIA = btVector3(0, 0, 0);
+        const btQuaternion  ROTATION = btQuaternion(0, 0, 0, 1);
+        const float         RESTITUTION = 0.0,
+                            FRICTION = 0.0,
+                            LINEAR_DAMPING = 0.0,
+                            ANGULAR_DAMPING = 0.0;
+        const bool          KINEMATIC = false,
+                            NEEDS_UPDATES = false;
+        const collisionType COLTYPE = COL_POCKET,
+                            COLLIDES_WITH = collisionType(COL_CUEBALL | COL_BALL);
+    }
+}
+
 class Pocket : public GameObject {
 public:
     Pocket (Ogre::SceneManager* mSceneMgr,

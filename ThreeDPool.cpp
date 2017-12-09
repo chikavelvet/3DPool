@@ -19,21 +19,36 @@ http://www.ogre3d.org/wiki/
 #include <fstream>
 
 #include "ThreeDPool.h"
+#include "ManualPlayer.h"
+#include "AIPlayer.h"
+#include "NetworkPlayer.h"
+#include "GUIManager.h"
+#include "Simulator.h"
+#include "Ball.h"
+#include "Stick.h"
+#include "Room.h"
+#include "PlayerCamera.h"
+#include "Pocket.h"
+#include "Player.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
+#include "NetManager.h"
 
-Ogre::Vector3 cameraOffset;
-Stick* cueStickObject;
-btRigidBody* cueStick;
-Ball* cueBallObject;
-btRigidBody* cueBall;
-Room* room;
-int isServer;
+#include <OgreParticleIterator.h>
+#include <OgreParticleSystem.h>
+#include <OgreParticleSystemManager.h>
+#include <OgreParticle.h>
 
-Ogre::Vector3 preFreeLookCameraPosition;
-Ogre::Vector3 preFreeLookCameraDirection;
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/Renderer.h>
 
-const float CUE_STICK_MAX = 150.0f, CUE_STICK_MIN = 50.0f, STICK_POWER_MULT = 10.0f, BALL_SPEED_SUM_FREQUENCY = 100;
+const float ThreeDPool::CUE_STICK_MAX            = 150.0,
+            ThreeDPool::CUE_STICK_MIN            = 50.0, 
+            ThreeDPool::STICK_POWER_MULT         = 10.0;
+const int   ThreeDPool::BALL_SPEED_SUM_FREQUENCY = 100;
 
-std::vector<Ball*> balls;
+//std::vector<Ball*> redBalls;
+//std::vector<Ball*> blueBalls;
 
 int remainingBalls;
 int oppRemainingBalls;
@@ -56,7 +71,7 @@ ThreeDPool::ThreeDPool(void) :
         pocketMap(),
         gameStarted(false),
         isMultiplayer(false),
-        guiInitialized(false),
+        isAI(false),
         mainMenuScreenCreated(false),
         mpLobbyScreenCreated(false),
         gameScreenCreated(false),
@@ -65,7 +80,19 @@ ThreeDPool::ThreeDPool(void) :
         isWaiting(false),
         ballSpeedSum(0, 0, 0),
         frameCounter(0),
-        gameEnded(false)
+        gameEnded(false),
+        gamePaused(false),
+        player1(NULL),
+        player2(NULL),
+        player1Turn(true),
+        ballsAssignedToPlayers(false),
+        scratchedInPocket(false),
+        scratchedOnBall(true),
+        firstAssignment(false),
+        ballInThisTurn(false),
+        firstBallHit(true),
+        letTurnEnd(true),
+        AIDifficulty(0)
 {
 }
 //---------------------------------------------------------------------------
@@ -79,36 +106,14 @@ bool ThreeDPool::setup(void)
     if (!BaseApplication::setup())
         return false;
 
-    createMainMenu();
+    mGUIMgr = new GUIManager(this);
+    mGUIMgr->createMainMenu();
 
     return true;
 };
 
-void ThreeDPool::initGUI()
-{
-    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
-    CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
-    CEGUI::Font::setDefaultResourceGroup("Fonts");
-    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
-    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
-    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-
-    CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
-    CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("TaharezLook/MouseArrow");
-
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "ThreeDPool/Sheet");
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    context.setRootWindow(sheet);
-    
-    guiInitialized = true;
-}
-
 void ThreeDPool::hideAllScreens() 
 {
-    if (!guiInitialized)
-        initGUI();
-    
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
@@ -120,190 +125,6 @@ void ThreeDPool::hideAllScreens()
     }    
 
     CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().show();
-}
-
-void ThreeDPool::createMainMenu() 
-{       
-    if (!guiInitialized)
-        initGUI();
-    
-    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    
-    if (!mainMenuScreenCreated) {
-        hideAllScreens();
-        
-        //----Main Menu Screen----//
-        CEGUI::Window* mainMenu = wmgr.createWindow("DefaultWindow", "MainMenuScreen");
-        mainMenu->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
-        mainMenu->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        mainMenu->setAlwaysOnTop(true);
-        
-        sheet->addChild(mainMenu);
-        
-        //----Back Ground----//   
-        CEGUI::ImageManager::getSingleton().addFromImageFile("BackgroundImage", "ThreeDPoolBackground.png", "Imagesets");
-        CEGUI::Window* background = wmgr.createWindow("TaharezLook/StaticImage", "DefaultBackground");
-        background->setProperty("Image", "BackgroundImage");
-        background->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
-        background->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        background->setAlwaysOnTop(false);
-        sheet->addChild(background);
-        
-        //----Quit Button----//
-        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
-        quit->setText("Quit");    
-
-        // In UDim, only set one of the two params, the other should be 0
-        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.86, 0)));
-        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
-
-        mainMenu->addChild(quit);
-
-        //----Single Player----//
-        CEGUI::Window *singlePlayer = wmgr.createWindow("TaharezLook/Button", "StartSinglePlayerButton");
-        singlePlayer->setText("Single Player");    
-
-        // In UDim, only set one of the two params, the other should be 0
-        singlePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        singlePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.74, 0)));
-        singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, this));
-
-        mainMenu->addChild(singlePlayer);
-
-        //----Multi Player----//
-        CEGUI::Window *multiPlayer = wmgr.createWindow("TaharezLook/Button", "StartMultiPlayerButton");
-        multiPlayer->setText("Multi Player");    
-
-        // In UDim, only set one of the two params, the other should be 0
-        multiPlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        multiPlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.425, 0), CEGUI::UDim(0.80, 0)));
-        multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMPLobby, this));
-
-        mainMenu->addChild(multiPlayer);
-        
-        mainMenuScreenCreated = true;
-    } else {
-        hideAllScreens();
-        sheet->getChild("MainMenuScreen")->show();
-        sheet->getChild("DefaultBackground")->show();
-    }
-}
-
-void ThreeDPool::onIPEnterBoxKeyPressed (const CEGUI::EventArgs& e) 
-{
-    using namespace CEGUI;
-    
-    //Cast it to a key event
-    const KeyEventArgs& key = static_cast<const KeyEventArgs&>(e);
-    
-    if (key.scancode == Key::Return) {
-        joinMultiplayer();
-    } else if (key.scancode == Key::Backspace) {
-        CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
-        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-        CEGUI::Window* ipEnterBox = context.getRootWindow()->getChild("MPLobbyScreen/EnterIPWindow/IPEnterBox");
-
-        std::string text = ipEnterBox->getText().c_str();
-        std::string backspacedText = text.substr(0, text.length() - 1);
-        ipEnterBox->setText(backspacedText);
-    }
-}
-
-void ThreeDPool::createMPLobby(void) 
-{ 
-    if (!guiInitialized)
-        initGUI();
-    
-    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-        
-    if (!mpLobbyScreenCreated) {
-        hideAllScreens();
-        
-        // Create Lobby                
-        CEGUI::Window* mpLobby = wmgr.createWindow("DefaultWindow", "MPLobbyScreen");
-        mpLobby->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
-        mpLobby->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        
-        sheet->addChild(mpLobby);
-        
-        //----Back to Main----//
-        CEGUI::Window *back = wmgr.createWindow("TaharezLook/Button", "BackToMainButton");
-        back->setText("Back");
-        back->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        back->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createMainMenu, this));
-        mpLobby->addChild(back);
-        
-        //----Host Game-----------------//
-        CEGUI::Window *hostGame = wmgr.createWindow("TaharezLook/Button", "HostGameButton");
-        hostGame->setText("Host Game");
-        hostGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        hostGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.8, 0)));
-        hostGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::startWaiting, this));
-        mpLobby->addChild(hostGame);
-        
-        //----Join Game-----------------//
-        CEGUI::Window *joinGame = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
-        joinGame->setText("Join Game");
-        joinGame->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        joinGame->setPosition(CEGUI::UVector2(CEGUI::UDim(0.55, 0), CEGUI::UDim(0.8, 0)));
-        joinGame->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::showEnterIPWindow, this));
-        mpLobby->addChild(joinGame);
-        
-        //--------Enter Server IP-------//
-        CEGUI::FrameWindow *enterIP = static_cast<CEGUI::FrameWindow*>(wmgr.createWindow("TaharezLook/FrameWindow", "EnterIPWindow"));
-        enterIP->setText("Enter Server IP");
-        enterIP->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
-        enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
-        enterIP->setAlwaysOnTop(true);
-        enterIP->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::hideEnterIPWindow, this));
-        enterIP->hide();
-        mpLobby->addChild(enterIP);
-                
-        //------------IP Enter Box------//
-        CEGUI::Editbox *ipEnterBox = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox", "IPEnterBox"));
-        ipEnterBox->setSize(CEGUI::USize(CEGUI::UDim(0.5, 0), CEGUI::UDim(0.2, 0)));
-        ipEnterBox->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25, 0), CEGUI::UDim(0.4, 0)));
-        ipEnterBox->subscribeEvent(CEGUI::Editbox::EventKeyDown, CEGUI::Event::Subscriber(&ThreeDPool::onIPEnterBoxKeyPressed, this));
-        enterIP->addChild(ipEnterBox);
-        
-        //------------Go Button---------//
-        CEGUI::Window *goButton = wmgr.createWindow("TaharezLook/Button", "JoinGameButton");
-        goButton->setText("Go");
-        goButton->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.1, 0)));
-        goButton->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.7, 0)));
-        goButton->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::joinMultiplayer, this));
-        enterIP->addChild(goButton);
-        
-        //--------Waiting for Client----//
-        CEGUI::FrameWindow *waiting = static_cast<CEGUI::FrameWindow*>(wmgr.createWindow("TaharezLook/FrameWindow", "WaitingWindow"));
-        waiting->setText("Waiting for Client...");
-        waiting->setSize(CEGUI::USize(CEGUI::UDim(0.6, 0), CEGUI::UDim(0.4, 0)));
-        waiting->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
-        waiting->setAlwaysOnTop(true);
-        waiting->subscribeEvent(CEGUI::FrameWindow::EventCloseClicked, CEGUI::Event::Subscriber(&ThreeDPool::cancelWaiting, this));
-        waiting->hide();
-        mpLobby->addChild(waiting);
-        
-        //------------Information-------//
-        CEGUI::Window *serverInfo = wmgr.createWindow("TaharezLook/StaticText", "ServerInfo");
-        serverInfo->setSize(CEGUI::USize(CEGUI::UDim(0.4, 0), CEGUI::UDim(0.15, 0)));
-        serverInfo->setPosition(CEGUI::UVector2(CEGUI::UDim(0.3, 0), CEGUI::UDim(0.425, 0)));
-        waiting->addChild(serverInfo);
-        
-        sheet->getChild("DefaultBackground")->show();
-        
-        mpLobbyScreenCreated = true;
-    } else {
-        hideAllScreens();
-        sheet->getChild("MPLobbyScreen")->show();
-        sheet->getChild("DefaultBackground")->show();
-    }
 }
 
 void ThreeDPool::startWaiting() {
@@ -379,13 +200,8 @@ void ThreeDPool::joinMultiplayer ()
     nm->initNetManager();
     nm->addNetworkInfo(PROTOCOL_ALL, hostName.c_str(), port);
     nm->startClient();
-    
-//    std::string msg = "Client Request";
-//    nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
-    
+        
     isWaiting = true;
-    
-//    createMultiplayer();
 }
 
 void ThreeDPool::hostMultiplayer () 
@@ -393,130 +209,77 @@ void ThreeDPool::hostMultiplayer ()
     createMultiplayer();
 }
 
-void ThreeDPool::showEnterIPWindow()
-{
-    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
-    
-    CEGUI::Window* enterIP = mpLobby->getChild("EnterIPWindow");
-    
-    cancelWaiting();
-    enterIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.2, 0), CEGUI::UDim(0.3, 0)));
-    enterIP->show();
-}
-
-void ThreeDPool::hideEnterIPWindow()
-{
-    CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* mpLobby = context.getRootWindow()->getChild("MPLobbyScreen");
-        
-    mpLobby->getChild("EnterIPWindow")->hide();
-    
-    isWaiting = false;
-}
-
-void ThreeDPool::setUpGUI(void) {    
-    if (!guiInitialized)
-           initGUI();
-
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    
-    if (!gameScreenCreated) {
-        hideAllScreens();
-        CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
-
-        //----Game Screen----//
-        CEGUI::Window* gameScreen = wmgr.createWindow("DefaultWindow", "GameScreen");
-        gameScreen->setSize(CEGUI::USize(CEGUI::UDim(1, 0), CEGUI::UDim(1, 0)));
-        gameScreen->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        
-        sheet->addChild(gameScreen);
-
-        //----Quit Button----//
-        CEGUI::Window *quit = wmgr.createWindow("TaharezLook/Button", "QuitButton");
-        quit->setText("Quit");    
-
-        // In UDim, only set one of the two params, the other should be 0
-        quit->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        quit->setPosition(CEGUI::UVector2(CEGUI::UDim(0, 0), CEGUI::UDim(0, 0)));
-        quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, this));
-
-        quit->hide();
-        gameScreen->addChild(quit);
-
-        // Stroke counter
-        CEGUI::Window *strokesWin = wmgr.createWindow("TaharezLook/StaticText", "StrokeCount");
-        std::stringstream ss;
-        ss << "Strokes: " << strokes;
-        strokesWin->setText(ss.str());
-        strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
-
-        gameScreen->addChild(strokesWin);
-
-        // Remaining Ball Counter
-        CEGUI::Window *remainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "RemainingBalls");
-        std::stringstream ss3;
-        ss3 << "Remaining: " << remainingBalls;
-        remainingBallWin->setText(ss3.str());
-        // remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        // remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85, 0), CEGUI::UDim(0.1, 0)));
-        remainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        remainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
-        gameScreen->addChild(remainingBallWin);
-
-        if (isMultiplayer) {
-            // Opponent Stroke counter
-            CEGUI::Window *oppTitle = wmgr.createWindow("TaharezLook/StaticText", "OppTitle");
-            oppTitle->setText("Opponent: ");
-            oppTitle->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppTitle->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
-
-            gameScreen->addChild(oppTitle);
-
-            // Opponent Stroke counter
-            CEGUI::Window *oppStrokesWin = wmgr.createWindow("TaharezLook/StaticText", "OppStrokeCount");
-            std::stringstream ss2;
-            ss2 << "Strokes: " << opponentStrokes;
-            oppStrokesWin->setText(ss2.str());
-            oppStrokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppStrokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.6, 0)));
-
-            gameScreen->addChild(oppStrokesWin);
-
-            // Opponent Remaining Ball Counter
-            CEGUI::Window *oppRemainingBallWin = wmgr.createWindow("TaharezLook/StaticText", "OppRemainingBalls");
-            std::stringstream ss4;
-            ss4 << "Remaining: " << oppRemainingBalls;
-            oppRemainingBallWin->setText(ss4.str());
-            oppRemainingBallWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-            oppRemainingBallWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
-            gameScreen->addChild(oppRemainingBallWin);
-        }
-
-        CEGUI::Window *youWin = wmgr.createWindow("TaharezLook/StaticText", "YouWin");
-        youWin->setText("You Win!");
-        youWin->setSize(CEGUI::USize(CEGUI::UDim(0.1, 0), CEGUI::UDim(0.05, 0)));
-        youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.45, 0), CEGUI::UDim(0.45, 0)));
-
-        youWin->hide();
-        gameScreen->addChild(youWin);
-        
-    } else {
-        hideAllScreens();
-        sheet->getChild("GameScreen")->show();
-    }
-}
-
-
 void ThreeDPool::createMultiplayer(void)
 {
     isMultiplayer = true;
     createScene();
+}
+
+bool ThreeDPool::ballsStopped() {
+    if (cueBall->getBody()->getLinearVelocity().length() > 0.0)
+            return false;
+    
+    for(std::vector<Ball*>::iterator ballIt = redBalls.begin(); ballIt != redBalls.end(); ++ballIt) {
+        if((*ballIt)->getBody()->getLinearVelocity().length() > 0.0f){
+            return false;
+        }
+    }
+    
+    for(std::vector<Ball*>::iterator ballIt = blueBalls.begin(); ballIt != blueBalls.end(); ++ballIt) {
+        if((*ballIt)->getBody()->getLinearVelocity().length() > 0.0f){
+            return false;
+        }
+    }
+}
+
+void ThreeDPool::endCurrentTurn(void){    
+    std::cout << scratchedInPocket << " " << ballInThisTurn << std::endl;
+        
+    if (scratchedInPocket || scratchedOnBall || !ballInThisTurn)
+        player1Turn = !player1Turn;
+    
+    // Reset flags
+    ballInThisTurn    = false;
+    scratchedInPocket = false;
+    scratchedOnBall   = true;
+    firstBallHit      = true;
+    
+    // Changed this to true to remove space to continue functionality
+    letTurnEnd      = true;
+    
+    adjustingCamera = false;
+    
+    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+    CEGUI::Window* sheet = context.getRootWindow();
+    CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
+    
+    mGUIMgr->hidePowerBar();
+        
+    activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
+    
+    if (ballsAssignedToPlayers) {
+        if (firstAssignment) {
+            getActivePlayer()->setRedBall(redBallToAssign);
+            getInactivePlayer()->setRedBall(!redBallToAssign);
+            firstAssignment = false;
+        }
+        
+        CEGUI::Window* targettingColorWin = sheet->getChild("GameScreen/TargettingColor");
+        std::string targetting;
+        
+        if (player1Turn) {
+            targetting = player1->targetRedBall ? "Targetting: Red" : "Targetting: Blue";
+        } else {
+            targetting = player2->targetRedBall ? "Targetting: Red" : "Targetting: Blue";
+        }
+        
+        targettingColorWin->setText(targetting);
+    }
+
+    player1->endCurrentTurn();
+    player2->endCurrentTurn();
+    
+    cameraFollowStick();
 }
 
 //---------------------------------------------------------------------------
@@ -529,15 +292,24 @@ void ThreeDPool::createScene(void)
 
     physicsEngine = new Simulator();
     physicsEngine->initObjects();
-
-    cueBallObject = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", true);
-    cueBall = cueBallObject->getBody();
-
-    cueStickObject = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap, cueBallObject->getNode());
-    cueStick = cueStickObject->getBody();
     
-    cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStickObject->getPosition());
-    btVector3 btPos = cueStick->getCenterOfMassPosition();
+    // Set up Players //
+    player1 = new ManualPlayer();
+//    player2 = new ManualPlayer();
+    player2 = new AIPlayer(this, AIDifficulty);
+    
+    if (isMultiplayer)
+        if (isAI)
+            player2 = new AIPlayer(this, AIDifficulty);
+        else
+            player2 = new NetworkPlayer();
+
+    cueBall = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", false, true);
+
+    cueStick = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap);
+    
+    cameraOffset = Ogre::Vector3(mCamera->getPosition()-cueStick->getPosition());
+    btVector3 btPos = cueStick->getBody()->getCenterOfMassPosition();
     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
     mCamera->lookAt(cueStickPos);
     mCamera->setPosition(cueStickPos + cameraOffset);
@@ -546,9 +318,10 @@ void ThreeDPool::createScene(void)
     
     addPockets();
     addBallPyramid();
-    remainingBalls = balls.size();
+    redBallsRemaining = redBalls.size();
+    blueBallsRemaining = blueBalls.size();
     oppRemainingBalls = remainingBalls;
-    setUpGUI();
+    mGUIMgr->setUpGUI();
     setUpSounds();
 }
 
@@ -601,113 +374,81 @@ void ThreeDPool::playBGM() {
 
 
 void ThreeDPool::addBallPyramid() {
-    // 1st Layer
-    /*balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, -15, -255, "b1",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  -5, -255, "b2",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,   5, -255, "b3",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15,  15, -255, "b4",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5, -15, -255, "b5",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,  -5, -255, "b6",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,   5, -255, "b7",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  -5,  15, -255, "b8",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5, -15, -255, "b9",  typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,  -5, -255, "b10", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,   5, -255, "b11", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   5,  15, -255, "b12", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15, -15, -255, "b13", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,  -5, -255, "b14", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,   5, -255, "b15", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  15,  15, -255, "b16", typeMap, pocketMap, "Example/Red"));
-    
-    // 2nd Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10, -10, -245, "b17", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10,   0, -245, "b18", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10,  10, -245, "b19", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0, -10, -245, "b20", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0,   0, -245, "b21", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,   0,  10, -245, "b22", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10, -10, -245, "b23", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10,   0, -245, "b24", typeMap, pocketMap, "Example/Purple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  10,  10, -245, "b25", typeMap, pocketMap, "Example/Purple"));
-    
-    // 3rd Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, -5, -235, "b26", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5,  5, -235, "b27", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  5, -5, -235, "b28", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine,  5,  5, -235, "b29", typeMap, pocketMap, "Example/Orange"));
-    
-    // 4th Layer
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b30", typeMap, pocketMap, "Example/Blue"));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Blue", false));
 
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "b31", typeMap, pocketMap, "Example/GreenOther"));*/
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -235, "b2", typeMap, pocketMap, "Example/Red", true));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -235, "b3", typeMap, pocketMap, "Example/Blue", false));
     
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Blue"));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -245, "b4", typeMap, pocketMap, "Example/Blue", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 10, -10, -245, "b5", typeMap, pocketMap, "Example/Red", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -10, 10, -245, "b6", typeMap, pocketMap, "Example/Red", true));
+    
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -255, "b7", typeMap, pocketMap, "Example/Blue", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -255, "b8", typeMap, pocketMap, "Example/Red", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 15, -15, -255, "b9", typeMap, pocketMap, "Example/Red", true));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -15, 15, -255, "b10", typeMap, pocketMap, "Example/Blue", false));
 
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -235, "b2", typeMap, pocketMap, "Example/Orange"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -235, "b3", typeMap, pocketMap, "Example/Purple"));
-    
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -245, "b4", typeMap, pocketMap, "Example/Black"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 10, -10, -245, "b5", typeMap, pocketMap, "Example/Red"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -10, 10, -245, "b6", typeMap, pocketMap, "Example/GreenOther"));
-    
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -255, "b7", typeMap, pocketMap, "Example/Teal"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -255, "b8", typeMap, pocketMap, "Example/PinkPurple"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, 15, -15, -255, "b9", typeMap, pocketMap, "Example/Yellow"));
-    balls.push_back(new Ball(mSceneMgr, physicsEngine, -15, 15, -255, "b10", typeMap, pocketMap, "Example/BOrange"));
-
+    // Easy-in Ball
     //balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "bTest", typeMap, pocketMap, "Example/GreenOther"));
 }
 
 void ThreeDPool::addPockets() {
     // 12 Pockets
-    Pocket* p1 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, -240, 480,
-            "p1", typeMap);
-    Pocket* p2 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, -240, 0,
-            "p2", typeMap);
-    Pocket* p3 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, -240, -480,
-            "p3", typeMap);
-    Pocket* p4 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, 240, 480,
-            "p4", typeMap);
-    Pocket* p5 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, 240, 0,
-            "p5", typeMap);
-    Pocket* p6 = new Pocket(mSceneMgr, physicsEngine, 
-            -240, 240, -480,
-            "p6", typeMap);
-    Pocket* p7 = new Pocket(mSceneMgr, physicsEngine, 
-            240, -240, 480,
-            "p7", typeMap);
-    Pocket* p8 = new Pocket(mSceneMgr, physicsEngine, 
-            240, -240, 0,
-            "p8", typeMap);
-    Pocket* p9 = new Pocket(mSceneMgr, physicsEngine, 
-            240, -240, -480,
-            "p9", typeMap);
-    Pocket* p10 = new Pocket(mSceneMgr, physicsEngine, 
-            240, 240, 480,
-            "p10", typeMap);
-    Pocket* p11 = new Pocket(mSceneMgr, physicsEngine, 
-            240, 240, 0,
-            "p11", typeMap);
-    Pocket* p12 = new Pocket(mSceneMgr, physicsEngine, 
-            240, 240, -480,
-            "p12", typeMap);
     
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, 480,
+            "p1", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, 0,
+            "p2", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, -240, -480,
+            "p3", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, 480,
+            "p4", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, 0,
+            "p5", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            -240, 240, -480,
+            "p6", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, 480,
+            "p7", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, 0,
+            "p8", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, -240, -480,
+            "p9", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, 480,
+            "p10", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, 0,
+            "p11", typeMap));
+    pockets.push_back(new Pocket(mSceneMgr, physicsEngine, 
+            240, 240, -480,
+            "p12", typeMap));
 }
 
 void ThreeDPool::incrementStrokeCount() {    
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("StrokeCount");
     std::stringstream ss;
     
-    ++strokes;
-    ss << "Strokes: " << strokes;
-    strokesWin->setText(ss.str());
+    if (player1Turn) {
+        CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("StrokeCount");
+        ++strokes;
+        ss << "Strokes: " << strokes;
+        strokesWin->setText(ss.str());
+    } else {
+        CEGUI::Window* oppStrokesWin = sheet->getChild("GameScreen")->getChild("OppStrokeCount");
+        ++opponentStrokes;
+        ss << "Opp Strokes: " << opponentStrokes;
+        oppStrokesWin->setText(ss.str());
+    }
     
     if (isMultiplayer) {
         if (isServer) {
@@ -725,39 +466,65 @@ void ThreeDPool::incrementStrokeCount() {
     }
 }
 
-void ThreeDPool::decrementRemainingBallCount() {
+void ThreeDPool::decrementRemainingBallCount(bool redBall) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
     std::stringstream ss;
     
     if (soundOn)
         Mix_PlayChannel(-1, pocket, 0);
     
-    --remainingBalls;
-    ss << "Remaining: " << remainingBalls;
-    remainingBallWin->setText(ss.str());
     
-    if (remainingBalls < 1 && oppRemainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
-        gameEnded = true;
-        youWin->show();
+//    if (player1Turn) {
+//        CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
+//        --remainingBalls;
+//        ss << "Remaining: " << remainingBalls;
+//        remainingBallWin->setText(ss.str());
+//    } else {
+//        CEGUI::Window* oppRemainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
+//        --oppRemainingBalls;
+//        ss << "Opp Remaining: " << oppRemainingBalls;
+//        oppRemainingBallWin->setText(ss.str());
+//    }
+    
+    if (redBall) {
+        CEGUI::Window* redBallWin = sheet->getChild("GameScreen")->getChild("RedBallsRemaining");
+        --redBallsRemaining;
+        ss << "Red: " << redBallsRemaining;
+        redBallWin->setText(ss.str());
+        if (redBallsRemaining < 1 && blueBallsRemaining > 0) {
+            CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+            youWin->setText("Red Player Wins!");
+            gameEnded = true;
+            youWin->show();
+        }
+    } else {
+        CEGUI::Window* blueBallWin = sheet->getChild("GameScreen")->getChild("BlueBallsRemaining");
+        --blueBallsRemaining;
+        ss << "Blue: " << blueBallsRemaining;
+        blueBallWin->setText(ss.str());
+        if (blueBallsRemaining < 1 && redBallsRemaining > 0) {
+            CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+            youWin->setText("Blue Player Wins!");
+            gameEnded = true;
+            youWin->show();
+        }
     }
     
-    if (isMultiplayer) {
-        if (isServer) {
-            std::stringstream ss2;
-            ss2 << "remaining " << remainingBalls;
-            std::string msg = ss2.str();
-            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-        }
-        else {
-            std::stringstream ss2;
-            ss2 << "remaining " << remainingBalls;
-            std::string msg = ss2.str();
-            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
-        }
-    }
+//    if (isMultiplayer) {
+//        if (isServer) {
+//            std::stringstream ss2;
+//            ss2 << "remaining " << remainingBalls;
+//            std::string msg = ss2.str();
+//            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+//        }
+//        else {
+//            std::stringstream ss2;
+//            ss2 << "remaining " << remainingBalls;
+//            std::string msg = ss2.str();
+//            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+//        }
+//    }
 }
 
 void ThreeDPool::updateOppStrokeCount(int newVal) {    
@@ -796,6 +563,8 @@ void ThreeDPool::displayQuitCursor () {
     
     context.getMouseCursor().show();
     quit->show();
+    
+    gamePaused = true;
 }
 
 void ThreeDPool::hideQuitCursor () {
@@ -805,6 +574,8 @@ void ThreeDPool::hideQuitCursor () {
     
     context.getMouseCursor().hide();
     quit->hide();
+    
+    gamePaused = false;
 }
 
 void ThreeDPool::createFrameListener() {
@@ -839,6 +610,12 @@ bool ThreeDPool::keyPressed(const OIS::KeyEvent& arg) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectKeyDown((CEGUI::Key::Scan)arg.key);
     context.injectChar((CEGUI::Key::Scan)arg.text);
+
+    if (player1)
+        player1->keyPressed(arg);
+    if (player2)
+        player2->keyPressed(arg);
+
     return true;
 }
 
@@ -849,6 +626,11 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
     if (!BaseApplication::keyReleased(arg))
         return false;
     
+    if (player1)
+        player1->keyReleased(arg);
+    if (player2)
+        player2->keyReleased(arg);
+
     switch(arg.key) {
         case OIS::KC_T :
             if (!adjustingCamera){
@@ -892,6 +674,10 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
                 nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
                 std::cout << "Sent " << msg << std::endl;
             }
+            break;
+        case OIS::KC_SPACE:
+            letTurnEnd = true;
+            break;
     }
     return true;
 }
@@ -900,23 +686,20 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
     // CEGUI Injection
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectMouseMove(me.state.X.rel, me.state.Y.rel);
+
     // Scroll wheel.
     if (me.state.Z.rel)
         context.injectMouseWheelChange(me.state.Z.rel / 120.0f);
 
     if (!BaseApplication::mouseMoved(me))
         return false;
+
+    if (player1)
+        player1->mouseMoved(me);
+    if (player2)
+        player2->mouseMoved(me);
     
-    if (!adjustingCamera) {
-        if(me.state.buttonDown(OIS::MB_Left))
-        {
-            cueStickDelta = me.state.Y.rel * 0.05;
-        }
-        else{
-            cueStickRotationX = 0.01 * me.state.X.rel;
-            cueStickRotationY = 0.01 * me.state.Y.rel;
-        }
-    } else {
+    if (adjustingCamera) {
        mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
        mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
     }
@@ -945,11 +728,18 @@ bool ThreeDPool::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     // CEGUI Injection
     CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertButton(id));
     
+    if (player1)
+        player1->mouseReleased(me, id);
+    if (player2)
+        player2->mouseReleased(me, id);
+
     // if(!BaseApplication::mouseReleased(me, id))
     //     return false;
-    if(fabs(cueStickTotal) > 0.1)
-        if(id==OIS::MB_Left)
-            hitBall = true;
+
+    // if(std::abs(cueStickTotal) > 0.1)
+    //     if(id==OIS::MB_Left)
+    //         hitBall = true;
+
     return true;
 }
 
@@ -961,11 +751,15 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     if(!BaseApplication::mousePressed(me, id))
         return false;
 
+    if (player1)
+        player1->mousePressed(me, id);
+    if (player2)
+        player2->mousePressed(me, id);
+
     using namespace std;
     switch(id)
     {
         case OIS::MB_Left:
-            cout << "Left" << endl;
             LMBDown = true;
             break;
         case OIS::MB_Right:
@@ -1023,32 +817,22 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
     if (gameStarted) {
-        if(gameEnded)
-           return true;
+        if(gameEnded || gamePaused)
+           return true;    
+        
+        player1->frameUpdate(evt);
 
-        if (isMultiplayer)
+        if (isMultiplayer) {
+            player2->frameUpdate(evt);
             networkLoop();
+        }
         gameLoop(evt);
         physicsLoop();
-    
-        // if(frameCounter >= BALL_SPEED_SUM_FREQUENCY) {
-        //     frameCounter = 0;
-        //     updateBallSpeedSum();
-        // }    
-
-        // ++frameCounter;
     }
 
 
     return true;
 }
-
-// void ThreeDPool::updateBallSpeedSum(void){
-//     ballSpeedSum = btVector3(0.f, 0.f, 0.f);
-//     for(Ball* curBall: balls){
-//         ballSpeedSum += curBall->getBody()->getLinearVelocity();
-//     }
-// }
 
 void ThreeDPool::networkLoop () {
     if (isServer) {
@@ -1116,21 +900,50 @@ void ThreeDPool::networkLoop () {
     }
 }
 
+static bool needToUpdateCamera = false;
+
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
+    if (player1Turn) {
+        player1->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+    } else {
+        player2->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+        // std::cout << "cueStickDelta: " << cueStickDelta << " cueStickRotationX: " << cueStickRotationX << " cueStickRotationY: " << cueStickRotationY << std::endl;
+    }
+
     if(adjustingStick) {
-        if(fabs(cueBall->getLinearVelocity().length())>0.01f){
-            cueStick->setLinearVelocity(btVector3(0, 0, 0));
+        if(std::abs(cueBall->getBody()->getLinearVelocity().length())>0.01f){
+            cueStick->getBody()->setLinearVelocity(btVector3(0, 0, 0));
         }
         
         // bool ballsStopped = ballSpeedSum.length() < 0.1f;
-        bool ballsStopped = true;
+//        bool ballsStopped = true;
         
-        bool done = cueStickObject->readjustStickToCueball(adjustingStick, ballsStopped);
-        if (done) cameraFollowStick();
+        bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped(), letTurnEnd, scratchedInPocket, scratchedOnBall);
+        if (done && letTurnEnd){
+            endCurrentTurn();   
+        } else if (adjustingCamera) {
+            using namespace Ogre;
+            Vector3 camDirVec = Vector3::ZERO;
+            Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
+                mMoveSpeed : mMoveSpeed / 2;
 
-        // adjustingCamera = true;
+            if (mKeyboard->isKeyDown(OIS::KC_W))
+                camDirVec += (mCamera->getDirection() * thisMove);
+
+            if (mKeyboard->isKeyDown(OIS::KC_S))
+                camDirVec -= (mCamera->getDirection() * thisMove);
+
+            if (mKeyboard->isKeyDown(OIS::KC_A))
+                camDirVec -= (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+
+            if (mKeyboard->isKeyDown(OIS::KC_D))
+                camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
+
+            mCamera->move(camDirVec * evt.timeSinceLastFrame);
+        }
     } else if(adjustingCamera){
+        // TODO: Make this work after you hit the ball
         using namespace Ogre;
         Vector3 camDirVec = Vector3::ZERO;
         Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
@@ -1149,16 +962,17 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
         
         mCamera->move(camDirVec * evt.timeSinceLastFrame);
-    } else if(hitBall) {        
+    } else if(hitBall) {      
+        mGUIMgr->hidePowerBar();
         if (cueStickTotal > CUE_STICK_MIN) 
             incrementStrokeCount();
-        cueStickObject->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
-
-    }
-    else {
-        cueStickObject->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
-        pCamera->moveCameraToStick(cueStickObject);
-        cueStickObject->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
+        cueStick->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
+    } else {
+        cueStick->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
+        needToUpdateCamera = true;
+        cueStick->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
+        if (LMBDown)
+            mGUIMgr->setPowerBar((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN));
     }
 }
 
@@ -1166,24 +980,11 @@ void ThreeDPool::physicsLoop()
 {
     if (physicsEngine == NULL)
         return;
-
+    
     physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
-    int length = physicsEngine->getDynamicsWorld()->getCollisionObjectArray().size();
-    for (int i = 0; i< length; i++) {
-        btCollisionObject* obj = physicsEngine->getDynamicsWorld()->getCollisionObjectArray()[i];
-        btRigidBody* body = btRigidBody::upcast(obj);
-        if (body && body->getMotionState()){
-            btTransform trans;
-            body->getMotionState()->getWorldTransform(trans);
-            void *userPointer = body->getUserPointer();
-            if (userPointer) {
-                btQuaternion orientation = trans.getRotation();
-                Ogre::SceneNode *sceneNode = static_cast<Ogre::SceneNode*>(userPointer);
-                
-                sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));                
-                sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-            }
-        }
+    if (needToUpdateCamera) {
+        pCamera->moveCameraToStick(cueStick);
+        needToUpdateCamera = false;
     }
 
     int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
@@ -1219,6 +1020,21 @@ void ThreeDPool::physicsLoop()
                 if (body1->getLinearVelocity().length() > ballSoundThreshold || body2->getLinearVelocity().length() > ballSoundThreshold)
                     if (soundsToPlay-- > 0)
                         Mix_PlayChannel(-1, ball_ball, 0);
+                
+                if (firstBallHit && ballsAssignedToPlayers && !firstAssignment) {
+                    // Check if the right group
+                    void* usr = obAType == ballType ? obA->getUserPointer() : obB->getUserPointer();
+                    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(usr);
+
+                    Ball* ball = pocketMap[node];
+                    
+                    if (ball->redBall == getActivePlayer()->targetRedBall)
+                        scratchedOnBall = false;
+                    
+                    firstBallHit = false;
+                }
+                
+                
             }
         }
         
@@ -1230,7 +1046,15 @@ void ThreeDPool::physicsLoop()
             
             ball->removeFromWorld();
             
-            decrementRemainingBallCount();
+            if (!ballsAssignedToPlayers) {
+                redBallToAssign = ball->redBall;
+                ballsAssignedToPlayers = true;
+                firstAssignment = true;
+            }
+            
+            decrementRemainingBallCount(ball->redBall);
+            
+            ballInThisTurn = true;
         }
         
             
@@ -1241,8 +1065,10 @@ void ThreeDPool::physicsLoop()
             Ball* cueBall = pocketMap[node];
             
             incrementStrokeCount();
+                        
+            cueBall->removeCueBall();
             
-            cueBall->resetCueBall();
+            scratchedInPocket = true;
         }
     }
 }
@@ -1270,7 +1096,7 @@ void ThreeDPool::createCamera(void){
 
 void ThreeDPool::cameraFollowStick(void)
 {
-    btVector3 btPos = cueStick->getCenterOfMassPosition();
+    btVector3 btPos = cueStick->getBody()->getCenterOfMassPosition();
     Ogre::Vector3 cueStickPos(float(btPos.x()),float(btPos.y()), float(btPos.z()));
     mCamera->setPosition(cueStickPos + cameraOffset);
     mCamera->lookAt(cueStickPos);
