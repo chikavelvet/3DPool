@@ -1037,6 +1037,10 @@ void ThreeDPool::physicsLoop()
                     
                     firstBallHit = false;
                 }
+
+                if (firstBallHit && !ballsAssignedToPlayers) {
+                    scratchedOnBall = false;
+                }
                 
                 
             }
