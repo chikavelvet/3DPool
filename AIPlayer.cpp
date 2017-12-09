@@ -173,6 +173,18 @@ bool AIPlayer::decideShot()
         oppBalls = std::vector<Ball*>();    
     }
 
+    Pocket* bestClearPocket_150 = NULL;
+    Ball* bestClearBall_150 = NULL;
+    double bestClearDist_150 = 1500.0;
+    
+    Pocket* bestClearPocket_110 = NULL;
+    Ball* bestClearBall_110 = NULL;
+    double bestClearDist_110 = 1500.0;
+    
+    Pocket* bestClearPocket_lower = NULL;
+    Ball* bestClearBall_lower = NULL;
+    double bestClearDist_lower = 1500.0;
+
     Pocket* bestPocket_150 = NULL;
     Ball* bestBall_150 = NULL;
     double bestDist_150 = 1500.0;
@@ -184,6 +196,8 @@ bool AIPlayer::decideShot()
     Pocket* bestPocket_lower = NULL;
     Ball* bestBall_lower = NULL;
     double bestDist_lower = 1500.0;
+    
+
     
     for(std::vector<Ball*>::iterator ballIt = ourBalls.begin(); ballIt != ourBalls.end(); ++ballIt) {
         Ball* curBall = *ballIt;
@@ -209,8 +223,8 @@ bool AIPlayer::decideShot()
             Ogre::Real proximity = ballToPocketV.length();
             
             if (AtoB >= Ogre::Degree(150)) {
-                if (proximity < bestDist_150) {
 
+                if(proximity < bestDist_150 || proximity < bestClearDist_150){
                     Ogre::Vector3 direction = curPocket->getNode()->getPosition() - curBall->getNode()->getPosition(); 
                     direction.normalise(); float radius = 5.0f;
                     Ogre::Vector3 dest = curBall->getNode()->getPosition() - (direction * radius * 2.0f);
@@ -218,53 +232,97 @@ bool AIPlayer::decideShot()
 
                     if(isClearShot)
                     {
-                        bestDist_150 = proximity;
-                        bestPocket_150 = curPocket;
-                        bestBall_150 = curBall;
+                        if(proximity < bestClearDist_150){
+                            bestClearDist_150 = proximity;
+                            bestClearPocket_150 = curPocket;
+                            bestClearBall_150 = curBall;
+                        }
                     }
+                    else{                        
+                        if(proximity < bestDist_150){
+                            bestDist_150 = proximity;
+                            bestPocket_150 = curPocket;
+                            bestBall_150 = curBall;
+                        }
+                    }
+
+                }
             }
             else if (AtoB >= Ogre::Degree(110)) {
-                if (proximity < bestDist_110) {
 
+                if(proximity < bestDist_110 || proximity < bestClearDist_110){
                     Ogre::Vector3 direction = curPocket->getNode()->getPosition() - curBall->getNode()->getPosition(); 
                     direction.normalise(); float radius = 5.0f;
                     Ogre::Vector3 dest = curBall->getNode()->getPosition() - (direction * radius * 2.0f);
                     bool isClearShot = noBallsBlocking(dest, curBall, curPocket);
-                    
+
                     if(isClearShot)
                     {
-                        bestDist_110 = proximity;
-                        bestPocket_110 = curPocket;
-                        bestBall_110 = curBall;
+                        if(proximity < bestClearDist_110){
+                            bestClearDist_110 = proximity;
+                            bestClearPocket_110 = curPocket;
+                            bestClearBall_110 = curBall;
+                        }
                     }
+                    else{                        
+                        if(proximity < bestDist_110){
+                            bestDist_110 = proximity;
+                            bestPocket_110 = curPocket;
+                            bestBall_110 = curBall;
+                        }
+                    }
+
                 }
             }
             else { // all other shots
-                if (proximity < bestDist_lower) {
 
+                if(proximity < bestDist_lower || proximity < bestClearDist_lower){
                     Ogre::Vector3 direction = curPocket->getNode()->getPosition() - curBall->getNode()->getPosition(); 
                     direction.normalise(); float radius = 5.0f;
                     Ogre::Vector3 dest = curBall->getNode()->getPosition() - (direction * radius * 2.0f);
                     bool isClearShot = noBallsBlocking(dest, curBall, curPocket);
-                    
+
                     if(isClearShot)
                     {
-                        bestDist_lower = proximity;
-                        bestPocket_lower = curPocket;
-                        bestBall_lower = curBall;
+                        if(proximity < bestClearDist_lower){
+                            bestClearDist_lower = proximity;
+                            bestClearPocket_lower = curPocket;
+                            bestClearBall_lower = curBall;
+                        }
                     }
+                    else{                        
+                        if(proximity < bestDist_lower){
+                            bestDist_lower = proximity;
+                            bestPocket_lower = curPocket;
+                            bestBall_lower = curBall;
+                        }
+                    }
+
                 }
-            }
             }
         }
     }
-    
-    chosenPocket = bestPocket_150 != NULL ? bestPocket_150 
+
+    Pocket* bestClearPocket = bestClearPocket_150 != NULL ? bestClearPocket_150 
+                                          : (bestClearPocket_110 != NULL ? bestClearPocket_110 
+                                                                    : bestClearPocket_lower);
+    Ball* bestClearBall = bestClearBall_150 != NULL ? bestClearBall_150 
+                                      : (bestClearBall_110 != NULL ? bestClearBall_110 
+                                                              : bestClearBall_lower);
+    Pocket* bestNonClearPocket = bestPocket_150 != NULL ? bestPocket_150 
                                           : (bestPocket_110 != NULL ? bestPocket_110 
                                                                     : bestPocket_lower);
-    chosenBall = bestBall_150 != NULL ? bestBall_150 
+    Ball* bestNonClearBall = bestBall_150 != NULL ? bestBall_150 
                                       : (bestBall_110 != NULL ? bestBall_110 
                                                               : bestBall_lower);
+
+    if(bestClearBall == NULL || bestClearPocket == NULL){
+        chosenPocket = bestNonClearPocket;
+        chosenBall = bestNonClearBall;
+    } else{
+        chosenPocket = bestClearPocket;
+        chosenBall = bestClearBall;        
+    }
 
     Ogre::Vector3 direction = chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition(); 
     direction.normalise();
