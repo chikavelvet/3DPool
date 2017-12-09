@@ -374,19 +374,23 @@ void ThreeDPool::playBGM() {
 
 
 void ThreeDPool::addBallPyramid() {
+    // First Row
     blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Blue", false));
 
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -235, "b2", typeMap, pocketMap, "Example/Red", true));
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -235, "b3", typeMap, pocketMap, "Example/Blue", false));
+    // Second Row
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3.6, 3.6, -233.8, "b2", typeMap, pocketMap, "Example/Red", true));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3.6, -3.6, -233.8, "b3", typeMap, pocketMap, "Example/Blue", false));
     
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -245, "b4", typeMap, pocketMap, "Example/Blue", false));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 10, -10, -245, "b5", typeMap, pocketMap, "Example/Red", true));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -10, 10, -245, "b6", typeMap, pocketMap, "Example/Red", true));
+    // Third Row
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -242, "b4", typeMap, pocketMap, "Example/Blue", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7.0, -7.0, -242, "b5", typeMap, pocketMap, "Example/Red", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7.0, 7.0, -242, "b6", typeMap, pocketMap, "Example/Red", true));
     
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 5, -5, -255, "b7", typeMap, pocketMap, "Example/Blue", false));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -5, 5, -255, "b8", typeMap, pocketMap, "Example/Red", true));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 15, -15, -255, "b9", typeMap, pocketMap, "Example/Red", true));
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -15, 15, -255, "b10", typeMap, pocketMap, "Example/Blue", false));
+    // Fourth Row
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3, -3, -251, "b7", typeMap, pocketMap, "Example/Blue", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3, 3, -251, "b8", typeMap, pocketMap, "Example/Red", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 11, -11, -251, "b9", typeMap, pocketMap, "Example/Red", true));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -11, 11, -251, "b10", typeMap, pocketMap, "Example/Blue", false));
 
     // Easy-in Ball
     //balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "bTest", typeMap, pocketMap, "Example/GreenOther"));
