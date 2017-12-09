@@ -19,17 +19,20 @@
 #include <ois/OISInputManager.h>
 
 #include "Player.h"
+class ThreeDPool;
 
 class ManualPlayer : public Player {
 protected:
     virtual bool keyPressed(const OIS::KeyEvent &arg) {}
     virtual bool keyReleased(const OIS::KeyEvent &arg) {}
     virtual bool mouseMoved(const OIS::MouseEvent &me);
-    virtual bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id) {}
+    virtual bool mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id);
     virtual bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id);
-    
+    ThreeDPool* game;
+
 public:
     ManualPlayer();
+    ManualPlayer(ThreeDPool* _game);
     ManualPlayer(const ManualPlayer& orig);
     virtual ~ManualPlayer();
     

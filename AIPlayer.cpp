@@ -439,7 +439,7 @@ float AIPlayer::guessStickRotation (const Ogre::Vector3& x,
         return rotDelta;
 }
 
-bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall)
+bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall, bool& _LMBDown)
 {
     if (!decided)
         if(!decideShot())
@@ -451,6 +451,7 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
     }
 
     else if(!hitBall){
+        LMBDown = true;
         if(!decidedChargeGoal){
             if(!calculateStickChargeGoal())
                 return false;
@@ -462,7 +463,7 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
 //    if (hitBall)
 //        std::cout << cueToDest.normalisedCopy() << " " << game->cueStick->getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z << std::endl << chosenBall->getNode()->getPosition() << " " << chosenPocket->getNode()->getPosition() << std::endl;
 
-    Player::giveGamePlayerInput(csd, csrx, csry, hitBall);
+    Player::giveGamePlayerInput(csd, csrx, csry, hitBall, _LMBDown);
     return true;
 }
 

@@ -74,7 +74,7 @@ public:
     virtual ~AIPlayer();
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) {}
-    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
+    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall, bool& _LMBDown);
     virtual bool endCurrentTurn(void);
 
 

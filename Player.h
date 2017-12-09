@@ -27,6 +27,7 @@ protected:
     float cueStickRotationX;
     float cueStickRotationY;
     bool hitBall;
+    bool LMBDown;
     bool targetRedBall;
     int strokes;
 
@@ -44,7 +45,7 @@ public:
     virtual bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id) {}
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) = 0;
-    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
+    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall, bool& _LMBDown);
     virtual bool endCurrentTurn(void);
     
 private:

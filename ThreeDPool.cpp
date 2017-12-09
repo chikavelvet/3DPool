@@ -294,7 +294,7 @@ void ThreeDPool::createScene(void)
     physicsEngine->initObjects();
     
     // Set up Players //
-    player1 = new ManualPlayer();
+    player1 = new ManualPlayer(this);
 //    player2 = new ManualPlayer();
     player2 = new AIPlayer(this, AIDifficulty);
     
@@ -764,12 +764,7 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     
     if(!BaseApplication::mousePressed(me, id))
         return false;
-
-    if (player1)
-        player1->mousePressed(me, id);
-    if (player2)
-        player2->mousePressed(me, id);
-
+    
     using namespace std;
     switch(id)
     {
@@ -783,6 +778,13 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
         default:
             break;
     }
+
+
+    if (player1)
+        player1->mousePressed(me, id);
+    if (player2)
+        player2->mousePressed(me, id);
+
     return true;
 }
 
@@ -919,9 +921,9 @@ static bool needToUpdateCamera = false;
 void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
 {
     if (player1Turn) {
-        player1->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+        player1->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall, LMBDown);
     } else {
-        player2->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall);
+        player2->giveGamePlayerInput(cueStickDelta, cueStickRotationX, cueStickRotationY, hitBall, LMBDown);
         // std::cout << "cueStickDelta: " << cueStickDelta << " cueStickRotationX: " << cueStickRotationX << " cueStickRotationY: " << cueStickRotationY << std::endl;
     }
 

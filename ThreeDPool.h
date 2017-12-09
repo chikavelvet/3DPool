@@ -54,14 +54,15 @@ public:
     
     int redBallsRemaining;
     int blueBallsRemaining;
+    float cueStickTotal;
+    static const float CUE_STICK_MAX,
+                       CUE_STICK_MIN,
+                       STICK_POWER_MULT;
 
 protected:
     friend class GUIManager;
     friend class AIPlayer;
     
-    static const float CUE_STICK_MAX,
-                       CUE_STICK_MIN,
-                       STICK_POWER_MULT;
     static const int   BALL_SPEED_SUM_FREQUENCY;
     
     virtual void createScene(void);
@@ -140,7 +141,6 @@ protected:
     bool hitBall;
     bool LMBDown;
     float cueStickDelta;
-    float cueStickTotal;
     float cueStickTotalProgress;
     bool adjustingStick;
     bool cursorDisplaying;

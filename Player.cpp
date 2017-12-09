@@ -29,11 +29,12 @@ Player::Player(const Player& orig) {
 Player::~Player() {
 }
 
-bool Player::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hb) {
+bool Player::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hb, bool& _LMBDown) {
     csd = cueStickDelta;
     csrx = cueStickRotationX;
     csry = cueStickRotationY;
     hb = hitBall;
+    _LMBDown = LMBDown;
     cueStickDelta = 0;
     cueStickRotationX = 0;
     cueStickRotationY = 0;
