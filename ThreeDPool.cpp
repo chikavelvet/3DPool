@@ -253,7 +253,7 @@ void ThreeDPool::endCurrentTurn(void){
     CEGUI::Window* sheet = context.getRootWindow();
     CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
     
-    mGUIMgr->hidePowerBar();
+    mGUIMgr->fadeOutPowerBar();
         
     activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
     
@@ -926,13 +926,14 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
     }
 
     if(adjustingStick) {
+        cueStickTotalProgress = cueStickTotalProgress-1.0f;
+        mGUIMgr->setPowerBar(((std::max(cueStickTotalProgress, CUE_STICK_MIN) - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
+        mGUIMgr->fadeOutPowerBar();
+
         if(std::abs(cueBall->getBody()->getLinearVelocity().length())>0.01f){
             cueStick->getBody()->setLinearVelocity(btVector3(0, 0, 0));
-        }
-        
-        // bool ballsStopped = ballSpeedSum.length() < 0.1f;
-//        bool ballsStopped = true;
-        
+        }        
+
         bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped(), letTurnEnd, scratchedInPocket, scratchedOnBall);
         if (done && letTurnEnd){
             endCurrentTurn();   
@@ -977,16 +978,23 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         
         mCamera->move(camDirVec * evt.timeSinceLastFrame);
     } else if(hitBall) {      
-        mGUIMgr->hidePowerBar();
         if (cueStickTotal > CUE_STICK_MIN) 
             incrementStrokeCount();
         cueStick->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
     } else {
+
         cueStick->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         needToUpdateCamera = true;
         cueStick->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
-        if (LMBDown)
-            mGUIMgr->setPowerBar((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN));
+
+
+        
+        if (LMBDown){
+            std::cout << "left mouse down " << std::endl;
+            mGUIMgr->fadeInPowerBar();
+            mGUIMgr->setPowerBar(((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
+            cueStickTotalProgress = cueStickTotal;
+        }
     }
 }
 

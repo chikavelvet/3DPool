@@ -18,13 +18,16 @@
 
 const std::string GUIManager::lookNFeelClass = "TaharezLook";
 
+const float GUIManager::PROGRESS_MAX_ALPHA = 0.75f;
+
 const std::string GUIManager::MAIN_MENU   = "MainMenuScreen",
                   GUIManager::MP_LOBBY    = "MPLobbyScreen",
                   GUIManager::BACKGROUND  = "DefaultBackground",
                   GUIManager::GAME_SCREEN = "GameScreen";
 
 GUIManager::GUIManager(ThreeDPool* _game) : 
-    game(_game)
+    game(_game),
+    progressAlpha(PROGRESS_MAX_ALPHA)
 {
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
@@ -290,8 +293,13 @@ void GUIManager::setUpGUI()
         youWin->hide();
         
         // Shot Power Bar
-        CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(makeWindow(GAME_SCREEN, "ProgressBar", "PowerBar", 0.4, 0.05, 0.3, 0.9));
-        powerBar->setProgress(0.0);
+        CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(makeWindow(GAME_SCREEN, "ProgressBar", "PowerBar", 0.4, 0.02, 0.3, 0.9));
+        std::stringstream ssz;
+        ssz << progressAlpha;       
+        progressAlpha = 0.0f;
+        powerBar->setProperty("Alpha", ssz.str());
+        powerBar->setProperty("ReversedProgress", "True");
+        powerBar->setProgress(1.0);
         powerBar->hide();
         
     } else {
@@ -300,14 +308,28 @@ void GUIManager::setUpGUI()
     }
 }
 
+void GUIManager::fadeInPowerBar() {
+    progressAlpha = std::min(progressAlpha + 0.003f, PROGRESS_MAX_ALPHA);
+    std::cout << "fading in "<< progressAlpha << std::endl;
+    CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
+    powerBar->show();
+    std::stringstream ss;
+    ss << progressAlpha;       
+    powerBar->setProperty("Alpha", ss.str());
+}
+
+
 void GUIManager::setPowerBar(float progress) {
     CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
     powerBar->setProgress(progress);
-    powerBar->show();
 }
 
-void GUIManager::hidePowerBar() {
+void GUIManager::fadeOutPowerBar() {
+    progressAlpha = std::max(std::min(progressAlpha - 0.003f, PROGRESS_MAX_ALPHA), 0.0f);
+
     CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
-    powerBar->setProgress(0.0);
-    powerBar->hide();
+
+    std::stringstream ss;
+    ss << progressAlpha;       
+    powerBar->setProperty("Alpha", ss.str());
 }

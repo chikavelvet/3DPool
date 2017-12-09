@@ -39,6 +39,9 @@ protected:
     CEGUI::GUIContext* context;
     CEGUI::Window* sheet;
     
+    static const float PROGRESS_MAX_ALPHA;
+    float progressAlpha;
+
     void hideAllScreens(void);
     void createMPLobby(void);
     void showEnterIPWindow(void);
@@ -69,7 +72,8 @@ public:
     void setUpGUI(void);
     
     void setPowerBar(float progress);
-    void hidePowerBar(void);
+    void fadeInPowerBar(void);
+    void fadeOutPowerBar(void);
 private:
 
 };

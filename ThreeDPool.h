@@ -141,6 +141,7 @@ protected:
     bool LMBDown;
     float cueStickDelta;
     float cueStickTotal;
+    float cueStickTotalProgress;
     bool adjustingStick;
     bool cursorDisplaying;
     bool soundOn;
