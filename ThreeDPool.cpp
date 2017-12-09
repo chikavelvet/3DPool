@@ -252,6 +252,8 @@ void ThreeDPool::endCurrentTurn(void){
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
     CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
+    
+    mGUIMgr->hidePowerBar();
         
     activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
     
@@ -960,7 +962,8 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
         
         mCamera->move(camDirVec * evt.timeSinceLastFrame);
-    } else if(hitBall) {        
+    } else if(hitBall) {      
+        mGUIMgr->hidePowerBar();
         if (cueStickTotal > CUE_STICK_MIN) 
             incrementStrokeCount();
         cueStick->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
@@ -968,6 +971,8 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         cueStick->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
         needToUpdateCamera = true;
         cueStick->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
+        if (LMBDown)
+            mGUIMgr->setPowerBar((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN));
     }
 }
 

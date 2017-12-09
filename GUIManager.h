@@ -67,6 +67,9 @@ public:
     
     void createMainMenu(void);
     void setUpGUI(void);
+    
+    void setPowerBar(float progress);
+    void hidePowerBar(void);
 private:
 
 };

@@ -226,11 +226,7 @@ void GUIManager::onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e)
 }
 
 void GUIManager::setUpGUI()
-{
-        CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    
+{    
     if (!this->screens[GAME_SCREEN]) {
         hideAllScreens();
         CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
@@ -292,8 +288,26 @@ void GUIManager::setUpGUI()
         CEGUI::Window *youWin = makeWindow(GAME_SCREEN, "StaticText", "YouWin", 0.15, 0.05, 0.425, 0.475);
         youWin->setText("You Win!");
         youWin->hide();
+        
+        // Shot Power Bar
+        CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(makeWindow(GAME_SCREEN, "ProgressBar", "PowerBar", 0.4, 0.05, 0.3, 0.9));
+        powerBar->setProgress(0.0);
+        powerBar->hide();
+        
     } else {
         hideAllScreens();
         this->screens[GAME_SCREEN]->show();
     }
+}
+
+void GUIManager::setPowerBar(float progress) {
+    CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
+    powerBar->setProgress(progress);
+    powerBar->show();
+}
+
+void GUIManager::hidePowerBar() {
+    CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
+    powerBar->setProgress(0.0);
+    powerBar->hide();
 }
