@@ -764,7 +764,7 @@ bool ThreeDPool::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id)
     
     if(!BaseApplication::mousePressed(me, id))
         return false;
-    
+
     using namespace std;
     switch(id)
     {
@@ -989,13 +989,13 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         needToUpdateCamera = true;
         cueStick->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
 
-
+        mGUIMgr->setPowerBar(((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
+        cueStickTotalProgress = cueStickTotal;
         
         if (LMBDown){
-            std::cout << "left mouse down " << std::endl;
             mGUIMgr->fadeInPowerBar();
-            mGUIMgr->setPowerBar(((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
-            cueStickTotalProgress = cueStickTotal;
+        } else {
+            mGUIMgr->fadeOutPowerBar();
         }
     }
 }
