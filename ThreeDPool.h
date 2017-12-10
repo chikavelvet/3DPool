@@ -62,6 +62,7 @@ public:
 protected:
     friend class GUIManager;
     friend class AIPlayer;
+    friend class Stick;
     
     static const int   BALL_SPEED_SUM_FREQUENCY;
     

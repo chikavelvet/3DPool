@@ -7,6 +7,7 @@
 #include <OgreParticleSystemManager.h>
 #include <OgreParticle.h>
 
+class ThreeDPool;
 class GameObject;
 class Ball;
 
@@ -35,6 +36,9 @@ namespace STICK_DEFAULT {
 }
 
 class Stick : public GameObject {
+protected:
+    ThreeDPool* game;
+
 private:
     float cueStickMax;
     float cueStickMin;
@@ -48,7 +52,7 @@ public:
             btScalar x, btScalar y, btScalar z, 
             std::string _name, 
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
-            Ball* _cueBall, std::map<size_t, objType> &typeMap);
+            Ball* _cueBall, std::map<size_t, objType> &typeMap, ThreeDPool* _game);
 
     bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped, const bool& letTurnEnd, const bool& scratched, const bool& scratchedOnBall);
 
@@ -61,6 +65,8 @@ public:
     void rotateToMouseXInput(float& deltaRotationX);
 
     void rotateToMouseYInput(float& deltaRotationY);
+
+    Ball* closestBallAimingAt();
         
     Ogre::Vector3 getPosition() const;
 };

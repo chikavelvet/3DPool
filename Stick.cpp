@@ -2,17 +2,19 @@
 #include "Ball.h"
 #include "GraphicsComponent.h"
 #include "PhysicsComponent.h"
+#include <OgreRay.h>
+#include "ThreeDPool.h"
 
 Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Simulator* _simulator,
              btScalar x, btScalar y, btScalar z,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
-             Ball* _cueBall, std::map<size_t, objType> &typeMap) :
+             Ball* _cueBall, std::map<size_t, objType> &typeMap, ThreeDPool* _game) :
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
-        cueBall(_cueBall)
+        cueBall(_cueBall), game(_game)
 {
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z),
@@ -41,6 +43,35 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     guideLineNode = rootNode->createChildSceneNode("Particle");
     guideLineNode->attachObject(guideLineParticle);
 }
+
+Ball* Stick::closestBallAimingAt(){
+    Ogre::Vector3 origin(cueBall->getNode()->getPosition());
+    Ogre::Vector3 direction(getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z);
+    Ogre::Ray stickDirRay (origin, direction); 
+
+    std::vector<Ball*> allBalls = std::vector<Ball*>(game->redBalls);   
+    allBalls.insert(allBalls.end(), game->blueBalls.begin(), game->blueBalls.end());
+
+    float minT = 1000000.0f;
+    Ball* closestBall = NULL;
+    float ballRadius = 5.0f;
+
+    for(std::vector<Ball*>::iterator ballIt = allBalls.begin(); ballIt != allBalls.end(); ++ballIt) {
+        Ball* curBall = *ballIt;
+        Ogre::Sphere ballSphere(curBall->getNode()->getPosition(), ballRadius); //a sphere representation of the ball
+        std::pair<bool,Ogre::Real> intersection = stickDirRay.intersects(ballSphere);
+        if(intersection.first){
+            /*Find the closest Ball*/
+            if(intersection.second < minT && intersection.second > 0.0f){ 
+                minT = intersection.second;
+                closestBall = curBall;
+            }
+        }
+    }
+
+    return closestBall;
+}
+
 
 bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, const bool& letTurnEnd, const bool& scratched, const bool& scratchedOnBall) {
     try {
@@ -181,6 +212,13 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
 void Stick::rotateToMouseInput (float& deltaRotationX, float& deltaRotationY) {
     rotateToMouseXInput(deltaRotationX);
     rotateToMouseYInput(deltaRotationY);
+    Ball* aimingAt = closestBallAimingAt();
+    if(aimingAt==NULL){
+        std::cout << "Aiming at NOTHING" << std::endl;
+    }
+    else{
+        std::cout << "Aiming at " << aimingAt << std::endl;
+    }
 }
 
 void Stick::rotateToMouseXInput (float& deltaRotationX) {
