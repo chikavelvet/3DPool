@@ -22,6 +22,7 @@ http://www.ogre3d.org/wiki/
 #include <btBulletDynamicsCommon.h>
 #include <map>
 #include "Enums.h"
+#include "Player.h"
 
 //--Forward Declarations--//
 //----Game Objects--------//
@@ -52,8 +53,8 @@ public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
     
-    int redBallsRemaining;
-    int blueBallsRemaining;
+    int solidBallsRemaining;
+    int stripedBallsRemaining;
     float cueStickTotal;
     static const float CUE_STICK_MAX,
                        CUE_STICK_MIN,
@@ -121,7 +122,9 @@ protected:
     
     Player* getActivePlayer (void) { return player1Turn ? player1 : player2; }
     Player* getInactivePlayer (void) { return player1Turn ? player2 : player1; }
-
+    
+    bool activePlayerReadyToHitEightBall(void);
+    
     bool mainMenuScreenCreated;
     bool mpLobbyScreenCreated;
     bool gameScreenCreated;
@@ -165,8 +168,8 @@ protected:
     
     bool ballsAssignedToPlayers;
     
-    std::vector<Ball*> blueBalls;
-    std::vector<Ball*> redBalls;
+    std::vector<Ball*> stripedBalls;
+    std::vector<Ball*> solidBalls;
     std::vector<Pocket*> pockets;
     
     bool isMultiplayer;
@@ -186,6 +189,7 @@ protected:
     
     Stick* cueStick;
     Ball* cueBall;
+    Ball* eightBall;
     Room* room;
 
     Mix_Chunk* ball_ball;

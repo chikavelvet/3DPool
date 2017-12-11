@@ -37,12 +37,14 @@ protected:
     btScalar initialX, initialY, initialZ;
     
 public:
+    int number;
+    
     Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
         std::string _name, 
         std::map<size_t, objType> &typeMap,
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
-        std::string color,
+        std::string color, int _number,
         bool isRed,
         bool isCue = false);
     

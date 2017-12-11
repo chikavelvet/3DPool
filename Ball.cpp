@@ -5,10 +5,10 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         std::string _name, 
         std::map<size_t,objType>& typeMap, 
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
-        std::string color,
+        std::string color, int _number,
         bool isRed,
         bool isCue) :
-        initialX(x), initialY(y), initialZ(z), redBall(isRed)
+        initialX(x), initialY(y), initialZ(z), redBall(isRed), number(_number)
 {    
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z), 

@@ -97,7 +97,7 @@ bool AIPlayer::noBallsBlocking(Ogre::Vector3 cueBallDest, Ball* candidateBall, P
     
     /*Variables we will need in our intersection tests*/
     Ogre::SceneNode* cueBallNode = game->cueBall->getNode();
-    std::vector<Ball*> allBalls = std::vector<Ball*>(game->redBalls);   allBalls.insert(allBalls.end(), game->blueBalls.begin(), game->blueBalls.end());
+    std::vector<Ball*> allBalls = std::vector<Ball*>(game->solidBalls);   allBalls.insert(allBalls.end(), game->stripedBalls.begin(), game->stripedBalls.end());
     allBalls.erase(std::remove(allBalls.begin(), allBalls.end(), candidateBall), allBalls.end());
     // allBalls.remove(candidateBall);
     float ballRadius = 5.0f;
@@ -164,12 +164,12 @@ bool AIPlayer::decideShot()
     std::vector<Ball*> ourBalls, oppBalls;
     
     if(game->ballsAssignedToPlayers){
-        ourBalls = targetRedBall ? game->redBalls : game->blueBalls;
-        oppBalls = targetRedBall ? game->blueBalls : game->redBalls;
+        ourBalls = targetRedBall ? game->solidBalls : game->stripedBalls;
+        oppBalls = targetRedBall ? game->stripedBalls : game->solidBalls;
     }
     else {
-        ourBalls = std::vector<Ball*>(game->redBalls);
-        ourBalls.insert(ourBalls.end(), game->blueBalls.begin(), game->blueBalls.end());
+        ourBalls = std::vector<Ball*>(game->solidBalls);
+        ourBalls.insert(ourBalls.end(), game->stripedBalls.begin(), game->stripedBalls.end());
         oppBalls = std::vector<Ball*>();    
     }
 

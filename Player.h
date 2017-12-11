@@ -34,7 +34,7 @@ protected:
 public:
     Player();
     Player(const Player& orig);
-    virtual ~Player();    
+    virtual ~Player();
     
     void setRedBall(bool isRed) { targetRedBall = isRed; }
 

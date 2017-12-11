@@ -255,7 +255,7 @@ void GUIManager::setUpGUI()
         // Red Remaining Ball Counter
         CEGUI::Window *redBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "RedBallsRemaining", 0.15, 0.05, 0.8, 0.79);
         std::stringstream ss3;
-        ss3 << "Red: " << game->redBallsRemaining;
+        ss3 << "Red: " << game->solidBallsRemaining;
         redBallsRemainingWin->setText(ss3.str());
         redBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         redBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
@@ -263,7 +263,7 @@ void GUIManager::setUpGUI()
         // Blue Remaining Ball Counter
         CEGUI::Window *blueBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "BlueBallsRemaining", 0.15, 0.05, 0.8, 0.7);
         std::stringstream ss4;
-        ss4 << "Blue: " << game->blueBallsRemaining;
+        ss4 << "Blue: " << game->stripedBallsRemaining;
         blueBallsRemainingWin->setText(ss4.str());
         blueBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         blueBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.70, 0)));

@@ -219,13 +219,13 @@ bool ThreeDPool::ballsStopped() {
     if (cueBall->getBody()->getLinearVelocity().length() > 0.0)
             return false;
     
-    for(std::vector<Ball*>::iterator ballIt = redBalls.begin(); ballIt != redBalls.end(); ++ballIt) {
+    for(std::vector<Ball*>::iterator ballIt = solidBalls.begin(); ballIt != solidBalls.end(); ++ballIt) {
         if((*ballIt)->getBody()->getLinearVelocity().length() > 0.0f){
             return false;
         }
     }
     
-    for(std::vector<Ball*>::iterator ballIt = blueBalls.begin(); ballIt != blueBalls.end(); ++ballIt) {
+    for(std::vector<Ball*>::iterator ballIt = stripedBalls.begin(); ballIt != stripedBalls.end(); ++ballIt) {
         if((*ballIt)->getBody()->getLinearVelocity().length() > 0.0f){
             return false;
         }
@@ -304,7 +304,7 @@ void ThreeDPool::createScene(void)
         else
             player2 = new NetworkPlayer();
 
-    cueBall = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", false, true);
+    cueBall = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", 0, false, true);
 
     cueStick = new Stick(mSceneMgr, physicsEngine, 0, 0, 240 + CUE_STICK_MIN, "cueStick", CUE_STICK_MAX, CUE_STICK_MIN, STICK_POWER_MULT, cueBall, typeMap, this);
     
@@ -318,11 +318,18 @@ void ThreeDPool::createScene(void)
     
     addPockets();
     addBallPyramid();
-    redBallsRemaining = redBalls.size();
-    blueBallsRemaining = blueBalls.size();
+    solidBallsRemaining = solidBalls.size();
+    stripedBallsRemaining = stripedBalls.size();
     oppRemainingBalls = remainingBalls;
     mGUIMgr->setUpGUI();
     setUpSounds();
+}
+
+bool ThreeDPool::activePlayerReadyToHitEightBall() {
+    if (!ballsAssignedToPlayers)
+        return false;
+    
+    return (getActivePlayer()->targetRedBall ? solidBallsRemaining : stripedBallsRemaining) == 0;
 }
 
 void ThreeDPool::setUpLighting(void){
@@ -375,34 +382,31 @@ void ThreeDPool::playBGM() {
 
 void ThreeDPool::addBallPyramid() {
     // First Row
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Ball1", true));
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Ball1", 1, true));
 
     // Second Row
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3.6, 3.6, -233.8, "b2", typeMap, pocketMap, "Ball11", false));
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3.6, -3.6, -233.8, "b3", typeMap, pocketMap, "Ball14", false));
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3.6, 3.6, -233.8, "b11", typeMap, pocketMap, "Ball11", 11, false));
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3.6, -3.6, -233.8, "b14", typeMap, pocketMap, "Ball14", 14, false));
     
     // Third Row
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -242, "b4", typeMap, pocketMap, "Ball8", true));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7.0, -7.0, -242, "b5", typeMap, pocketMap, "Ball3", true));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7.0, 7.0, -242, "b6", typeMap, pocketMap, "Ball5", true));
+    eightBall = new Ball(mSceneMgr, physicsEngine, 0, 0, -242, "b8", typeMap, pocketMap, "Ball8", 8, true);
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7.0, -7.0, -242, "b3", typeMap, pocketMap, "Ball3", 3, true));
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7.0, 7.0, -242, "b5", typeMap, pocketMap, "Ball5", 5, true));
     
     // Fourth Row
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3, -3, -251, "b7", typeMap, pocketMap, "Ball9", false));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3, 3, -251, "b8", typeMap, pocketMap, "Ball7", true));
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 11, -11, -251, "b9", typeMap, pocketMap, "Ball12", false));
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -11, 11, -251, "b10", typeMap, pocketMap, "Ball10", false));
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3, -3, -251, "b9", typeMap, pocketMap, "Ball9", 9, false));
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3, 3, -251, "b7", typeMap, pocketMap, "Ball7", 7, true));
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, 11, -11, -251, "b12", typeMap, pocketMap, "Ball12", 12, false));
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, -11, 11, -251, "b10", typeMap, pocketMap, "Ball10", 10, false));
 
     // Fifth Row
     
     // Uncomment this when we implement the 8-Ball
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -260, "b11", typeMap, pocketMap, "Ball13", false));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7, -7, -260, "b12", typeMap, pocketMap, "Ball4", true));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7, 7, -260, "b13", typeMap, pocketMap, "Ball2", true));
-    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 14, -14, -260, "b14", typeMap, pocketMap, "Ball15", false));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -14, 14, -260, "b15", typeMap, pocketMap, "Ball6", true));
-
-
-
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -260, "b13", typeMap, pocketMap, "Ball13", 13, false));
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7, -7, -260, "b4", typeMap, pocketMap, "Ball4", 4, true));
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7, 7, -260, "b2", typeMap, pocketMap, "Ball2", 2, true));
+    stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, 14, -14, -260, "b15", typeMap, pocketMap, "Ball15", 15, false));
+    solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, -14, 14, -260, "b6", typeMap, pocketMap, "Ball6", 6, true));
 
     // First Row
     // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Test1", true));
@@ -533,10 +537,10 @@ void ThreeDPool::decrementRemainingBallCount(bool redBall) {
     
     if (redBall) {
         CEGUI::Window* redBallWin = sheet->getChild("GameScreen")->getChild("RedBallsRemaining");
-        --redBallsRemaining;
-        ss << "Red: " << redBallsRemaining;
+        --solidBallsRemaining;
+        ss << "Red: " << solidBallsRemaining;
         redBallWin->setText(ss.str());
-        if (redBallsRemaining < 1 && blueBallsRemaining > 0) {
+        if (solidBallsRemaining < 1 && stripedBallsRemaining > 0) {
             CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
             youWin->setText("Red Player Wins!");
             gameEnded = true;
@@ -544,10 +548,10 @@ void ThreeDPool::decrementRemainingBallCount(bool redBall) {
         }
     } else {
         CEGUI::Window* blueBallWin = sheet->getChild("GameScreen")->getChild("BlueBallsRemaining");
-        --blueBallsRemaining;
-        ss << "Blue: " << blueBallsRemaining;
+        --stripedBallsRemaining;
+        ss << "Blue: " << stripedBallsRemaining;
         blueBallWin->setText(ss.str());
-        if (blueBallsRemaining < 1 && redBallsRemaining > 0) {
+        if (stripedBallsRemaining < 1 && solidBallsRemaining > 0) {
             CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
             youWin->setText("Blue Player Wins!");
             gameEnded = true;
@@ -1082,7 +1086,7 @@ void ThreeDPool::physicsLoop()
 
                     Ball* ball = pocketMap[node];
                     
-                    if (ball->redBall == getActivePlayer()->targetRedBall)
+                    if (ball->redBall == getActivePlayer()->targetRedBall && (ball->number != 8 || activePlayerReadyToHitEightBall()))
                         scratchedOnBall = false;
                     
                     firstBallHit = false;

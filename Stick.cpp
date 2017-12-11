@@ -49,8 +49,8 @@ Ball* Stick::closestBallAimingAt(){
     Ogre::Vector3 direction(getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z);
     Ogre::Ray stickDirRay (origin, direction); 
 
-    std::vector<Ball*> allBalls = std::vector<Ball*>(game->redBalls);   
-    allBalls.insert(allBalls.end(), game->blueBalls.begin(), game->blueBalls.end());
+    std::vector<Ball*> allBalls = std::vector<Ball*>(game->solidBalls);   
+    allBalls.insert(allBalls.end(), game->stripedBalls.begin(), game->stripedBalls.end());
 
     float minT = 1000000.0f;
     Ball* closestBall = NULL;
