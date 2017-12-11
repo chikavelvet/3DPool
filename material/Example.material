@@ -261,7 +261,7 @@ material Example/Test1
          texture_unit
          {
             texture Ball1.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -277,7 +277,7 @@ material Example/Test2
          texture_unit
          {
             texture Ball2.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -293,7 +293,7 @@ material Example/Test3
          texture_unit
          {
             texture Ball3.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -309,7 +309,7 @@ material Example/Test4
          texture_unit
          {
             texture Ball4.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -325,7 +325,7 @@ material Example/Test5
          texture_unit
          {
             texture Ball5.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -341,7 +341,7 @@ material Example/Test6
          texture_unit
          {
             texture Ball6.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -357,7 +357,7 @@ material Example/Test7
          texture_unit
          {
             texture Ball7.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -373,7 +373,7 @@ material Example/Test8
          texture_unit
          {
             texture Ball8.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -389,7 +389,7 @@ material Example/Test9
          texture_unit
          {
             texture Ball9.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -405,7 +405,7 @@ material Example/Test10
          texture_unit
          {
             texture Ball10.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -421,7 +421,7 @@ material Example/Test11
          texture_unit
          {
             texture Ball11.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -437,7 +437,7 @@ material Example/Test12
          texture_unit
          {
             texture Ball12.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -453,7 +453,7 @@ material Example/Test13
          texture_unit
          {
             texture Ball13.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -469,7 +469,7 @@ material Example/Test14
          texture_unit
          {
             texture Ball14.jpg
-            env_map spherical
+            
          }
       }
    }
@@ -485,7 +485,7 @@ material Example/Test15
          texture_unit
          {
             texture Ball15.jpg
-            env_map spherical
+            
          }
       }
    }
