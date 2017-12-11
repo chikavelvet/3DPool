@@ -34,7 +34,7 @@ material Material.001
             {
                 texture poolb3.jpg
                 tex_address_mode wrap
-                scale 1.0 1.0
+                scale 0.5 1.0
                 colour_op modulate
             }
         }
