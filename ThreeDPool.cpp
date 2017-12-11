@@ -375,8 +375,37 @@ void ThreeDPool::playBGM() {
 
 void ThreeDPool::addBallPyramid() {
     // First Row
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Ball1", true));
+
+    // Second Row
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3.6, 3.6, -233.8, "b2", typeMap, pocketMap, "Ball11", false));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3.6, -3.6, -233.8, "b3", typeMap, pocketMap, "Ball14", false));
+    
+    // Third Row
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -242, "b4", typeMap, pocketMap, "Ball8", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7.0, -7.0, -242, "b5", typeMap, pocketMap, "Ball3", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7.0, 7.0, -242, "b6", typeMap, pocketMap, "Ball5", true));
+    
+    // Fourth Row
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3, -3, -251, "b7", typeMap, pocketMap, "Ball9", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3, 3, -251, "b8", typeMap, pocketMap, "Ball7", true));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 11, -11, -251, "b9", typeMap, pocketMap, "Ball12", false));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -11, 11, -251, "b10", typeMap, pocketMap, "Ball10", false));
+
+    // Fifth Row
+    
+    // Uncomment this when we implement the 8-Ball
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -260, "b11", typeMap, pocketMap, "Ball13", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7, -7, -260, "b12", typeMap, pocketMap, "Ball4", true));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7, 7, -260, "b13", typeMap, pocketMap, "Ball2", true));
+    blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 14, -14, -260, "b14", typeMap, pocketMap, "Ball15", false));
+    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -14, 14, -260, "b15", typeMap, pocketMap, "Ball6", true));
+
+
+
+
+    // First Row
     // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Test1", true));
-    redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Material.001", true));
 
     // // Second Row
     // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3.6, 3.6, -233.8, "b2", typeMap, pocketMap, "Example/Test11", false));
