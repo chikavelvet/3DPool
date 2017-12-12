@@ -25,6 +25,11 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
     
     Ogre::SceneNode* rootNode = graphics->rootNode;
     
+//    rootNode->setOrientation(Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3(0, 1, 0)));
+//    rootNode->setScale(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
+//            STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
+//            STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z);
+    
     physics = new PhysicsComponent(this, _simulator,
             STICK_DEFAULT::PHYSICS::MASS, STICK_DEFAULT::PHYSICS::INERTIA,
             STICK_DEFAULT::PHYSICS::RESTITUTION, STICK_DEFAULT::PHYSICS::FRICTION,

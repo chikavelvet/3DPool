@@ -20,6 +20,8 @@ namespace STICK_DEFAULT {
 //                          SCALE_FACTOR_Z =  50;
         const std::string MESH            = "cube.mesh",
                           MATERIAL        = "Example/Stick";
+//        const std::string MESH = "PoolStick.mesh",
+//                          MATERIAL = "PoolStick";
     }
     
     namespace PHYSICS {
