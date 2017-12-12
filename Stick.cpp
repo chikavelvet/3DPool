@@ -18,17 +18,12 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 {
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z),
-            Ogre::Vector3(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
-                          STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY,
+            Ogre::Vector3(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_X, 
+                          STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Y,
                           STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z),
             STICK_DEFAULT::GRAPHICS::MESH, STICK_DEFAULT::GRAPHICS::MATERIAL);
     
     Ogre::SceneNode* rootNode = graphics->rootNode;
-    
-//    rootNode->setOrientation(Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3(0, 1, 0)));
-//    rootNode->setScale(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
-//            STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
-//            STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z);
     
     physics = new PhysicsComponent(this, _simulator,
             STICK_DEFAULT::PHYSICS::MASS, STICK_DEFAULT::PHYSICS::INERTIA,
@@ -46,6 +41,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 
     guideLineParticle = graphics->sceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
     guideLineNode = rootNode->createChildSceneNode("Particle");
+    guideLineNode->scale(0.01f, 0.01f, 0.01f);
     guideLineNode->attachObject(guideLineParticle);
 }
 

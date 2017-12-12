@@ -14,14 +14,14 @@ class Ball;
 
 namespace STICK_DEFAULT {
     namespace GRAPHICS {
-        const float       SCALE_FACTOR_XY = 0.01,
-                          SCALE_FACTOR_Z  = 0.5;
-//        const float       SCALE_FACTOR_XY = 1,
-//                          SCALE_FACTOR_Z =  50;
-        const std::string MESH            = "cube.mesh",
-                          MATERIAL        = "Example/Stick";
-//        const std::string MESH = "PoolStick.mesh",
-//                          MATERIAL = "PoolStick";
+        // const float       SCALE_FACTOR_XY = 0.01,
+        //                   SCALE_FACTOR_Z  = 0.5;
+        //MATERIAL        = "Example/Stick";
+       const float       SCALE_FACTOR_X = 1,
+                         SCALE_FACTOR_Y = 50,
+                         SCALE_FACTOR_Z = 1;
+        const std::string MESH            = "Cone.mesh",
+                         MATERIAL = "Material.003";
     }
     
     namespace PHYSICS {
