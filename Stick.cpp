@@ -41,8 +41,13 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 
     guideLineParticle = graphics->sceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
     guideLineNode = rootNode->createChildSceneNode("Particle");
-    guideLineNode->scale(0.01f, 0.01f, 0.01f);
+    guideLineNode->scale(0.1f, 0.05f, 0.1f);
     guideLineNode->attachObject(guideLineParticle);
+
+    Ogre::Vector3 stickDirection(getGraphics()->rootNode->getPosition() 
+                - cueBall->getNode()->getPosition());
+    stickDirection.normalise();
+    // guideLineNode->setPosition(stickDirection * (cueStickMin - 50.f));
 }
 
 Ball* Stick::closestBallAimingAt(){
@@ -125,8 +130,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, con
                     - cueBall->getNode()->getPosition());
         stickDirection.normalise();
 
-        // guideLineNode->setPosition(-stickDirection * (cueStickMin*2.f));
-        guideLineNode->setPosition(stickDirection * (cueStickMin + 5.f));
+        // guideLineNode->setPosition(stickDirection * (cueStickMin - 50.f));
         guideLineNode->setVisible(true);
         return true;
     } catch (ComponentNotFoundException& e) {

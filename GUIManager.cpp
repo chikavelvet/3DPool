@@ -311,7 +311,7 @@ void GUIManager::setUpGUI()
 }
 
 void GUIManager::fadeInPowerBar() {
-    progressAlpha = std::min(progressAlpha + 0.003f, PROGRESS_MAX_ALPHA);
+    progressAlpha = std::min(progressAlpha + 0.01f, PROGRESS_MAX_ALPHA);
 //    std::cout << "fading in "<< progressAlpha << std::endl;
     CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
     powerBar->show();
@@ -327,7 +327,7 @@ void GUIManager::setPowerBar(float progress) {
 }
 
 void GUIManager::fadeOutPowerBar() {
-    progressAlpha = std::max(std::min(progressAlpha - 0.003f, PROGRESS_MAX_ALPHA), 0.0f);
+    progressAlpha = std::max(std::min(progressAlpha - 0.001f, PROGRESS_MAX_ALPHA), 0.0f);
 
     CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
 

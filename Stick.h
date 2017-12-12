@@ -19,7 +19,7 @@ namespace STICK_DEFAULT {
         //MATERIAL        = "Example/Stick";
        const float       SCALE_FACTOR_X = 1,
                          SCALE_FACTOR_Y = 50,
-                         SCALE_FACTOR_Z = 1;
+                         SCALE_FACTOR_Z = 2;
         const std::string MESH            = "Cone.mesh",
                          MATERIAL = "Material.003";
     }
