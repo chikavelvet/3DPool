@@ -451,6 +451,7 @@ bool AIPlayer::giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& h
     if(rotatingStick){
         calculateXYRotation();
         hitBall = false;
+        LMBDown = false;
     }
 
     else if(!hitBall){

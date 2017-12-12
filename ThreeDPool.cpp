@@ -893,7 +893,9 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
     if(adjustingStick) {
         cueStickTotalProgress = cueStickTotalProgress-1.0f;
         mGUIMgr->setPowerBar(((std::max(cueStickTotalProgress, CUE_STICK_MIN) - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
-        mGUIMgr->fadeOutPowerBar();
+        
+        if(cueStickTotalProgress < 0.0f)
+            mGUIMgr->fadeOutPowerBar();
 
         if(std::abs(cueBall->getBody()->getLinearVelocity().length())>0.01f){
             cueStick->getBody()->setLinearVelocity(btVector3(0, 0, 0));
