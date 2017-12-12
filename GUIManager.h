@@ -17,6 +17,9 @@
 #include <string>
 #include <map>
 
+#include <iostream>     // std::cout
+#include <sstream>      // std::stringstream, std::stringbuf
+
 class ThreeDPool;
 
 namespace CEGUI {
@@ -49,7 +52,8 @@ protected:
     void showEnterIPWindow(void);
     void hideEnterIPWindow(void);
     void onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e);
-    
+    void spawnBallImages();
+    void addBallImage(std::string num, float xScale, float yScale, float xpos, float ypos);
     void makeBackground(const std::string& filename);
     
     void makeScreen(const std::string& name);

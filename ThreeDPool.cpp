@@ -972,8 +972,11 @@ void ThreeDPool::physicsLoop()
     
     physicsEngine->getDynamicsWorld()->stepSimulation(1.0f/60.0f); //suppose you have 60 frames per second
     if (needToUpdateCamera) {
-        pCamera->moveCameraToStick(cueStick);
-        needToUpdateCamera = false;
+        bool done = pCamera->moveCameraToStick(cueStick);
+        if(done)
+            needToUpdateCamera = false;
+        else
+            needToUpdateCamera = true;
     }
 
     int numManifolds = physicsEngine->getDynamicsWorld()->getDispatcher()->getNumManifolds();
