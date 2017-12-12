@@ -164,8 +164,8 @@ bool AIPlayer::decideShot()
     std::vector<Ball*> ourBalls, oppBalls;
     
     if(game->ballsAssignedToPlayers){
-        ourBalls = targetRedBall ? game->solidBalls : game->stripedBalls;
-        oppBalls = targetRedBall ? game->stripedBalls : game->solidBalls;
+        ourBalls = targetSolids ? game->solidBalls : game->stripedBalls;
+        oppBalls = targetSolids ? game->stripedBalls : game->solidBalls;
     }
     else {
         ourBalls = std::vector<Ball*>(game->solidBalls);

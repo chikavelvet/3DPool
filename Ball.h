@@ -45,10 +45,10 @@ public:
         std::map<size_t, objType> &typeMap,
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
         std::string color, int _number,
-        bool isRed,
+        bool isSolid,
         bool isCue = false);
     
-    bool redBall;
+    bool solidBall;
     
     void removeFromWorld (void);
     void removeCueBall (void);

@@ -28,7 +28,7 @@ protected:
     float cueStickRotationY;
     bool hitBall;
     bool LMBDown;
-    bool targetRedBall;
+    bool targetSolids;
     int strokes;
 
 public:
@@ -36,7 +36,8 @@ public:
     Player(const Player& orig);
     virtual ~Player();
     
-    void setRedBall(bool isRed) { targetRedBall = isRed; }
+    void setTargetSolids(bool isRed) { targetSolids = isRed; }
+    bool getTargetSolids(void) { return targetSolids; }
 
     virtual bool keyPressed(const OIS::KeyEvent &arg) {}
     virtual bool keyReleased(const OIS::KeyEvent &arg) {}

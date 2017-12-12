@@ -99,8 +99,8 @@ protected:
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(bool redBall);
     void increaseScore(void);
-    void updateOppStrokeCount(int newVal);
-    void updateOppRemainingBallCount(int newVal);
+//    void updateOppStrokeCount(int newVal);
+//    void updateOppRemainingBallCount(int newVal);
     
     void createFrameListener(void);
     

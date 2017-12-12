@@ -259,22 +259,13 @@ void ThreeDPool::endCurrentTurn(void){
     
     if (ballsAssignedToPlayers) {
         if (firstAssignment) {
-            getActivePlayer()->setRedBall(redBallToAssign);
-            getInactivePlayer()->setRedBall(!redBallToAssign);
+            getActivePlayer()->setTargetSolids(redBallToAssign);
+            getInactivePlayer()->setTargetSolids(!redBallToAssign);
             firstAssignment = false;
         }
-        
-        CEGUI::Window* targettingColorWin = sheet->getChild("GameScreen/TargettingColor");
-        std::string targetting;
-        
-        if (player1Turn) {
-            targetting = player1->targetRedBall ? "Targetting: Red" : "Targetting: Blue";
-        } else {
-            targetting = player2->targetRedBall ? "Targetting: Red" : "Targetting: Blue";
-        }
-        
-        targettingColorWin->setText(targetting);
     }
+    
+    mGUIMgr->endCurrentTurn();
 
     player1->endCurrentTurn();
     player2->endCurrentTurn();
@@ -329,7 +320,7 @@ bool ThreeDPool::activePlayerReadyToHitEightBall() {
     if (!ballsAssignedToPlayers)
         return false;
     
-    return (getActivePlayer()->targetRedBall ? solidBallsRemaining : stripedBallsRemaining) == 0;
+    return (getActivePlayer()->targetSolids ? solidBallsRemaining : stripedBallsRemaining) == 0;
 }
 
 void ThreeDPool::setUpLighting(void){
@@ -515,94 +506,46 @@ void ThreeDPool::incrementStrokeCount() {
 }
 
 void ThreeDPool::decrementRemainingBallCount(bool redBall) {
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    std::stringstream ss;
-    
     if (soundOn)
         Mix_PlayChannel(-1, pocket, 0);
     
-    
-//    if (player1Turn) {
-//        CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("RemainingBalls");
-//        --remainingBalls;
-//        ss << "Remaining: " << remainingBalls;
-//        remainingBallWin->setText(ss.str());
-//    } else {
-//        CEGUI::Window* oppRemainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
-//        --oppRemainingBalls;
-//        ss << "Opp Remaining: " << oppRemainingBalls;
-//        oppRemainingBallWin->setText(ss.str());
-//    }
-    
     if (redBall) {
-        CEGUI::Window* redBallWin = sheet->getChild("GameScreen")->getChild("RedBallsRemaining");
         --solidBallsRemaining;
-        ss << "Red: " << solidBallsRemaining;
-        redBallWin->setText(ss.str());
-        if (solidBallsRemaining < 1 && stripedBallsRemaining > 0) {
-            CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
-            youWin->setText("Red Player Wins!");
-            gameEnded = true;
-            youWin->show();
-        }
     } else {
-        CEGUI::Window* blueBallWin = sheet->getChild("GameScreen")->getChild("BlueBallsRemaining");
         --stripedBallsRemaining;
-        ss << "Blue: " << stripedBallsRemaining;
-        blueBallWin->setText(ss.str());
-        if (stripedBallsRemaining < 1 && solidBallsRemaining > 0) {
-            CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
-            youWin->setText("Blue Player Wins!");
-            gameEnded = true;
-            youWin->show();
-        }
     }
     
-//    if (isMultiplayer) {
-//        if (isServer) {
-//            std::stringstream ss2;
-//            ss2 << "remaining " << remainingBalls;
-//            std::string msg = ss2.str();
-//            nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-//        }
-//        else {
-//            std::stringstream ss2;
-//            ss2 << "remaining " << remainingBalls;
-//            std::string msg = ss2.str();
-//            nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
-//        }
+    mGUIMgr->decrementRemainingBallCount(redBall);
+}
+
+//void ThreeDPool::updateOppStrokeCount(int newVal) {    
+//    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+//    CEGUI::Window* sheet = context.getRootWindow();
+//    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("OppStrokeCount");
+//    std::stringstream ss;
+//    
+//    opponentStrokes = newVal;
+//    ss << "Opp Strokes: " << opponentStrokes;
+//    strokesWin->setText(ss.str());
+//}
+//
+//void ThreeDPool::updateOppRemainingBallCount(int newVal) {
+//    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+//    CEGUI::Window* sheet = context.getRootWindow();
+//    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
+//    std::stringstream ss;
+//      
+//    oppRemainingBalls = newVal;
+//    ss << "Opp Remaining: " << oppRemainingBalls;
+//    remainingBallWin->setText(ss.str());
+//    
+//    if (oppRemainingBalls < 1 && remainingBalls > 0) {
+//        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
+//        youWin->setText("You Lose!! :c");
+//        gameEnded = true;
+//        youWin->show();
 //    }
-}
-
-void ThreeDPool::updateOppStrokeCount(int newVal) {    
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* strokesWin = sheet->getChild("GameScreen")->getChild("OppStrokeCount");
-    std::stringstream ss;
-    
-    opponentStrokes = newVal;
-    ss << "Opp Strokes: " << opponentStrokes;
-    strokesWin->setText(ss.str());
-}
-
-void ThreeDPool::updateOppRemainingBallCount(int newVal) {
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* remainingBallWin = sheet->getChild("GameScreen")->getChild("OppRemainingBalls");
-    std::stringstream ss;
-      
-    oppRemainingBalls = newVal;
-    ss << "Opp Remaining: " << oppRemainingBalls;
-    remainingBallWin->setText(ss.str());
-    
-    if (oppRemainingBalls < 1 && remainingBalls > 0) {
-        CEGUI::Window* youWin = sheet->getChild("GameScreen")->getChild("YouWin");
-        youWin->setText("You Lose!! :c");
-        gameEnded = true;
-        youWin->show();
-    }
-}
+//}
 
 void ThreeDPool::displayQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
@@ -885,69 +828,69 @@ bool ThreeDPool::frameRenderingQueued(const Ogre::FrameEvent& evt)
 }
 
 void ThreeDPool::networkLoop () {
-    if (isServer) {
-        if (nm->scanForActivity()) {
-            //ClientData& data = nm->tcpServerData;
-            if (nm->getClients()){
-                ClientData* data = nm->tcpClientData.front();
-
-                std::cout << "Rcvd " << std::string(data->output) << std::endl;
-                std::stringstream ss(data->output);
-                std::string key;
-                int val;
-                ss >> key >> val;
-                if (key == "remaining") {
-                    this->updateOppRemainingBallCount(val);
-                } else if (key == "strokes") {
-                    this->updateOppStrokeCount(val);
-                }
-                else if (key == "quit") {
-                    nm->stopServer();
-
-                    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-                    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-                    CEGUI::Window* sheet = context.getRootWindow();
-                    CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
-
-                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
-                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
-
-                    youWin->setText("Opponent Disconnected:\nYou Win!");
-                    gameEnded = true;
-                    youWin->show();
-                }
-            }
-        }
-    } else {
-        if (nm->scanForActivity()) {
-            ClientData& data = nm->tcpServerData;
-            std::cout << "Rcvd " << std::string(data.output) << std::endl;
-            std::stringstream ss(data.output);
-            std::string key;
-            int val;
-            ss >> key >> val;
-            if (key == "remaining") {
-                this->updateOppRemainingBallCount(val);
-            } else if (key == "strokes") {
-                this->updateOppStrokeCount(val);
-            }
-            else if (key == "quit") {
-                nm->stopClient();
-
-                CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-                CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-                CEGUI::Window* sheet = context.getRootWindow();
-                CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
-
-                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
-                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
-
-                youWin->setText("Opponent Disconnected:\nYou Win!");
-                gameEnded = true;
-                youWin->show();
-            }
-        }
-    }
+//    if (isServer) {
+//        if (nm->scanForActivity()) {
+//            //ClientData& data = nm->tcpServerData;
+//            if (nm->getClients()){
+//                ClientData* data = nm->tcpClientData.front();
+//
+//                std::cout << "Rcvd " << std::string(data->output) << std::endl;
+//                std::stringstream ss(data->output);
+//                std::string key;
+//                int val;
+//                ss >> key >> val;
+////                if (key == "remaining") {
+////                    this->updateOppRemainingBallCount(val);
+////                } else if (key == "strokes") {
+////                    this->updateOppStrokeCount(val);
+////                }
+//                else if (key == "quit") {
+//                    nm->stopServer();
+//
+//                    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+//                    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+//                    CEGUI::Window* sheet = context.getRootWindow();
+//                    CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
+//
+//                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
+//                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
+//
+//                    youWin->setText("Opponent Disconnected:\nYou Win!");
+//                    gameEnded = true;
+//                    youWin->show();
+//                }
+//            }
+//        }
+//    } else {
+//        if (nm->scanForActivity()) {
+//            ClientData& data = nm->tcpServerData;
+//            std::cout << "Rcvd " << std::string(data.output) << std::endl;
+//            std::stringstream ss(data.output);
+//            std::string key;
+//            int val;
+//            ss >> key >> val;
+////            if (key == "remaining") {
+////                this->updateOppRemainingBallCount(val);
+////            } else if (key == "strokes") {
+////                this->updateOppStrokeCount(val);
+////            }
+//            else if (key == "quit") {
+//                nm->stopClient();
+//
+//                CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+//                CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+//                CEGUI::Window* sheet = context.getRootWindow();
+//                CEGUI::Window* youWin = sheet->getChild("GameScreen/YouWin");
+//
+//                    youWin->setSize(CEGUI::USize(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.1, 0)));
+//                    youWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.41, 0), CEGUI::UDim(0.4, 0)));  
+//
+//                youWin->setText("Opponent Disconnected:\nYou Win!");
+//                gameEnded = true;
+//                youWin->show();
+//            }
+//        }
+//    }
 }
 
 static bool needToUpdateCamera = false;
@@ -1086,7 +1029,7 @@ void ThreeDPool::physicsLoop()
 
                     Ball* ball = pocketMap[node];
                     
-                    if (ball->redBall == getActivePlayer()->targetRedBall && (ball->number != 8 || activePlayerReadyToHitEightBall()))
+                    if (ball->solidBall == getActivePlayer()->targetSolids && (ball->number != 8 || activePlayerReadyToHitEightBall()))
                         scratchedOnBall = false;
                     
                     firstBallHit = false;
@@ -1109,12 +1052,12 @@ void ThreeDPool::physicsLoop()
             ball->removeFromWorld();
             
             if (!ballsAssignedToPlayers) {
-                redBallToAssign = ball->redBall;
+                redBallToAssign = ball->solidBall;
                 ballsAssignedToPlayers = true;
                 firstAssignment = true;
             }
             
-            decrementRemainingBallCount(ball->redBall);
+            decrementRemainingBallCount(ball->solidBall);
             
             ballInThisTurn = true;
         }

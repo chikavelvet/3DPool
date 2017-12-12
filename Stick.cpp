@@ -212,13 +212,13 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
 void Stick::rotateToMouseInput (float& deltaRotationX, float& deltaRotationY) {
     rotateToMouseXInput(deltaRotationX);
     rotateToMouseYInput(deltaRotationY);
-    Ball* aimingAt = closestBallAimingAt();
-    if(aimingAt==NULL){
-        std::cout << "Aiming at NOTHING" << std::endl;
-    }
-    else{
-        std::cout << "Aiming at " << aimingAt << std::endl;
-    }
+//    Ball* aimingAt = closestBallAimingAt();
+//    if(aimingAt==NULL){
+//        std::cout << "Aiming at NOTHING" << std::endl;
+//    }
+//    else{
+//        std::cout << "Aiming at " << aimingAt << std::endl;
+//    }
 }
 
 void Stick::rotateToMouseXInput (float& deltaRotationX) {

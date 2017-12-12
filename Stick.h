@@ -1,20 +1,23 @@
 #ifndef __Stick_h_
 #define __Stick_h_
 
-#include "GameObject.h"
 #include <OgreParticleIterator.h>
 #include <OgreParticleSystem.h>
 #include <OgreParticleSystemManager.h>
 #include <OgreParticle.h>
+#include "Enums.h"
+#include <btBulletDynamicsCommon.h>
+#include "GameObject.h"
 
 class ThreeDPool;
-class GameObject;
 class Ball;
 
 namespace STICK_DEFAULT {
     namespace GRAPHICS {
         const float       SCALE_FACTOR_XY = 0.01,
                           SCALE_FACTOR_Z  = 0.5;
+//        const float       SCALE_FACTOR_XY = 1,
+//                          SCALE_FACTOR_Z =  50;
         const std::string MESH            = "cube.mesh",
                           MATERIAL        = "Example/Stick";
     }

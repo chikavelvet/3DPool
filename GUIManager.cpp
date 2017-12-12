@@ -15,6 +15,7 @@
 #include "ThreeDPool.h"
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/Renderer.h>
+#include <sstream>
 
 const std::string GUIManager::lookNFeelClass = "TaharezLook";
 
@@ -253,17 +254,17 @@ void GUIManager::setUpGUI()
         strokesWin->hide();
 
         // Red Remaining Ball Counter
-        CEGUI::Window *redBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "RedBallsRemaining", 0.15, 0.05, 0.8, 0.79);
+        CEGUI::Window *redBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "SolidBallsRemaining", 0.15, 0.05, 0.8, 0.79);
         std::stringstream ss3;
-        ss3 << "Red: " << game->solidBallsRemaining;
+        ss3 << "Solid: " << game->solidBallsRemaining;
         redBallsRemainingWin->setText(ss3.str());
         redBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         redBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
         
         // Blue Remaining Ball Counter
-        CEGUI::Window *blueBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "BlueBallsRemaining", 0.15, 0.05, 0.8, 0.7);
+        CEGUI::Window *blueBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "StripedBallsRemaining", 0.15, 0.05, 0.8, 0.7);
         std::stringstream ss4;
-        ss4 << "Blue: " << game->stripedBallsRemaining;
+        ss4 << "Striped: " << game->stripedBallsRemaining;
         blueBallsRemainingWin->setText(ss4.str());
         blueBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         blueBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.70, 0)));
@@ -310,7 +311,7 @@ void GUIManager::setUpGUI()
 
 void GUIManager::fadeInPowerBar() {
     progressAlpha = std::min(progressAlpha + 0.003f, PROGRESS_MAX_ALPHA);
-    std::cout << "fading in "<< progressAlpha << std::endl;
+//    std::cout << "fading in "<< progressAlpha << std::endl;
     CEGUI::ProgressBar* powerBar = static_cast<CEGUI::ProgressBar*>(this->screens[GAME_SCREEN]->getChild("PowerBar"));
     powerBar->show();
     std::stringstream ss;
@@ -332,4 +333,30 @@ void GUIManager::fadeOutPowerBar() {
     std::stringstream ss;
     ss << progressAlpha;       
     powerBar->setProperty("Alpha", ss.str());
+}
+
+void GUIManager::decrementRemainingBallCount(bool redBall) {
+    std::stringstream ss;
+    
+    if (redBall) {
+        ss << "Solid: " << game->solidBallsRemaining;
+        this->screens["GameScreen"]->getChild("SolidBallsRemaining")->setText(ss.str());
+    } else {
+        ss << "Striped: " << game->stripedBallsRemaining;
+        this->screens["GameScreen"]->getChild("StripedBallsRemaining")->setText(ss.str());
+    }
+}
+
+void GUIManager::endCurrentTurn() {
+    if (game->ballsAssignedToPlayers) {
+        std::string targetting;
+        
+        if (game->player1Turn) {
+            targetting = game->player1->getTargetSolids() ? "Targetting: Solid" : "Targetting: Striped";
+        } else {
+            targetting = game->player2->getTargetSolids() ? "Targetting: Solid" : "Targetting: Striped";
+        }
+        
+        this->screens["GameScreen"]->getChild("TargettingColor")->setText(targetting);
+    }
 }

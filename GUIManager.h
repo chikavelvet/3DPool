@@ -74,6 +74,9 @@ public:
     void setPowerBar(float progress);
     void fadeInPowerBar(void);
     void fadeOutPowerBar(void);
+    
+    void decrementRemainingBallCount(bool redBall);
+    void endCurrentTurn(void);
 private:
 
 };
