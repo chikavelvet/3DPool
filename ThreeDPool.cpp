@@ -55,7 +55,7 @@ int oppRemainingBalls;
 
 //---------------------------------------------------------------------------
 ThreeDPool::ThreeDPool(void) :
-        mMoveSpeed(750),
+        mMoveSpeed(200),
         hitBall(false),
         LMBDown(false),
         cueStickDelta(0),
@@ -406,34 +406,6 @@ void ThreeDPool::addBallPyramid() {
     solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7, 7, -260, "b2", typeMap, pocketMap, "Ball2", 2, true));
     stripedBalls.push_back(new Ball(mSceneMgr, physicsEngine, 14, -14, -260, "b15", typeMap, pocketMap, "Ball15", 15, false));
     solidBalls.push_back(new Ball(mSceneMgr, physicsEngine, -14, 14, -260, "b6", typeMap, pocketMap, "Ball6", 6, true));
-
-    // First Row
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -225, "b1", typeMap, pocketMap, "Example/Test1", true));
-
-    // // Second Row
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3.6, 3.6, -233.8, "b2", typeMap, pocketMap, "Example/Test11", false));
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3.6, -3.6, -233.8, "b3", typeMap, pocketMap, "Example/Test14", false));
-    
-    // // Third Row
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -242, "b4", typeMap, pocketMap, "Example/Test8", true));
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7.0, -7.0, -242, "b5", typeMap, pocketMap, "Example/Test3", true));
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7.0, 7.0, -242, "b6", typeMap, pocketMap, "Example/Test5", true));
-    
-    // // Fourth Row
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 3, -3, -251, "b7", typeMap, pocketMap, "Example/Test9", false));
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -3, 3, -251, "b8", typeMap, pocketMap, "Example/Test7", true));
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 11, -11, -251, "b9", typeMap, pocketMap, "Example/Test12", false));
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, -11, 11, -251, "b10", typeMap, pocketMap, "Example/Test10", false));
-
-    // // Fifth Row
-    
-    // // Uncomment this when we implement the 8-Ball
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 0, 0, -260, "b11", typeMap, pocketMap, "Example/Test13", false));
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, 7, -7, -260, "b12", typeMap, pocketMap, "Example/Test4", true));
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -7, 7, -260, "b13", typeMap, pocketMap, "Example/Test2", true));
-    // blueBalls.push_back(new Ball(mSceneMgr, physicsEngine, 14, -14, -260, "b14", typeMap, pocketMap, "Example/Test15", false));
-    // redBalls.push_back(new Ball(mSceneMgr, physicsEngine, -14, 14, -260, "b15", typeMap, pocketMap, "Example/Test6", true));
-
 
     // Easy-in Ball
     //balls.push_back(new Ball(mSceneMgr, physicsEngine, 200, -200, 20, "bTest", typeMap, pocketMap, "Example/GreenOther"));
@@ -934,7 +906,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             using namespace Ogre;
             Vector3 camDirVec = Vector3::ZERO;
             Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
-                mMoveSpeed : mMoveSpeed / 2;
+                mMoveSpeed/4 : mMoveSpeed;
 
             if (mKeyboard->isKeyDown(OIS::KC_W))
                 camDirVec += (mCamera->getDirection() * thisMove);
@@ -955,7 +927,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         using namespace Ogre;
         Vector3 camDirVec = Vector3::ZERO;
         Real thisMove = mKeyboard->isKeyDown(OIS::KC_LSHIFT) ? 
-            mMoveSpeed : mMoveSpeed / 2;
+            mMoveSpeed/4 : mMoveSpeed;
     
         if (mKeyboard->isKeyDown(OIS::KC_W))
             camDirVec += (mCamera->getDirection() * thisMove);
