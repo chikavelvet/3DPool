@@ -27,6 +27,8 @@ namespace CEGUI {
     class EventArgs;
 }
 
+class Player;
+
 class GUIManager {
 protected:
     static const std::string lookNFeelClass;
@@ -77,6 +79,7 @@ public:
     
     void decrementRemainingBallCount(bool redBall);
     void endCurrentTurn(void);
+    void playerWon(Player* winning);
 private:
 
 };

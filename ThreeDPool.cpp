@@ -90,6 +90,7 @@ ThreeDPool::ThreeDPool(void) :
         scratchedOnBall(true),
         firstAssignment(false),
         ballInThisTurn(false),
+        eightBallIn(false),
         firstBallHit(true),
         letTurnEnd(true),
         AIDifficulty(0)
@@ -233,8 +234,15 @@ bool ThreeDPool::ballsStopped() {
 }
 
 void ThreeDPool::endCurrentTurn(void){    
-    std::cout << scratchedInPocket << " " << ballInThisTurn << std::endl;
+    std::cout << scratchedInPocket << " " << scratchedOnBall << " " << ballInThisTurn << std::endl;
         
+    if (eightBallIn){
+        if (scratchedInPocket || scratchedOnBall || !activePlayerReadyToHitEightBall())
+            playerWon(getInactivePlayer());
+        else 
+            playerWon(getActivePlayer());
+    }
+    
     if (scratchedInPocket || scratchedOnBall || !ballInThisTurn)
         player1Turn = !player1Turn;
     
@@ -516,6 +524,12 @@ void ThreeDPool::decrementRemainingBallCount(bool redBall) {
     }
     
     mGUIMgr->decrementRemainingBallCount(redBall);
+}
+
+void ThreeDPool::playerWon(Player* winning) {
+    gameEnded = true;
+    
+    mGUIMgr->playerWon(winning);
 }
 
 //void ThreeDPool::updateOppStrokeCount(int newVal) {    
@@ -1050,6 +1064,9 @@ void ThreeDPool::physicsLoop()
             Ball* ball = pocketMap[node];
             
             ball->removeFromWorld();
+            
+            if (ball->number == 8)
+                eightBallIn = true;
             
             if (!ballsAssignedToPlayers) {
                 redBallToAssign = ball->solidBall;

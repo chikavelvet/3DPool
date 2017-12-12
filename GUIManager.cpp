@@ -16,6 +16,7 @@
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/Renderer.h>
 #include <sstream>
+#include "Player.h"
 
 const std::string GUIManager::lookNFeelClass = "TaharezLook";
 
@@ -358,5 +359,21 @@ void GUIManager::endCurrentTurn() {
         }
         
         this->screens["GameScreen"]->getChild("TargettingColor")->setText(targetting);
+    }
+}
+
+void GUIManager::playerWon(Player* winning) {
+    using namespace CEGUI;
+    
+    Window* youWin = this->screens["GameScreen"]->getChild("YouWin");
+    
+    if (winning->getTargetSolids()) {
+        // Solids win
+        youWin->setText("Solid Player Wins!");
+        youWin->show();
+    } else {
+        // Stripes win
+        youWin->setText("Striped Player Wins!");
+        youWin->show();
     }
 }

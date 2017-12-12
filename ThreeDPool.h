@@ -108,6 +108,8 @@ protected:
     void addBallPyramid(void);
     void playBGM(void);
     
+    void playerWon(Player* winning);
+    
     bool quit (const CEGUI::EventArgs& e);
 
     void hideAllScreens(void);
@@ -162,6 +164,8 @@ protected:
     
     bool scratchedInPocket;
     bool scratchedOnBall;
+    
+    bool eightBallIn;
     
     bool firstAssignment;
     bool redBallToAssign;
