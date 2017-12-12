@@ -172,6 +172,9 @@ bool AIPlayer::decideShot()
         ourBalls.insert(ourBalls.end(), game->stripedBalls.begin(), game->stripedBalls.end());
         oppBalls = std::vector<Ball*>();    
     }
+    
+    if (game->activePlayerReadyToHitEightBall())
+        ourBalls.push_back(game->eightBall);
 
     Pocket* bestClearPocket_150 = NULL;
     Ball* bestClearBall_150 = NULL;

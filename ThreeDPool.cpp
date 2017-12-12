@@ -93,7 +93,7 @@ ThreeDPool::ThreeDPool(void) :
         eightBallIn(false),
         firstBallHit(true),
         letTurnEnd(true),
-        AIDifficulty(0)
+        AIDifficulty(2)
 {
 }
 //---------------------------------------------------------------------------
