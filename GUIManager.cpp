@@ -252,6 +252,10 @@ void GUIManager::setUpGUI()
         strokesWin->setText(ss.str());
         strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
+        strokesWin->setProperty("FrameEnabled", "False");
+        // strokesWin->setProperty("HorizontalAlignment", "Centre");
+        strokesWin->setProperty("TextColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        strokesWin->setProperty("BackgroundEnabled", "False");
         strokesWin->hide();
 
         // Red Remaining Ball Counter
@@ -261,6 +265,11 @@ void GUIManager::setUpGUI()
         redBallsRemainingWin->setText(ss3.str());
         redBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         redBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
+        redBallsRemainingWin->setProperty("FrameEnabled", "False");
+        redBallsRemainingWin->setProperty("TextColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        redBallsRemainingWin->setProperty("BackgroundColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        redBallsRemainingWin->setProperty("BackgroundEnabled", "False");
+        redBallsRemainingWin->setProperty("FrameColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
         
         // Blue Remaining Ball Counter
         CEGUI::Window *blueBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "StripedBallsRemaining", 0.15, 0.05, 0.8, 0.7);
@@ -269,18 +278,36 @@ void GUIManager::setUpGUI()
         blueBallsRemainingWin->setText(ss4.str());
         blueBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         blueBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.70, 0)));
+        blueBallsRemainingWin->setProperty("FrameEnabled", "False");
+        // blueBallsRemainingWin->setProperty("HorizontalAlignment", "Centre");
+        blueBallsRemainingWin->setProperty("TextColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        blueBallsRemainingWin->setProperty("FrameColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        blueBallsRemainingWin->setProperty("BackgroundColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        blueBallsRemainingWin->setProperty("BackgroundEnabled", "False");
         
         // Opponent Remaining Ball Counter
         CEGUI::Window *targettingColorWin = makeWindow(GAME_SCREEN, "StaticText", "TargettingColor", 0.15, 0.05, 0.8, 0.55);
         targettingColorWin->setText("Targetting: All");
         targettingColorWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         targettingColorWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
+        targettingColorWin->setProperty("FrameEnabled", "False");
+        // targettingColorWin->setProperty("HorizontalAlignment", "Centre");
+        targettingColorWin->setProperty("TextColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        targettingColorWin->setProperty("FrameColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        targettingColorWin->setProperty("BackgroundColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        targettingColorWin->setProperty("BackgroundEnabled", "False");
         
         // Opponent Title
         CEGUI::Window *activePlayer = makeWindow(GAME_SCREEN, "StaticText", "ActivePlayer", 0.15, 0.05, 0.8, 0.5);
         activePlayer->setText("Player 1's Turn");
         activePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
         activePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
+        activePlayer->setProperty("FrameEnabled", "False");
+        // activePlayer->setProperty("HorizontalAlignment", "Centre");
+        activePlayer->setProperty("TextColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        activePlayer->setProperty("FrameColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        activePlayer->setProperty("BackgroundColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        activePlayer->setProperty("BackgroundEnabled", "False");
 
         // Opponent Stroke counter
         CEGUI::Window *oppStrokesWin = makeWindow(GAME_SCREEN, "StaticText", "OppStrokeCount", 0.15, 0.05, 0.8, 0.6);
@@ -288,6 +315,13 @@ void GUIManager::setUpGUI()
         ss2 << "Strokes: " << game->opponentStrokes;
         oppStrokesWin->setText(ss2.str());
         oppStrokesWin->hide();
+        oppStrokesWin->setProperty("FrameEnabled", "False");
+        // oppStrokesWin->setProperty("HorizontalAlignment", "Centre");
+        oppStrokesWin->setProperty("TextColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        oppStrokesWin->setProperty("FrameColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        oppStrokesWin->setProperty("BackgroundColours", "tl:FF993300 tr:FF993300 bl:FF993300 br:FF993300");
+        oppStrokesWin->setProperty("BackgroundEnabled", "False");
+
 
         // You Win Window
         CEGUI::Window *youWin = makeWindow(GAME_SCREEN, "StaticText", "YouWin", 0.15, 0.05, 0.425, 0.475);
