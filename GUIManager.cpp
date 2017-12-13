@@ -477,16 +477,22 @@ void GUIManager::setUpGUI()
 
         if(p1Type == 0) p1Name = "Human";
         else {
-            p1Name = "Computer (" + std::string((p1Diff == 0) ? "Easy)" : 
-                                        (p1Diff == 1) ? "Med)" : 
-                                                             "Hard)");    
+            std::stringstream pNameSS;
+            pNameSS << "Computer (" << (p1Adaptive ? "A. " : "") << 
+                    (p1Diff == 0 ? "Easy" 
+                                 : (p1Diff == 1 ? "Med" 
+                                                : "Hard")) << ")";
+            p1Name = pNameSS.str();  
         }
 
         if(p2Type == 0) p2Name = "Human";
         else {
-            p2Name = "Computer (" + std::string((p2Diff == 0) ? "Easy)" : 
-                                        (p2Diff == 1) ? "Med)" : 
-                                                            "Hard)");    
+            std::stringstream pNameSS;
+            pNameSS << "Computer (" << (p2Adaptive ? "A. " : "") << 
+                    (p2Diff == 0 ? "Easy" 
+                                 : (p2Diff == 1 ? "Med" 
+                                                : "Hard")) << ")";    
+            p2Name = pNameSS.str(); 
         }
 
 
