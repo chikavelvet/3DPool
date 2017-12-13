@@ -687,10 +687,10 @@ bool ThreeDPool::keyReleased(const OIS::KeyEvent &arg) {
 
     switch(arg.key) {
         case OIS::KC_T :
-            if (!adjustingCamera){
+            if (!adjustingCamera){ //stick cam
                 preFreeLookCameraPosition = mCamera->getPosition();
                 preFreeLookCameraDirection = mCamera->getDirection();
-            } else {
+            } else {               //free cam
                 mCamera->setPosition(preFreeLookCameraPosition);
                 mCamera->setDirection(preFreeLookCameraDirection);
             }
@@ -753,7 +753,7 @@ bool ThreeDPool::mouseMoved(const OIS::MouseEvent &me) {
     if (player2)
         player2->mouseMoved(me);
     
-    if (adjustingCamera) {
+    if (adjustingCamera) { //in freecam
        mCamera->yaw(Ogre::Degree(-0.13 * me.state.X.rel));
        mCamera->pitch(Ogre::Degree(-0.13 * me.state.Y.rel));
     }
@@ -967,6 +967,9 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         // std::cout << "cueStickDelta: " << cueStickDelta << " cueStickRotationX: " << cueStickRotationX << " cueStickRotationY: " << cueStickRotationY << std::endl;
     }
 
+    Player* curPlayer = getActivePlayer(); 
+    bool curPlayerIsAI = (dynamic_cast<AIPlayer*> (curPlayer)) != NULL;
+
     if(adjustingStick) {
         cueStickTotalProgress = cueStickTotalProgress-1.0f;
         mGUIMgr->setPowerBar(((std::max(cueStickTotalProgress, CUE_STICK_MIN) - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
@@ -1021,6 +1024,31 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
             camDirVec += (mCamera->getDirection().crossProduct(mCamera->getUp()) * thisMove);
         
         mCamera->move(camDirVec * evt.timeSinceLastFrame);
+
+
+        if(curPlayerIsAI && !hitBall){
+            std::cout << "got here BOI" << std::endl;
+            cueStick->rotateToMouseInput(cueStickRotationX, cueStickRotationY);
+            needToUpdateCamera = false;
+            cueStick->chargeStick(adjustingStick, cueStickTotal, cueStickDelta, LMBDown);
+
+            mGUIMgr->setPowerBar(((cueStickTotal - CUE_STICK_MIN) / (CUE_STICK_MAX - CUE_STICK_MIN)));
+            cueStickTotalProgress = cueStickTotal;
+            
+            if (LMBDown){
+                mGUIMgr->fadeInPowerBar();
+            } else {
+                mGUIMgr->fadeOutPowerBar();
+            }
+        }
+
+        else if(curPlayerIsAI && hitBall){
+            if (cueStickTotal > CUE_STICK_MIN) 
+                incrementStrokeCount();
+            cueStick->releaseStick(adjustingStick, hitBall, cueStickTotal, cueStickDelta);
+        }
+
+
     } else if(hitBall) {      
         if (cueStickTotal > CUE_STICK_MIN) 
             incrementStrokeCount();
