@@ -114,10 +114,14 @@ void GUIManager::createMainMenu()
         //----Quit Button----//
         CEGUI::Window* quit = makeWindow(MAIN_MENU, "Button", "QuitButton", 0.15, 0.05, 0.425, 0.80);  
         quit->setText("Quit");
+        quit->setProperty("HoverTextColour", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000");
+        quit->setProperty("PushedTextColour", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000");
         quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, game));
       
         //----Single Player----//
         CEGUI::Window* singlePlayer = makeWindow(MAIN_MENU, "Button", "StartSinglePlayerButton", 0.15, 0.05, 0.425, 0.74);
+        singlePlayer->setProperty("HoverTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+        singlePlayer->setProperty("PushedTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
         singlePlayer->setText("Play");    
         singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::createPlayersLobby, this));
 
@@ -134,6 +138,8 @@ void GUIManager::createMainMenu()
 
 void GUIManager::player1SelectManual(){
     p1Type = 0;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectManual")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectAI")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->hide();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->hide();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->hide();
@@ -141,13 +147,17 @@ void GUIManager::player1SelectManual(){
 
 void GUIManager::player2SelectManual(){
     p2Type = 0;
-    this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->show();
-    this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->show();
-    this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectManual")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectAI")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->hide();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->hide();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->hide();
 }
 
 void GUIManager::player1SelectAI(){
     p1Type = 1;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectAI")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectManual")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->show();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->show();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->show();
@@ -155,6 +165,8 @@ void GUIManager::player1SelectAI(){
 
 void GUIManager::player2SelectAI(){
     p2Type = 1;
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectAI")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectManual")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->show();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->show();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->show();
@@ -216,56 +228,98 @@ void GUIManager::player2SelectHard(){
 
 
 void GUIManager::createPlayersLobby(){
-     if (!this->screens[PLAYER_SELECT]) {
-        hideAllScreens();
+    hideAllScreens();
+    this->screens[BACKGROUND]->show();
 
-        this->screens[BACKGROUND]->show();
+     if (!this->screens[PLAYER_SELECT]) {
 
         makeScreen(PLAYER_SELECT);
 
         CEGUI::Window *back = makeWindow(PLAYER_SELECT, "Button", "BackToMainButton2", 0.15, 0.05, 0.05, 0.9);
-        back->setText("Back to Main Menu");
-        back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, game));        
+        back->setProperty("HoverTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+        back->setProperty("PushedTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+        back->setText("Main Menu");
+        back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::createMainMenu, this));        
 
 
         //Player 1 (LEFT) Side
-        CEGUI::Window *p1Title = makeWindow(PLAYER_SELECT, "StaticText", "Player1Title", 0.15, 0.05, 0.25, 0.1);
+        CEGUI::Window *p1Title = makeWindow(PLAYER_SELECT, "StaticText", "Player1Title", 0.15, 0.05, 0.29, 0.26);
         p1Title->setProperty("BackgroundEnabled", "False");
         p1Title->setProperty("FrameEnabled", "False");
         p1Title->setText("Player 1");
         
-        CEGUI::Window *p1SelectManual = makeWindow(PLAYER_SELECT, "Button", "Player1SelectManual", 0.15, 0.05, 0.25, 0.3);
+        CEGUI::Window *p1SelectManual = makeWindow(PLAYER_SELECT, "Button", "Player1SelectManual", 0.13, 0.04, 0.25, 0.32);
         p1SelectManual->setText("Human");
         p1SelectManual->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::player1SelectManual, this));        
-
-        CEGUI::Window *p1SelectAI = makeWindow(PLAYER_SELECT, "Button", "Player1SelectAI", 0.15, 0.05, 0.25, 0.4);
+        p1SelectManual->setProperty("HoverTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+        
+        CEGUI::Window *p1SelectAI = makeWindow(PLAYER_SELECT, "Button", "Player1SelectAI", 0.13, 0.04, 0.25, 0.37);
         p1SelectAI->setText("Computer");
         p1SelectAI->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::player1SelectAI, this));        
+        p1SelectAI->setProperty("HoverTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
 
-        CEGUI::Window *p1SelectEasy = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectEasy", 0.1, 0.05, 0.3, 0.5);
+        CEGUI::Window *p1SelectEasy = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectEasy", 0.1, 0.05, 0.27, 0.42);
         p1SelectEasy->setProperty("Text", "Easy");
         p1SelectEasy->setProperty("Selected", "False");
         p1SelectEasy->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectEasy, this));
         p1SelectEasy->hide();
 
-        CEGUI::Window *p1SelectMedium = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectMedium", 0.1, 0.05, 0.3, 0.53);
+        CEGUI::Window *p1SelectMedium = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectMedium", 0.1, 0.05, 0.27, 0.45);
         p1SelectMedium->setProperty("Text", "Normal");
         p1SelectMedium->setProperty("Selected", "True");
         p1SelectMedium->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectMedium, this));
         p1SelectMedium->hide();
 
-        CEGUI::Window *p1SelectHard = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectHard", 0.1, 0.05, 0.3, 0.56);
+        CEGUI::Window *p1SelectHard = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectHard", 0.1, 0.05, 0.27, 0.48);
         p1SelectHard->setProperty("Text", "Hard");
         p1SelectHard->setProperty("Selected", "False");
         p1SelectHard->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectHard, this));
         p1SelectHard->hide();
 
+
+
         //Player 2 (RIGHT) Side
-        CEGUI::Window *p2Title = makeWindow(PLAYER_SELECT, "StaticText", "Player2Title", 0.15, 0.05, 0.62, 0.1);
+        CEGUI::Window *p2Title = makeWindow(PLAYER_SELECT, "StaticText", "Player2Title", 0.15, 0.05, 0.66, 0.26);
         p2Title->setProperty("BackgroundEnabled", "False");
         p2Title->setProperty("FrameEnabled", "False");
         p2Title->setText("Player 2");
 
+        CEGUI::Window *p2SelectManual = makeWindow(PLAYER_SELECT, "Button", "Player2SelectManual", 0.13, 0.04, 0.62, 0.32);
+        p2SelectManual->setText("Human");
+        p2SelectManual->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::player2SelectManual, this));        
+        p2SelectManual->setProperty("HoverTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+
+        CEGUI::Window *p2SelectAI = makeWindow(PLAYER_SELECT, "Button", "Player2SelectAI", 0.13, 0.04, 0.62, 0.37);
+        p2SelectAI->setText("Computer");
+        p2SelectAI->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::player2SelectAI, this));        
+        p2SelectAI->setProperty("HoverTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
+
+        CEGUI::Window *p2SelectEasy = makeWindow(PLAYER_SELECT, "Checkbox", "Player2SelectEasy", 0.1, 0.05, 0.64, 0.42);
+        p2SelectEasy->setProperty("Text", "Easy");
+        p2SelectEasy->setProperty("Selected", "False");
+        p2SelectEasy->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectEasy, this));
+        p2SelectEasy->hide();
+
+        CEGUI::Window *p2SelectMedium = makeWindow(PLAYER_SELECT, "Checkbox", "Player2SelectMedium", 0.1, 0.05, 0.64, 0.45);
+        p2SelectMedium->setProperty("Text", "Normal");
+        p2SelectMedium->setProperty("Selected", "True");
+        p2SelectMedium->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectMedium, this));
+        p2SelectMedium->hide();
+
+        CEGUI::Window *p2SelectHard = makeWindow(PLAYER_SELECT, "Checkbox", "Player2SelectHard", 0.1, 0.05, 0.64, 0.48);
+        p2SelectHard->setProperty("Text", "Hard");
+        p2SelectHard->setProperty("Selected", "False");
+        p2SelectHard->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectHard, this));
+        p2SelectHard->hide();
+
+
+        CEGUI::Window *readyToGo = makeWindow(PLAYER_SELECT, "Button", "ReadyToGo", 0.15, 0.05, 0.415, 0.55);
+        readyToGo->setText("Ready to Go");
+        readyToGo->setProperty("HoverTextColour", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000");
+        readyToGo->setProperty("PushedTextColour", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000");
+        readyToGo->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, game));
+    } else {
+        this->screens[PLAYER_SELECT]->show();
     }
 }
 

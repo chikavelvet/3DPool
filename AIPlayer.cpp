@@ -48,7 +48,7 @@ AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         game(_game),
         decided(false),
         rotDelta(ROT_DELTA_START),
-        chargeDelta(0.02f),
+        chargeDelta(0.01f),
         noRotCount(0),
         rotatingStick(true),
         decidedChargeGoal(false),

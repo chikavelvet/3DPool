@@ -363,15 +363,17 @@ void ThreeDPool::createScene(void)
     physicsEngine->initObjects();
     
     // Set up Players //
-    player1 = new ManualPlayer(this);
-//    player2 = new ManualPlayer();
-    player2 = new AIPlayer(this, AIDifficulty);
+    if(mGUIMgr->p1Type == 0) player1 = new ManualPlayer(this); 
+    else player1 = new AIPlayer(this, mGUIMgr->p1Diff);
+
+    if(mGUIMgr->p2Type == 0) player2 = new ManualPlayer(this); 
+    else player2 = new AIPlayer(this, mGUIMgr->p2Diff);
     
-    if (isMultiplayer)
-        if (isAI)
-            player2 = new AIPlayer(this, AIDifficulty);
-        else
-            player2 = new NetworkPlayer();
+    // if (isMultiplayer)
+    //     if (isAI)
+    //         player2 = new AIPlayer(this, AIDifficulty);
+    //     else
+    //         player2 = new NetworkPlayer();
 
     cueBall = new Ball(mSceneMgr, physicsEngine, 0, 0, 240, "cueBall", typeMap, pocketMap, "Example/White", 0, false, true);
 
