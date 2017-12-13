@@ -13,4 +13,4 @@ Makefile
 config.h
 configure
 Makefile.in
-
+ogre.cfg

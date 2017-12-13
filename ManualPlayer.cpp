@@ -13,6 +13,13 @@
 
 #include "ManualPlayer.h"
 #include <OgreRenderWindow.h>
+#include "ThreeDPool.h"
+
+ManualPlayer::ManualPlayer(ThreeDPool* _game):
+    game(_game)
+{
+}
+
 
 ManualPlayer::ManualPlayer()
 {
@@ -41,7 +48,27 @@ bool ManualPlayer::mouseMoved(const OIS::MouseEvent &me) {
 }
 
 bool ManualPlayer::mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id) {
-    if(id==OIS::MB_Left)
-        hitBall = true;
+    if(id==OIS::MB_Left){
+        LMBDown = false;
+        if(game->cueStickTotal > game->CUE_STICK_MIN)
+            hitBall = true;
+    }
 }
+
+bool ManualPlayer::mousePressed(const OIS::MouseEvent &me, OIS::MouseButtonID id) {
+    using namespace std;
+    switch(id)
+    {
+        case OIS::MB_Left:
+            LMBDown = true;
+            break;
+        case OIS::MB_Right:
+            break;
+        case OIS::MB_Middle:
+            break;
+        default:
+            break;
+    }
+}
+
 

@@ -22,6 +22,7 @@ http://www.ogre3d.org/wiki/
 #include <btBulletDynamicsCommon.h>
 #include <map>
 #include "Enums.h"
+#include "Player.h"
 
 //--Forward Declarations--//
 //----Game Objects--------//
@@ -52,16 +53,18 @@ public:
     ThreeDPool(void);
     virtual ~ThreeDPool(void);
     
-    int redBallsRemaining;
-    int blueBallsRemaining;
+    int solidBallsRemaining;
+    int stripedBallsRemaining;
+    float cueStickTotal;
+    static const float CUE_STICK_MAX,
+                       CUE_STICK_MIN,
+                       STICK_POWER_MULT;
 
 protected:
     friend class GUIManager;
     friend class AIPlayer;
+    friend class Stick;
     
-    static const float CUE_STICK_MAX,
-                       CUE_STICK_MIN,
-                       STICK_POWER_MULT;
     static const int   BALL_SPEED_SUM_FREQUENCY;
     
     virtual void createScene(void);
@@ -70,6 +73,8 @@ protected:
     virtual bool setup(void);
     virtual bool configure(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
+    void restart(void);
 
     void setUpSounds(void);
 
@@ -96,14 +101,16 @@ protected:
     void incrementStrokeCount(void);
     void decrementRemainingBallCount(bool redBall);
     void increaseScore(void);
-    void updateOppStrokeCount(int newVal);
-    void updateOppRemainingBallCount(int newVal);
+//    void updateOppStrokeCount(int newVal);
+//    void updateOppRemainingBallCount(int newVal);
     
     void createFrameListener(void);
     
     void addPockets(void);
     void addBallPyramid(void);
     void playBGM(void);
+    
+    void playerWon(Player* winning);
     
     bool quit (const CEGUI::EventArgs& e);
 
@@ -119,7 +126,9 @@ protected:
     
     Player* getActivePlayer (void) { return player1Turn ? player1 : player2; }
     Player* getInactivePlayer (void) { return player1Turn ? player2 : player1; }
-
+    
+    bool activePlayerReadyToHitEightBall(void);
+    
     bool mainMenuScreenCreated;
     bool mpLobbyScreenCreated;
     bool gameScreenCreated;
@@ -140,7 +149,7 @@ protected:
     bool hitBall;
     bool LMBDown;
     float cueStickDelta;
-    float cueStickTotal;
+    float cueStickTotalProgress;
     bool adjustingStick;
     bool cursorDisplaying;
     bool soundOn;
@@ -158,13 +167,15 @@ protected:
     bool scratchedInPocket;
     bool scratchedOnBall;
     
+    bool eightBallIn;
+    
     bool firstAssignment;
     bool redBallToAssign;
     
     bool ballsAssignedToPlayers;
     
-    std::vector<Ball*> blueBalls;
-    std::vector<Ball*> redBalls;
+    std::vector<Ball*> stripedBalls;
+    std::vector<Ball*> solidBalls;
     std::vector<Pocket*> pockets;
     
     bool isMultiplayer;
@@ -184,6 +195,7 @@ protected:
     
     Stick* cueStick;
     Ball* cueBall;
+    Ball* eightBall;
     Room* room;
 
     Mix_Chunk* ball_ball;

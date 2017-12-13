@@ -2,22 +2,24 @@
 #include "Ball.h"
 #include "GraphicsComponent.h"
 #include "PhysicsComponent.h"
+#include <OgreRay.h>
+#include "ThreeDPool.h"
 
 Stick::Stick(Ogre::SceneManager* _sceneMgr,
              Simulator* _simulator,
              btScalar x, btScalar y, btScalar z,
              Ogre::String _name,
              float _cueStickMax, float _cueStickMin, float _powerMultiplier,
-             Ball* _cueBall, std::map<size_t, objType> &typeMap) :
+             Ball* _cueBall, std::map<size_t, objType> &typeMap, ThreeDPool* _game) :
         cueStickMax(_cueStickMax),
         cueStickMin(_cueStickMin),
         powerMultiplier(_powerMultiplier),
-        cueBall(_cueBall)
+        cueBall(_cueBall), game(_game)
 {
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z),
-            Ogre::Vector3(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY, 
-                          STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_XY,
+            Ogre::Vector3(STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_X, 
+                          STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Y,
                           STICK_DEFAULT::GRAPHICS::SCALE_FACTOR_Z),
             STICK_DEFAULT::GRAPHICS::MESH, STICK_DEFAULT::GRAPHICS::MATERIAL);
     
@@ -39,8 +41,43 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 
     guideLineParticle = graphics->sceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
     guideLineNode = rootNode->createChildSceneNode("Particle");
+    guideLineNode->scale(0.1f, 0.023f, 0.1f);
     guideLineNode->attachObject(guideLineParticle);
+
+    Ogre::Vector3 stickDirection(getGraphics()->rootNode->getPosition() 
+                - cueBall->getNode()->getPosition());
+    stickDirection.normalise();
+    // guideLineNode->setPosition(stickDirection * (cueStickMin - 50.f));
 }
+
+Ball* Stick::closestBallAimingAt(){
+    Ogre::Vector3 origin(cueBall->getNode()->getPosition());
+    Ogre::Vector3 direction(getNode()->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z);
+    Ogre::Ray stickDirRay (origin, direction); 
+
+    std::vector<Ball*> allBalls = std::vector<Ball*>(game->solidBalls);   
+    allBalls.insert(allBalls.end(), game->stripedBalls.begin(), game->stripedBalls.end());
+
+    float minT = 1000000.0f;
+    Ball* closestBall = NULL;
+    float ballRadius = 5.0f;
+
+    for(std::vector<Ball*>::iterator ballIt = allBalls.begin(); ballIt != allBalls.end(); ++ballIt) {
+        Ball* curBall = *ballIt;
+        Ogre::Sphere ballSphere(curBall->getNode()->getPosition(), ballRadius); //a sphere representation of the ball
+        std::pair<bool,Ogre::Real> intersection = stickDirRay.intersects(ballSphere);
+        if(intersection.first){
+            /*Find the closest Ball*/
+            if(intersection.second < minT && intersection.second > 0.0f){ 
+                minT = intersection.second;
+                closestBall = curBall;
+            }
+        }
+    }
+
+    return closestBall;
+}
+
 
 bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, const bool& letTurnEnd, const bool& scratched, const bool& scratchedOnBall) {
     try {
@@ -56,15 +93,16 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, con
         bool cueStickStopped = body->getLinearVelocity().length() < 0.05f
                             && body->getTotalForce().length() < 0.05f;
 
-        bool cueBallStopped = cueBallBody->getLinearVelocity().length() < 1.f
-                           && cueBallBody->getTotalForce().length() < 1.f;
+        // bool cueBallStopped = cueBallBody->getLinearVelocity().length() < 0.1f
+        //                    && cueBallBody->getTotalForce().length() < 0.1f;
 
         if (cueStickStopped) {
             simulator->getDynamicsWorld()->removeRigidBody(body);
             geom->setVisible(false);
         }
 
-        bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped && letTurnEnd;
+        // bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped && letTurnEnd;
+        bool turnIsOver = ballsStopped && cueStickStopped;
 
         if (!turnIsOver)
             return false;
@@ -93,8 +131,7 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, con
                     - cueBall->getNode()->getPosition());
         stickDirection.normalise();
 
-        // guideLineNode->setPosition(-stickDirection * (cueStickMin*2.f));
-        guideLineNode->setPosition(stickDirection * (cueStickMin + 5.f));
+        // guideLineNode->setPosition(stickDirection * (cueStickMin - 50.f));
         guideLineNode->setVisible(true);
         return true;
     } catch (ComponentNotFoundException& e) {
@@ -181,6 +218,13 @@ void Stick::releaseStick (bool& adjustingStick, bool& hitBall, float& cueStickTo
 void Stick::rotateToMouseInput (float& deltaRotationX, float& deltaRotationY) {
     rotateToMouseXInput(deltaRotationX);
     rotateToMouseYInput(deltaRotationY);
+//    Ball* aimingAt = closestBallAimingAt();
+//    if(aimingAt==NULL){
+//        std::cout << "Aiming at NOTHING" << std::endl;
+//    }
+//    else{
+//        std::cout << "Aiming at " << aimingAt << std::endl;
+//    }
 }
 
 void Stick::rotateToMouseXInput (float& deltaRotationX) {

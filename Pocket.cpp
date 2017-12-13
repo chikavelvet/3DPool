@@ -23,7 +23,7 @@ Pocket::Pocket(Ogre::SceneManager* _sceneMgr,
             POCKET_DEFAULT::GRAPHICS::MATERIAL);
 
     Ogre::SceneNode* rootNode = graphics->rootNode;
-    rootNode->setVisible(true);
+    rootNode->setVisible(false);
     
     physics = new PhysicsComponent(this, _simulator,
             POCKET_DEFAULT::PHYSICS::MASS, 

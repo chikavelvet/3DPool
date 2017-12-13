@@ -1,0 +1,28 @@
+<scene formatVersion="1.0.1" export_time="1513045207.728284" exported_by="rsa" previous_export_time="1513044133.189824" >
+  <nodes >
+    <node name="Cone" >
+      <position y="0.000000" z="-0.000000" x="0.000000" />
+      <rotation qy="0.000000" qw="0.707107" qz="-0.000000" qx="0.707107" />
+      <scale y="350.118591" z="7.568185" x="7.568000" />
+      <user_data value='&lt;bpy id prop: owner="OBCone", name="cycles_visibility", address=0x000000000B47AA18&gt;' type="IDPropertyGroup" name="cycles_visibility" />
+      <user_data value='&lt;bpy id prop: owner="OBCone", name="cycles", address=0x000000000B3EEBF8&gt;' type="IDPropertyGroup" name="cycles" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity lock_trans_z="False" lock_trans_x="False" velocity_min="0.0" mass_radius="1.0" lock_rot_x="False" friction_z="1.0" ghost="False" lock_trans_y="False" physics_type="STATIC" friction_y="1.0" anisotropic_friction="False" name="Cone" inertia_tensor="0.4000000059604645" actor="False" lock_rot_z="False" friction_x="1.0" damping_rot="0.10000000149011612" mass="1.0" damping_trans="0.03999999910593033" velocity_max="0.0" lock_rot_y="False" meshFile="Cone.mesh" >
+        <user_data value='&lt;bpy id prop: owner="MECone", name="cycles", address=0x000000000B479398&gt;' type="IDPropertyGroup" name="cycles" />
+      </entity>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="C:\Users\rsa\Desktop\zUT\5th semester\Game Tech\Pool Stick\Material.003.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourBackground r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourDiffuse r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient r="0.0" b="0.0" g="0.0" />
+  </environment>
+</scene>

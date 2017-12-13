@@ -250,3 +250,243 @@ material Example/Background
       }
    }
 }
+
+material Example/Test1
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball1.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test2
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball2.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test3
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball3.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test4
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball4.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test5
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball5.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test6
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball6.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test7
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball7.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test8
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball8.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test9
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball9.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test10
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball10.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test11
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball11.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test12
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball12.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test13
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball13.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test14
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball14.jpg
+            
+         }
+      }
+   }
+}
+
+material Example/Test15
+{
+   technique
+   {
+      pass
+      {
+         specular 1 1 1 40
+         texture_unit
+         {
+            texture Ball15.jpg
+            
+         }
+      }
+   }
+}

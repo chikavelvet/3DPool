@@ -1,21 +1,27 @@
 #ifndef __Stick_h_
 #define __Stick_h_
 
-#include "GameObject.h"
 #include <OgreParticleIterator.h>
 #include <OgreParticleSystem.h>
 #include <OgreParticleSystemManager.h>
 #include <OgreParticle.h>
+#include "Enums.h"
+#include <btBulletDynamicsCommon.h>
+#include "GameObject.h"
 
-class GameObject;
+class ThreeDPool;
 class Ball;
 
 namespace STICK_DEFAULT {
     namespace GRAPHICS {
-        const float       SCALE_FACTOR_XY = 0.01,
-                          SCALE_FACTOR_Z  = 0.5;
-        const std::string MESH            = "cube.mesh",
-                          MATERIAL        = "Example/Stick";
+        // const float       SCALE_FACTOR_XY = 0.01,
+        //                   SCALE_FACTOR_Z  = 0.5;
+        //MATERIAL        = "Example/Stick";
+       const float       SCALE_FACTOR_X = 3,
+                         SCALE_FACTOR_Y = 150,
+                         SCALE_FACTOR_Z = 2;
+        const std::string MESH            = "Cone.mesh",
+                         MATERIAL = "Material.003";
     }
     
     namespace PHYSICS {
@@ -35,6 +41,9 @@ namespace STICK_DEFAULT {
 }
 
 class Stick : public GameObject {
+protected:
+    ThreeDPool* game;
+
 private:
     float cueStickMax;
     float cueStickMin;
@@ -48,7 +57,7 @@ public:
             btScalar x, btScalar y, btScalar z, 
             std::string _name, 
             float _cueStickMax, float _cueStickMin, float _powerMultiplier, 
-            Ball* _cueBall, std::map<size_t, objType> &typeMap);
+            Ball* _cueBall, std::map<size_t, objType> &typeMap, ThreeDPool* _game);
 
     bool readjustStickToCueball (bool& adjustingStick, bool ballsStopped, const bool& letTurnEnd, const bool& scratched, const bool& scratchedOnBall);
 
@@ -61,6 +70,8 @@ public:
     void rotateToMouseXInput(float& deltaRotationX);
 
     void rotateToMouseYInput(float& deltaRotationY);
+
+    Ball* closestBallAimingAt();
         
     Ogre::Vector3 getPosition() const;
 };

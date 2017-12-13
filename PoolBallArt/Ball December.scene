@@ -1,0 +1,27 @@
+<scene previous_export_time="1512882485.412638" export_time="1513020172.528383" exported_by="rsa" formatVersion="1.0.1" >
+  <nodes >
+    <node name="Sphere" >
+      <position x="-0.084979" z="-0.057751" y="1.227759" />
+      <rotation qw="1.000000" qx="0.000000" qz="-0.000000" qy="0.000000" />
+      <scale x="1.000000" z="1.000000" y="1.000000" />
+      <user_data type="IDPropertyGroup" value='&lt;bpy id prop: owner="OBSphere", name="cycles_visibility", address=0x000000000BA8DAC8&gt;' name="cycles_visibility" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity physics_type="STATIC" mass_radius="1.0" name="Sphere" lock_rot_z="False" lock_rot_x="False" lock_trans_x="False" inertia_tensor="0.4000000059604645" velocity_max="0.0" friction_z="1.0" friction_x="1.0" lock_trans_y="False" mass="1.0" lock_trans_z="False" damping_rot="0.10000000149011612" ghost="False" lock_rot_y="False" damping_trans="0.03999999910593033" actor="False" meshFile="Sphere.mesh" anisotropic_friction="False" friction_y="1.0" velocity_min="0.0" >
+        <user_data type="IDPropertyGroup" value='&lt;bpy id prop: owner="MESphere", name="cycles", address=0x0000000016211898&gt;' name="cycles" />
+      </entity>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="C:\Users\rsa\Desktop\zUT\5th semester\Game Tech\Ball December\Material.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourAmbient b="0.0" g="0.0" r="0.0" />
+    <colourBackground b="0.05087608844041824" g="0.05087608844041824" r="0.05087608844041824" />
+    <colourDiffuse b="0.05087608844041824" g="0.05087608844041824" r="0.05087608844041824" />
+  </environment>
+</scene>

@@ -27,15 +27,17 @@ protected:
     float cueStickRotationX;
     float cueStickRotationY;
     bool hitBall;
-    bool targetRedBall;
+    bool LMBDown;
+    bool targetSolids;
     int strokes;
 
 public:
     Player();
     Player(const Player& orig);
-    virtual ~Player();    
+    virtual ~Player();
     
-    void setRedBall(bool isRed) { targetRedBall = isRed; }
+    void setTargetSolids(bool isRed) { targetSolids = isRed; }
+    bool getTargetSolids(void) { return targetSolids; }
 
     virtual bool keyPressed(const OIS::KeyEvent &arg) {}
     virtual bool keyReleased(const OIS::KeyEvent &arg) {}
@@ -44,7 +46,7 @@ public:
     virtual bool mouseReleased(const OIS::MouseEvent &me, OIS::MouseButtonID id) {}
     
     virtual bool frameUpdate(const Ogre::FrameEvent& evt) = 0;
-    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall);
+    virtual bool giveGamePlayerInput(float& csd, float& csrx, float& csry, bool& hitBall, bool& _LMBDown);
     virtual bool endCurrentTurn(void);
     
 private:

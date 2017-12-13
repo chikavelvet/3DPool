@@ -10,8 +10,11 @@ class Simulator;
 
 namespace BALL_DEFAULT {
     namespace GRAPHICS {
-        const float       SCALE_FACTOR_XYZ = 0.05;
-        const std::string MESH             = "sphere.mesh";
+        const float       SCALE_FACTOR_XYZ_CUE = 0.05;
+        const std::string MESH_CUE             = "sphere.mesh";
+
+        const float       SCALE_FACTOR_XYZ = 5;
+        const std::string MESH             = "BlenderSphere2.mesh";
     }
     
     namespace PHYSICS {
@@ -34,16 +37,18 @@ protected:
     btScalar initialX, initialY, initialZ;
     
 public:
+    int number;
+    
     Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator, 
         btScalar x, btScalar y, btScalar z, 
         std::string _name, 
         std::map<size_t, objType> &typeMap,
         std::map<Ogre::SceneNode*, Ball*>& pocketMap,
-        std::string color,
-        bool isRed,
+        std::string color, int _number,
+        bool isSolid,
         bool isCue = false);
     
-    bool redBall;
+    bool solidBall;
     
     void removeFromWorld (void);
     void removeCueBall (void);
