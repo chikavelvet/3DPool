@@ -30,7 +30,8 @@ const std::string GUIManager::MAIN_MENU   = "MainMenuScreen",
 
 GUIManager::GUIManager(ThreeDPool* _game) : 
     game(_game),
-    progressAlpha(PROGRESS_MAX_ALPHA)
+    progressAlpha(PROGRESS_MAX_ALPHA),
+    justCheckedBox(false), justCheckedBox2(false)
 {
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
@@ -131,15 +132,140 @@ void GUIManager::createMainMenu()
     }
 }
 
+void GUIManager::player1SelectManual(){
+    p1Type = 0;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->hide();
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->hide();
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->hide();
+}
+
+void GUIManager::player2SelectManual(){
+    p2Type = 0;
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->show();
+}
+
+void GUIManager::player1SelectAI(){
+    p1Type = 1;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->show();
+}
+
+void GUIManager::player2SelectAI(){
+    p2Type = 1;
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->show();
+}
+
+void GUIManager::player1SelectEasy(){
+    if(justCheckedBox) return;
+    p1Diff = 0;
+    justCheckedBox = true;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->setProperty("Selected", "False");
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->setProperty("Selected", "False");
+    justCheckedBox = false;
+}
+
+void GUIManager::player1SelectMedium(){
+    if(justCheckedBox) return;
+    p1Diff = 1;
+    justCheckedBox = true;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->setProperty("Selected", "False");
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->setProperty("Selected", "False");
+    justCheckedBox = false;
+}
+
+void GUIManager::player1SelectHard(){
+    if(justCheckedBox) return;
+    p1Diff = 2;
+    justCheckedBox = true;
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->setProperty("Selected", "False");
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->setProperty("Selected", "False");
+    justCheckedBox = false;
+}
+
+void GUIManager::player2SelectEasy(){
+    if(justCheckedBox2) return;
+    p2Diff = 0;
+    justCheckedBox2 = true;
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->setProperty("Selected", "False");
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->setProperty("Selected", "False");
+    justCheckedBox2 = false;
+}
+
+void GUIManager::player2SelectMedium(){
+    if(justCheckedBox2) return;
+    p2Diff = 1;
+    justCheckedBox2 = true;
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->setProperty("Selected", "False");
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->setProperty("Selected", "False");
+    justCheckedBox2 = false;
+}
+
+void GUIManager::player2SelectHard(){
+    if(justCheckedBox2) return;
+    p2Diff = 2;
+    justCheckedBox2 = true;
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->setProperty("Selected", "False");
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->setProperty("Selected", "False");
+    justCheckedBox2 = false;
+}
+
+
 void GUIManager::createPlayersLobby(){
      if (!this->screens[PLAYER_SELECT]) {
         hideAllScreens();
 
+        this->screens[BACKGROUND]->show();
+
         makeScreen(PLAYER_SELECT);
 
-        CEGUI::Window *back = makeWindow(PLAYER_SELECT, "Button", "BackToMainButton2", 0.15, 0.05, 0.0, 0.0);
-        back->setText("Back");
+        CEGUI::Window *back = makeWindow(PLAYER_SELECT, "Button", "BackToMainButton2", 0.15, 0.05, 0.05, 0.9);
+        back->setText("Back to Main Menu");
         back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, game));        
+
+
+        //Player 1 (LEFT) Side
+        CEGUI::Window *p1Title = makeWindow(PLAYER_SELECT, "StaticText", "Player1Title", 0.15, 0.05, 0.25, 0.1);
+        p1Title->setProperty("BackgroundEnabled", "False");
+        p1Title->setProperty("FrameEnabled", "False");
+        p1Title->setText("Player 1");
+        
+        CEGUI::Window *p1SelectManual = makeWindow(PLAYER_SELECT, "Button", "Player1SelectManual", 0.15, 0.05, 0.25, 0.3);
+        p1SelectManual->setText("Human");
+        p1SelectManual->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::player1SelectManual, this));        
+
+        CEGUI::Window *p1SelectAI = makeWindow(PLAYER_SELECT, "Button", "Player1SelectAI", 0.15, 0.05, 0.25, 0.4);
+        p1SelectAI->setText("Computer");
+        p1SelectAI->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::player1SelectAI, this));        
+
+        CEGUI::Window *p1SelectEasy = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectEasy", 0.1, 0.05, 0.3, 0.5);
+        p1SelectEasy->setProperty("Text", "Easy");
+        p1SelectEasy->setProperty("Selected", "False");
+        p1SelectEasy->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectEasy, this));
+        p1SelectEasy->hide();
+
+        CEGUI::Window *p1SelectMedium = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectMedium", 0.1, 0.05, 0.3, 0.53);
+        p1SelectMedium->setProperty("Text", "Normal");
+        p1SelectMedium->setProperty("Selected", "True");
+        p1SelectMedium->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectMedium, this));
+        p1SelectMedium->hide();
+
+        CEGUI::Window *p1SelectHard = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectHard", 0.1, 0.05, 0.3, 0.56);
+        p1SelectHard->setProperty("Text", "Hard");
+        p1SelectHard->setProperty("Selected", "False");
+        p1SelectHard->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectHard, this));
+        p1SelectHard->hide();
+
+        //Player 2 (RIGHT) Side
+        CEGUI::Window *p2Title = makeWindow(PLAYER_SELECT, "StaticText", "Player2Title", 0.15, 0.05, 0.62, 0.1);
+        p2Title->setProperty("BackgroundEnabled", "False");
+        p2Title->setProperty("FrameEnabled", "False");
+        p2Title->setText("Player 2");
+
     }
 }
 

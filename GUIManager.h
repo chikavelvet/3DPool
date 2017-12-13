@@ -44,6 +44,12 @@ protected:
     CEGUI::GUIContext* context;
     CEGUI::Window* sheet;
     
+    int p1Type, p2Type, p1Diff, p2Diff;
+    bool justCheckedBox;
+    bool justCheckedBox2;
+
+
+
     static const float PROGRESS_MAX_ALPHA;
     float progressAlpha;
 
@@ -55,9 +61,19 @@ protected:
     void onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e);
     void spawnBallImages();
     void addBallImage(std::string num, float xScale, float yScale, float xpos, float ypos);
-    void makeBackground(const std::string& filename);
-    
+    void makeBackground(const std::string& filename);    
     void makeScreen(const std::string& name);
+
+    void player1SelectManual();
+    void player2SelectManual();
+    void player1SelectAI();
+    void player2SelectAI();
+    void player1SelectEasy();
+    void player1SelectMedium();
+    void player1SelectHard();
+    void player2SelectEasy();
+    void player2SelectMedium();
+    void player2SelectHard();
     
     CEGUI::Window* makeWindow(const std::string& parentScreen,
         const std::string& type, const std::string& name,
@@ -87,6 +103,7 @@ public:
     void decrementRemainingBallCount(bool redBall);
     void endCurrentTurn(void);
     void playerWon(Player* winning);
+
 private:
 
 };
