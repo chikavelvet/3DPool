@@ -10,9 +10,9 @@ class Simulator;
 
 namespace BALL_DEFAULT {
     namespace GRAPHICS {
-/*        const float       SCALE_FACTOR_XYZ = 0.05;
-        const std::string MESH             = "sphere.mesh";
-*/
+        const float       SCALE_FACTOR_XYZ_CUE = 0.05;
+        const std::string MESH_CUE             = "sphere.mesh";
+
         const float       SCALE_FACTOR_XYZ = 5;
         const std::string MESH             = "BlenderSphere2.mesh";
     }

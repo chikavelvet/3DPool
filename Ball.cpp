@@ -10,12 +10,24 @@ Ball::Ball(Ogre::SceneManager* _sceneMgr, Simulator* _simulator,
         bool isCue) :
         initialX(x), initialY(y), initialZ(z), solidBall(isSolid), number(_number)
 {    
+
+    float scaleFactor = 0.0f;
+    std::string chosenMesh;
+
+    if(isCue){
+        scaleFactor = BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ_CUE;
+        chosenMesh = BALL_DEFAULT::GRAPHICS::MESH_CUE;
+    } else {
+        scaleFactor = BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ;
+        chosenMesh = BALL_DEFAULT::GRAPHICS::MESH;
+    }
+
     graphics = new GraphicsComponent(this, _sceneMgr, Ogre::String(_name),
             Ogre::Vector3(x, y, z), 
-            Ogre::Vector3(BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
-                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ,
-                          BALL_DEFAULT::GRAPHICS::SCALE_FACTOR_XYZ),
-            BALL_DEFAULT::GRAPHICS::MESH, color);
+            Ogre::Vector3(scaleFactor,
+                          scaleFactor,
+                          scaleFactor),
+            chosenMesh, color);
     
     Ogre::SceneNode* rootNode = getGraphics()->rootNode;
     
