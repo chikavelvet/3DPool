@@ -15,6 +15,8 @@ http://www.ogre3d.org/wiki/
 -----------------------------------------------------------------------------
 */
 
+#define NDEBUG
+
 #include <OGRE/OgreMeshManager.h>
 #include <fstream>
 
@@ -100,6 +102,74 @@ ThreeDPool::ThreeDPool(void) :
 ThreeDPool::~ThreeDPool(void)
 {
     delete pCamera;
+    // delete mGUIMgr;        
+    // delete nm;
+    // delete physicsEngine;
+    // for(Ball* b: stripedBalls) 
+    //     {delete b;}
+    // for(Ball* b: solidBalls) 
+    //     {delete b;}
+    // for(Pocket* p: pockets) 
+    //     {delete p;}
+    // delete player1;
+    // delete player2;
+    // delete cueStick;
+    // delete cueBall;
+    // delete eightBall;
+    // delete room;
+    // delete ball_ball;
+    // delete stick_ball;
+    // delete pocket;
+    // delete bgMusic;
+    // BaseApplication* parent = this;
+    // delete parent;
+}
+
+void ThreeDPool::restart(void)
+{
+    auto* old = this;
+    ThreeDPool();
+    delete old;
+    // mMoveSpeed = 200;
+    // hitBall = false;
+    // LMBDown = false;
+    // cueStickDelta = 0;
+    // cueStickTotal = CUE_STICK_MIN;
+    // adjustingStick = false;
+    // adjustingCamera = false;
+    // cursorDisplaying = false;
+    // soundOn = true;
+    // strokes = 0;
+    // opponentStrokes = 0;
+    // cameraCounter = 0;
+    // typeMap = std::map<size_t, objType>();
+    // pocketMap = std::map<Ogre::SceneNode*, Ball*>();
+    // gameStarted = false;
+    // isMultiplayer = false;
+    // isAI = false;
+    // mainMenuScreenCreated = false;
+    // mpLobbyScreenCreated = false;
+    // gameScreenCreated = false;
+    // hostName = "";
+    // port = 59000;
+    // isWaiting = false;
+    // ballSpeedSum = btVector3(0, 0, 0);
+    // frameCounter = 0;
+    // gameEnded = false;
+    // gamePaused = false;
+    // player1 = NULL;
+    // player2 = NULL;
+    // player1Turn = true;
+    // ballsAssignedToPlayers = false;
+    // scratchedInPocket = false;
+    // scratchedOnBall = true;
+    // firstAssignment = false;
+    // ballInThisTurn = false;
+    // eightBallIn = false;
+    // firstBallHit = true;
+    // letTurnEnd = true;
+    // AIDifficulty = 2;
+    // mGUIMgr->createMainMenu();
 }
 
 bool ThreeDPool::setup(void)
@@ -537,9 +607,12 @@ void ThreeDPool::displayQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
     CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");
-    
+
     context.getMouseCursor().show();
     quit->show();
+
+    // CEGUI::Window* restart = sheet->getChild("GameScreen")->getChild("RestartButton");
+    // restart->show();
     
     gamePaused = true;
 }
@@ -547,10 +620,13 @@ void ThreeDPool::displayQuitCursor () {
 void ThreeDPool::hideQuitCursor () {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");
-    
+    CEGUI::Window* quit = sheet->getChild("GameScreen")->getChild("QuitButton");    
     context.getMouseCursor().hide();
     quit->hide();
+
+    // CEGUI::Window* restart = sheet->getChild("GameScreen")->getChild("RestartButton");
+    // restart->hide();
+
     
     gamePaused = false;
 }
@@ -1073,13 +1149,13 @@ void ThreeDPool::physicsLoop()
 }
 
 bool ThreeDPool::quit (const CEGUI::EventArgs& e) {
-    std::string msg = "quit";
-    if (!isServer) {
-        nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
-    }
-    else {
-        nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
-    }
+    // std::string msg = "quit";
+    // if (!isServer) {
+    //     nm->messageServer(PROTOCOL_TCP, msg.c_str(), msg.length());
+    // }
+    // else {
+    //     nm->messageClients(PROTOCOL_TCP, msg.c_str(), msg.length());
+    // }
 
     mShutDown = true;
     return true;
@@ -1139,7 +1215,7 @@ extern "C" {
                 e.getFullDescription().c_str() << std::endl;
 #endif
         }
-
+        
         return 0;
     }
 

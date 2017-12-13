@@ -74,6 +74,8 @@ protected:
     virtual bool configure(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
+    void restart(void);
+
     void setUpSounds(void);
 
     void gameLoop(const Ogre::FrameEvent& evt);

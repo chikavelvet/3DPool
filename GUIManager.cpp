@@ -230,6 +230,11 @@ void GUIManager::onIPEnterBoxKeyPressed(const CEGUI::EventArgs& e)
     }
 }
 
+void GUIManager::restartGame(){
+    // delete game;
+    game = new ThreeDPool();
+}
+
 void GUIManager::setUpGUI()
 {    
     if (!this->screens[GAME_SCREEN]) {
@@ -240,10 +245,15 @@ void GUIManager::setUpGUI()
         makeScreen(GAME_SCREEN);
 
         //----Quit Button----//
-        CEGUI::Window *quit = makeWindow(GAME_SCREEN, "Button", "QuitButton", 0.15, 0.05, 0.0, 0.0);
+        CEGUI::Window *quit = makeWindow(GAME_SCREEN, "Button", "QuitButton", 0.15, 0.05, 0.1, 0.1);
         quit->setText("Quit");    
         quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, game));
         quit->hide();
+
+        // CEGUI::Window *restart = makeWindow(GAME_SCREEN, "Button", "RestartButton", 0.15, 0.05, 0.3, 0.1);
+        // restart->setText("Main Menu");    
+        // restart->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::restartGame, this));
+        // restart->hide();
 
         // Stroke counter
         CEGUI::Window *strokesWin = makeWindow(GAME_SCREEN, "StaticText", "StrokeCount", 0.15, 0.05, 0.8, 0.84);

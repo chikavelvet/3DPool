@@ -47,6 +47,7 @@ protected:
     static const float PROGRESS_MAX_ALPHA;
     float progressAlpha;
 
+    void restartGame(void);
     void hideAllScreens(void);
     void createMPLobby(void);
     void showEnterIPWindow(void);

@@ -41,7 +41,7 @@ Stick::Stick(Ogre::SceneManager* _sceneMgr,
 
     guideLineParticle = graphics->sceneMgr->createParticleSystem("GuideLine", "Examples/GuideLine");
     guideLineNode = rootNode->createChildSceneNode("Particle");
-    guideLineNode->scale(0.1f, 0.05f, 0.1f);
+    guideLineNode->scale(0.1f, 0.023f, 0.1f);
     guideLineNode->attachObject(guideLineParticle);
 
     Ogre::Vector3 stickDirection(getGraphics()->rootNode->getPosition() 
