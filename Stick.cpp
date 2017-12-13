@@ -93,15 +93,16 @@ bool Stick::readjustStickToCueball (bool& adjustingStick, bool ballsStopped, con
         bool cueStickStopped = body->getLinearVelocity().length() < 0.05f
                             && body->getTotalForce().length() < 0.05f;
 
-        bool cueBallStopped = cueBallBody->getLinearVelocity().length() < 0.1f
-                           && cueBallBody->getTotalForce().length() < 0.1f;
+        // bool cueBallStopped = cueBallBody->getLinearVelocity().length() < 0.1f
+        //                    && cueBallBody->getTotalForce().length() < 0.1f;
 
         if (cueStickStopped) {
             simulator->getDynamicsWorld()->removeRigidBody(body);
             geom->setVisible(false);
         }
 
-        bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped && letTurnEnd;
+        // bool turnIsOver = cueBallStopped && ballsStopped && cueStickStopped && letTurnEnd;
+        bool turnIsOver = ballsStopped && cueStickStopped;
 
         if (!turnIsOver)
             return false;

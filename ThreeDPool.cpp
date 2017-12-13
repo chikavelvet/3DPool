@@ -301,6 +301,8 @@ bool ThreeDPool::ballsStopped() {
             return false;
         }
     }
+
+    return true;
 }
 
 void ThreeDPool::endCurrentTurn(void){    
@@ -311,41 +313,41 @@ void ThreeDPool::endCurrentTurn(void){
             playerWon(getInactivePlayer());
         else 
             playerWon(getActivePlayer());
-    }
-    
-    if (scratchedInPocket || scratchedOnBall || !ballInThisTurn)
-        player1Turn = !player1Turn;
-    
-    // Reset flags
-    ballInThisTurn    = false;
-    scratchedInPocket = false;
-    scratchedOnBall   = true;
-    firstBallHit      = true;
-    
-    // Changed this to true to remove space to continue functionality
-    letTurnEnd      = true;
-    
-    adjustingCamera = false;
-    
-    CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    CEGUI::Window* sheet = context.getRootWindow();
-    
-    mGUIMgr->fadeOutPowerBar();
-            
-    if (ballsAssignedToPlayers) {
-        if (firstAssignment) {
-            getActivePlayer()->setTargetSolids(redBallToAssign);
-            getInactivePlayer()->setTargetSolids(!redBallToAssign);
-            firstAssignment = false;
+    } else {
+        if (scratchedInPocket || scratchedOnBall || !ballInThisTurn)
+            player1Turn = !player1Turn;
+        
+        // Reset flags
+        ballInThisTurn    = false;
+        scratchedInPocket = false;
+        scratchedOnBall   = true;
+        firstBallHit      = true;
+        
+        // Changed this to true to remove space to continue functionality
+        letTurnEnd      = true;
+        
+        adjustingCamera = false;
+        
+        CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
+        CEGUI::Window* sheet = context.getRootWindow();
+        
+        mGUIMgr->fadeOutPowerBar();
+                
+        if (ballsAssignedToPlayers) {
+            if (firstAssignment) {
+                getActivePlayer()->setTargetSolids(redBallToAssign);
+                getInactivePlayer()->setTargetSolids(!redBallToAssign);
+                firstAssignment = false;
+            }
         }
-    }
-    
-    mGUIMgr->endCurrentTurn();
+        
+        mGUIMgr->endCurrentTurn();
 
-    player1->endCurrentTurn();
-    player2->endCurrentTurn();
-    
-    cameraFollowStick();
+        player1->endCurrentTurn();
+        player2->endCurrentTurn();
+        
+        cameraFollowStick();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -977,7 +979,7 @@ void ThreeDPool::gameLoop(const Ogre::FrameEvent& evt)
         }        
 
         bool done = cueStick->readjustStickToCueball(adjustingStick, ballsStopped(), letTurnEnd, scratchedInPocket, scratchedOnBall);
-        if (done && letTurnEnd){
+        if (done){
             endCurrentTurn();   
         } else if (adjustingCamera) {
             using namespace Ogre;
@@ -1095,7 +1097,10 @@ void ThreeDPool::physicsLoop()
 
                     Ball* ball = pocketMap[node];
                     
-                    if (ball->solidBall == getActivePlayer()->targetSolids && (ball->number != 8 || activePlayerReadyToHitEightBall()))
+                    if (ball->number != 8 && ball->solidBall == getActivePlayer()->targetSolids) 
+                        scratchedOnBall = false;
+
+                    if (ball->number == 8 && activePlayerReadyToHitEightBall())
                         scratchedOnBall = false;
                     
                     firstBallHit = false;
@@ -1132,7 +1137,8 @@ void ThreeDPool::physicsLoop()
                 stripedBalls.erase(std::remove(stripedBalls.begin(), stripedBalls.end(), ball), stripedBalls.end());
             }
 
-            decrementRemainingBallCount(ball->solidBall);
+            if (ball->number != 8)
+                decrementRemainingBallCount(ball->solidBall);
             
             ballInThisTurn = true;
         }
