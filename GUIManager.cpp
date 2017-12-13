@@ -23,6 +23,7 @@ const std::string GUIManager::lookNFeelClass = "TaharezLook";
 const float GUIManager::PROGRESS_MAX_ALPHA = 0.75f;
 
 const std::string GUIManager::MAIN_MENU   = "MainMenuScreen",
+                  GUIManager::PLAYER_SELECT   = "PlayerSelectScreen",
                   GUIManager::MP_LOBBY    = "MPLobbyScreen",
                   GUIManager::BACKGROUND  = "DefaultBackground",
                   GUIManager::GAME_SCREEN = "GameScreen";
@@ -110,23 +111,35 @@ void GUIManager::createMainMenu()
         makeScreen(MAIN_MENU);        
  
         //----Quit Button----//
-        CEGUI::Window* quit = makeWindow(MAIN_MENU, "Button", "QuitButton", 0.15, 0.05, 0.425, 0.86);  
+        CEGUI::Window* quit = makeWindow(MAIN_MENU, "Button", "QuitButton", 0.15, 0.05, 0.425, 0.80);  
         quit->setText("Quit");
         quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, game));
       
         //----Single Player----//
         CEGUI::Window* singlePlayer = makeWindow(MAIN_MENU, "Button", "StartSinglePlayerButton", 0.15, 0.05, 0.425, 0.74);
-        singlePlayer->setText("Single Player");    
-        singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, game));
+        singlePlayer->setText("Play");    
+        singlePlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::createPlayersLobby, this));
 
         //----Multi Player----//
-        CEGUI::Window *multiPlayer = makeWindow(MAIN_MENU, "Button", "StartMultiPlayerButton", 0.15, 0.05, 0.425, 0.80);
-        multiPlayer->setText("Multi Player");    
-        multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::createMPLobby, this));
+        // CEGUI::Window *multiPlayer = makeWindow(MAIN_MENU, "Button", "StartMultiPlayerButton", 0.15, 0.05, 0.425, 0.80);
+        // multiPlayer->setText("Multi Player");    
+        // multiPlayer->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::createMPLobby, this));
     } else {
         hideAllScreens();
         this->screens[MAIN_MENU]->show();
         this->screens[BACKGROUND]->show();
+    }
+}
+
+void GUIManager::createPlayersLobby(){
+     if (!this->screens[PLAYER_SELECT]) {
+        hideAllScreens();
+
+        makeScreen(PLAYER_SELECT);
+
+        CEGUI::Window *back = makeWindow(PLAYER_SELECT, "Button", "BackToMainButton2", 0.15, 0.05, 0.0, 0.0);
+        back->setText("Back");
+        back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, game));        
     }
 }
 

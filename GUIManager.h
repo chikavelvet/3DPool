@@ -67,6 +67,7 @@ protected:
     
 public:
     static const std::string MAIN_MENU,
+                             PLAYER_SELECT,
                              MP_LOBBY,
                              BACKGROUND,
                              GAME_SCREEN;
@@ -82,6 +83,7 @@ public:
     void fadeInPowerBar(void);
     void fadeOutPowerBar(void);
     
+    void createPlayersLobby();
     void decrementRemainingBallCount(bool redBall);
     void endCurrentTurn(void);
     void playerWon(Player* winning);
