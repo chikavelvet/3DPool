@@ -329,12 +329,9 @@ void ThreeDPool::endCurrentTurn(void){
     
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     CEGUI::Window* sheet = context.getRootWindow();
-    CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
     
     mGUIMgr->fadeOutPowerBar();
-        
-    activePlayer->setText(player1Turn ? "Player 1's Turn" : "Player 2's Turn");
-    
+            
     if (ballsAssignedToPlayers) {
         if (firstAssignment) {
             getActivePlayer()->setTargetSolids(redBallToAssign);

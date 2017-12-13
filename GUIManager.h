@@ -43,6 +43,7 @@ protected:
     CEGUI::WindowManager* wmgr;
     CEGUI::GUIContext* context;
     CEGUI::Window* sheet;
+    std::string p1Name, p2Name;
 
     static const float PROGRESS_MAX_ALPHA;
     float progressAlpha;
@@ -78,6 +79,7 @@ protected:
 public:
 
     int p1Type, p2Type, p1Diff, p2Diff;
+    bool p1Selected, p2Selected;
     bool justCheckedBox;
     bool justCheckedBox2;
 

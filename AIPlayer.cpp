@@ -30,13 +30,13 @@
 
 #include <algorithm>
 
-const float AIPlayer::ROT_DELTA_START = 0.05;
+const float AIPlayer::ROT_DELTA_START = 0.01;
 const float AIPlayer::ROT_DELTA_MIN = 0.0000001;
 const int AIPlayer::NO_ROT_COUNT_THRESHOLD = 5;
 
-const int AIPlayer::EASY_DIFFICULTY_OFFSET = 8;
-const int AIPlayer::MEDIUM_DIFFICULTY_OFFSET = 4;
-const int AIPlayer::HARD_DIFFICULTY_OFFSET = 2;
+const int AIPlayer::EASY_DIFFICULTY_OFFSET = 2;
+const int AIPlayer::MEDIUM_DIFFICULTY_OFFSET = 1;
+const int AIPlayer::HARD_DIFFICULTY_OFFSET = 0.5;
 
 const float AIPlayer::EASY_DIFFICULTY_PERFECT_PERCENTAGE   = 0.1;
 const float AIPlayer::MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE = 0.3;
@@ -327,11 +327,15 @@ bool AIPlayer::decideShot()
         chosenBall = bestClearBall;        
     }
 
+    // std::cout << "BALL CHOSEN: " << chosenBall;
+
     Ogre::Vector3 direction = chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition(); 
     direction.normalise();
-
     float radius = 5.0f;
     Ogre::Vector3 dest = chosenBall->getNode()->getPosition() - (direction * radius * 2.0f);
+    float distance(Ogre::Vector3((dest-cueBallNode->getPosition()) + (chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition())).length());
+
+    std::cout << "DISTANCE: " << distance << std::endl;
 
     applyDifficulty(dest); //applies random offsets to dest in the x, y, and z directions
 
@@ -391,6 +395,8 @@ void AIPlayer::applyDifficulty(Ogre::Vector3& dest) {
     float randPercent = static_cast<float>(rand())/static_cast<float>(RAND_MAX);
     std::cout << "Randome Percentage: " << randPercent << " vs " << perfectPercentage << std::endl;
     if(randPercent > perfectPercentage) { //Messes up some % of the time (by a random amount)
+        
+
         Ogre::Vector3 difficultyOffset(randNum(), randNum(), randNum());
         dest += difficultyOffset;
         std::cout << "applying offset: " << difficultyOffset.x << " " << difficultyOffset.y << " " << difficultyOffset.z << std::endl;        

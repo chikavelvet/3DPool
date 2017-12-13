@@ -63,6 +63,7 @@ void Ball::removeCueBall() {
         phys->body->setLinearVelocity(btVector3(0, 0, 0));
 
         phys->simulator->getDynamicsWorld()->removeRigidBody(phys->body);
+        getGraphics()->geom->setVisible(false);
         
     } catch (ComponentNotFoundException& e) {
         std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
@@ -80,6 +81,8 @@ void Ball::addCueBall() {
         phys->simulator->getDynamicsWorld()->addRigidBody(phys->body, phys->coltype, phys->collidesWith);
         
         phys->body->getMotionState()->setWorldTransform(phys->body->getCenterOfMassTransform());
+
+        getGraphics()->geom->setVisible(true);
     } catch (ComponentNotFoundException& e) {
         std::cout << "ERROR: " << e.what() << " Ball::resetCueBall()" << std::endl;
     }

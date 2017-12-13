@@ -31,7 +31,8 @@ const std::string GUIManager::MAIN_MENU   = "MainMenuScreen",
 GUIManager::GUIManager(ThreeDPool* _game) : 
     game(_game),
     progressAlpha(PROGRESS_MAX_ALPHA),
-    justCheckedBox(false), justCheckedBox2(false)
+    justCheckedBox(false), justCheckedBox2(false), p1Selected(false), p2Selected(false),
+    p1Type(0), p2Type(0), p1Diff(0), p2Diff(0)
 {
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
@@ -138,38 +139,54 @@ void GUIManager::createMainMenu()
 
 void GUIManager::player1SelectManual(){
     p1Type = 0;
+    p1Selected = true;
     this->screens[PLAYER_SELECT]->getChild("Player1SelectManual")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
     this->screens[PLAYER_SELECT]->getChild("Player1SelectAI")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->hide();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->hide();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->hide();
+
+    if(p1Selected && p2Selected)
+        this->screens[PLAYER_SELECT]->getChild("ReadyToGo")->show();
 }
 
 void GUIManager::player2SelectManual(){
     p2Type = 0;
+    p2Selected = true;
     this->screens[PLAYER_SELECT]->getChild("Player2SelectManual")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
     this->screens[PLAYER_SELECT]->getChild("Player2SelectAI")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->hide();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->hide();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->hide();
+
+    if(p1Selected && p2Selected)
+        this->screens[PLAYER_SELECT]->getChild("ReadyToGo")->show();
 }
 
 void GUIManager::player1SelectAI(){
     p1Type = 1;
+    p1Selected = true;
     this->screens[PLAYER_SELECT]->getChild("Player1SelectAI")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
     this->screens[PLAYER_SELECT]->getChild("Player1SelectManual")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->show();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->show();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->show();
+
+    if(p1Selected && p2Selected)
+        this->screens[PLAYER_SELECT]->getChild("ReadyToGo")->show();
 }
 
 void GUIManager::player2SelectAI(){
     p2Type = 1;
+    p2Selected = true;
     this->screens[PLAYER_SELECT]->getChild("Player2SelectAI")->setProperty("NormalTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
     this->screens[PLAYER_SELECT]->getChild("Player2SelectManual")->setProperty("NormalTextColour", "tl:FFFFFFFF tr:FFFFFFFF bl:FFFFFFFF br:FFFFFFFF");
     this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->show();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->show();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->show();
+
+    if(p1Selected && p2Selected)
+        this->screens[PLAYER_SELECT]->getChild("ReadyToGo")->show();
 }
 
 void GUIManager::player1SelectEasy(){
@@ -260,13 +277,13 @@ void GUIManager::createPlayersLobby(){
 
         CEGUI::Window *p1SelectEasy = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectEasy", 0.1, 0.05, 0.27, 0.42);
         p1SelectEasy->setProperty("Text", "Easy");
-        p1SelectEasy->setProperty("Selected", "False");
+        p1SelectEasy->setProperty("Selected", "True");
         p1SelectEasy->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectEasy, this));
         p1SelectEasy->hide();
 
         CEGUI::Window *p1SelectMedium = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectMedium", 0.1, 0.05, 0.27, 0.45);
-        p1SelectMedium->setProperty("Text", "Normal");
-        p1SelectMedium->setProperty("Selected", "True");
+        p1SelectMedium->setProperty("Text", "Medium");
+        p1SelectMedium->setProperty("Selected", "False");
         p1SelectMedium->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectMedium, this));
         p1SelectMedium->hide();
 
@@ -296,13 +313,13 @@ void GUIManager::createPlayersLobby(){
 
         CEGUI::Window *p2SelectEasy = makeWindow(PLAYER_SELECT, "Checkbox", "Player2SelectEasy", 0.1, 0.05, 0.64, 0.42);
         p2SelectEasy->setProperty("Text", "Easy");
-        p2SelectEasy->setProperty("Selected", "False");
+        p2SelectEasy->setProperty("Selected", "True");
         p2SelectEasy->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectEasy, this));
         p2SelectEasy->hide();
 
         CEGUI::Window *p2SelectMedium = makeWindow(PLAYER_SELECT, "Checkbox", "Player2SelectMedium", 0.1, 0.05, 0.64, 0.45);
-        p2SelectMedium->setProperty("Text", "Normal");
-        p2SelectMedium->setProperty("Selected", "True");
+        p2SelectMedium->setProperty("Text", "Medium");
+        p2SelectMedium->setProperty("Selected", "False");
         p2SelectMedium->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectMedium, this));
         p2SelectMedium->hide();
 
@@ -318,6 +335,7 @@ void GUIManager::createPlayersLobby(){
         readyToGo->setProperty("HoverTextColour", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000");
         readyToGo->setProperty("PushedTextColour", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000");
         readyToGo->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::createScene, game));
+        readyToGo->hide();
     } else {
         this->screens[PLAYER_SELECT]->show();
     }
@@ -437,8 +455,24 @@ void GUIManager::setUpGUI()
         //----Game Screen----//
         makeScreen(GAME_SCREEN);
 
+
+        if(p1Type == 0) p1Name = "Human";
+        else {
+            p1Name = "Computer (" + std::string((p1Diff == 0) ? "Easy)" : 
+                                        (p1Diff == 1) ? "Med)" : 
+                                                             "Hard)");    
+        }
+
+        if(p2Type == 0) p2Name = "Human";
+        else {
+            p2Name = "Computer (" + std::string((p2Diff == 0) ? "Easy)" : 
+                                        (p2Diff == 1) ? "Med)" : 
+                                                            "Hard)");    
+        }
+
+
         //----Quit Button----//
-        CEGUI::Window *quit = makeWindow(GAME_SCREEN, "Button", "QuitButton", 0.15, 0.05, 0.1, 0.1);
+        CEGUI::Window *quit = makeWindow(GAME_SCREEN, "Button", "QuitButton", 0.15, 0.05, 0.05, 0.05);
         quit->setText("Quit");    
         quit->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&ThreeDPool::quit, game));
         quit->hide();
@@ -453,77 +487,47 @@ void GUIManager::setUpGUI()
         std::stringstream ss;
         ss << "Strokes: " << game->strokes;
         strokesWin->setText(ss.str());
-        strokesWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        strokesWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.84, 0)));
-        strokesWin->setProperty("FrameEnabled", "True");
-        // strokesWin->setProperty("HorizontalAlignment", "Centre");
         strokesWin->setProperty("TextColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        // strokesWin->setProperty("BackgroundEnabled", "True");
         strokesWin->hide();
 
         // Red Remaining Ball Counter
-        CEGUI::Window *redBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "SolidBallsRemaining", 0.15, 0.05, 0.8, 0.79);
+        CEGUI::Window *redBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "SolidBallsRemaining", 0.17, 0.05, 0.75, 0.810);
         std::stringstream ss3;
         ss3 << "Solid: " << game->solidBallsRemaining;
         redBallsRemainingWin->setText(ss3.str());
-        redBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        redBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.79, 0)));
-        redBallsRemainingWin->setProperty("FrameEnabled", "True");
-        redBallsRemainingWin->setProperty("TextColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        // redBallsRemainingWin->setProperty("BackgroundEnabled", "True");
-        // redBallsRemainingWin->setProperty("BackgroundColours", "tl:FFFFFF tr:FFFFFF bl:FFFFFF br:FFFFFF");
-        redBallsRemainingWin->setProperty("FrameColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        
+        redBallsRemainingWin->hide();
+
         // Blue Remaining Ball Counter
-        CEGUI::Window *blueBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "StripedBallsRemaining", 0.15, 0.05, 0.8, 0.7);
+        CEGUI::Window *blueBallsRemainingWin = makeWindow(GAME_SCREEN, "StaticText", "StripedBallsRemaining", 0.17, 0.05, 0.75, 0.755);
         std::stringstream ss4;
         ss4 << "Striped: " << game->stripedBallsRemaining;
         blueBallsRemainingWin->setText(ss4.str());
-        blueBallsRemainingWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        blueBallsRemainingWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.70, 0)));
-        blueBallsRemainingWin->setProperty("FrameEnabled", "True");
-        // blueBallsRemainingWin->setProperty("HorizontalAlignment", "Centre");
-        blueBallsRemainingWin->setProperty("TextColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        blueBallsRemainingWin->setProperty("FrameColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        // blueBallsRemainingWin->setProperty("BackgroundEnabled", "True");
-        // blueBallsRemainingWin->setProperty("BackgroundColours", "tl:FFFFFF tr:FFFFFF bl:FFFFFF br:FFFFFF");
-        
+        blueBallsRemainingWin->hide();
+
+        CEGUI::Window *stats = makeWindow(GAME_SCREEN, "StaticText", "BallsRemaining", 0.17, 0.05, 0.75, 0.7);
+        stats->setText("     Balls Remaining  ");
+        stats->hide();
+
         // Opponent Remaining Ball Counter
-        CEGUI::Window *targettingColorWin = makeWindow(GAME_SCREEN, "StaticText", "TargettingColor", 0.15, 0.05, 0.8, 0.55);
-        targettingColorWin->setText("Targetting: All");
-        targettingColorWin->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        targettingColorWin->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.55, 0)));
-        targettingColorWin->setProperty("FrameEnabled", "True");
-        // targettingColorWin->setProperty("HorizontalAlignment", "Centre");
-        targettingColorWin->setProperty("TextColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        targettingColorWin->setProperty("FrameColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        // targettingColorWin->setProperty("BackgroundEnabled", "True");
-        // targettingColorWin->setProperty("BackgroundColours", "tl:FFFFFF tr:FFFFFF bl:FFFFFF br:FFFFFF");
+        CEGUI::Window *targettingColorWin = makeWindow(GAME_SCREEN, "StaticText", "TargetingColor", 0.17, 0.05, 0.75, 0.56);
+        targettingColorWin->setText("Targeting: All");
         
         // Opponent Title
-        CEGUI::Window *activePlayer = makeWindow(GAME_SCREEN, "StaticText", "ActivePlayer", 0.15, 0.05, 0.8, 0.5);
+        CEGUI::Window *activePlayer = makeWindow(GAME_SCREEN, "StaticText", "ActivePlayer", 0.17, 0.05, 0.75, 0.505);
         activePlayer->setText("Player 1's Turn");
-        activePlayer->setSize(CEGUI::USize(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-        activePlayer->setPosition(CEGUI::UVector2(CEGUI::UDim(0.80, 0), CEGUI::UDim(0.5, 0)));
-        activePlayer->setProperty("FrameEnabled", "True");
-        // activePlayer->setProperty("HorizontalAlignment", "Centre");
-        activePlayer->setProperty("TextColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        activePlayer->setProperty("FrameColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        // activePlayer->setProperty("BackgroundEnabled", "True");
-        // activePlayer->setProperty("BackgroundColours", "tl:FFFFFF tr:FFFFFF bl:FFFFFF br:FFFFFF");
+
+
+        CEGUI::Window *curTurnTitle = makeWindow(GAME_SCREEN, "StaticText", "curTurnTitle", 0.17, 0.05, 0.75, 0.45);
+        curTurnTitle->setText("       Current Turn     ");
+
+        endCurrentTurn();
 
         // Opponent Stroke counter
-        CEGUI::Window *oppStrokesWin = makeWindow(GAME_SCREEN, "StaticText", "OppStrokeCount", 0.15, 0.05, 0.8, 0.6);
+        CEGUI::Window *oppStrokesWin = makeWindow(GAME_SCREEN, "StaticText", "OppStrokeCount", 0.17, 0.05, 0.75, 0.6);
         std::stringstream ss2;
         ss2 << "Strokes: " << game->opponentStrokes;
         oppStrokesWin->setText(ss2.str());
         oppStrokesWin->hide();
-        oppStrokesWin->setProperty("FrameEnabled", "True");
-        // oppStrokesWin->setProperty("HorizontalAlignment", "Centre");
-        oppStrokesWin->setProperty("TextColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        oppStrokesWin->setProperty("FrameColours", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
-        // oppStrokesWin->setProperty("BackgroundEnabled", "True");
-        // oppStrokesWin->setProperty("BackgroundColours", "tl:FFFFFF tr:FFFFFF bl:FFFFFF br:FFFFFF");
 
 
         // You Win Window
@@ -540,8 +544,6 @@ void GUIManager::setUpGUI()
         powerBar->setProperty("ReversedProgress", "True");
         powerBar->setProgress(1.0);
         powerBar->hide();
-        
-        // spawnBallImages();
 
     } else {
         hideAllScreens();
@@ -606,29 +608,35 @@ void GUIManager::fadeOutPowerBar() {
 }
 
 void GUIManager::decrementRemainingBallCount(bool redBall) {
-    std::stringstream ss;
-    
-    if (redBall) {
-        ss << "Solid: " << game->solidBallsRemaining;
-        this->screens["GameScreen"]->getChild("SolidBallsRemaining")->setText(ss.str());
-    } else {
-        ss << "Striped: " << game->stripedBallsRemaining;
-        this->screens["GameScreen"]->getChild("StripedBallsRemaining")->setText(ss.str());
-    }
+    this->screens["GameScreen"]->getChild("SolidBallsRemaining")->show();
+    this->screens["GameScreen"]->getChild("StripedBallsRemaining")->show();
+    this->screens["GameScreen"]->getChild("BallsRemaining")->show();
+
+    std::stringstream ss, ss2;
+    ss << "           " << game->solidBallsRemaining << " Solids";
+    this->screens["GameScreen"]->getChild("SolidBallsRemaining")->setText(ss.str());
+    ss2 << "           " << game->stripedBallsRemaining << " Striped";
+    this->screens["GameScreen"]->getChild("StripedBallsRemaining")->setText(ss2.str());
 }
 
 void GUIManager::endCurrentTurn() {
+    CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
+    activePlayer->setText(game->player1Turn ? ("  P1: " + p1Name) : ("  P2: " + p1Name));
+    std::string targetting;
+
     if (game->ballsAssignedToPlayers) {
-        std::string targetting;
         
         if (game->player1Turn) {
-            targetting = game->player1->getTargetSolids() ? "Targetting: Solid" : "Targetting: Striped";
+            targetting = game->player1->getTargetSolids() ? "      Targeting - Solids" : "      Targeting - Stripes";
         } else {
-            targetting = game->player2->getTargetSolids() ? "Targetting: Solid" : "Targetting: Striped";
-        }
-        
-        this->screens["GameScreen"]->getChild("TargettingColor")->setText(targetting);
+            targetting = game->player2->getTargetSolids() ? "      Targeting - Solids" : "      Targeting - Stripes";
+        }        
     }
+    else{
+        targetting = "      Targeting - All";
+    }
+
+    this->screens["GameScreen"]->getChild("TargetingColor")->setText(targetting);    
 }
 
 void GUIManager::playerWon(Player* winning) {
