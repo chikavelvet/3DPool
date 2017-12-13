@@ -41,6 +41,8 @@ protected:
     int rotations;
 
     int difficulty;
+    int baseDifficulty;
+    int adaptiveBoundaries[2];
     int maxDifficultyOffset;
     float perfectPercentage;
     
@@ -58,7 +60,16 @@ protected:
     static const float MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE;
     static const float HARD_DIFFICULTY_PERFECT_PERCENTAGE;
 
+    static const int LOWER_ADAPTIVE_BOUNDARY;
+    static const int EASY_ADAPTIVE_BOUNDARIES  [2];
+    static const int MEDIUM_ADAPTIVE_BOUNDARIES[2];
+    static const int HARD_ADAPTIVE_BOUNDARIES  [2];
+    static const int HIGHER_ADAPTIVE_BOUNDARY;
+    
+
     bool decideShot();
+    bool adaptive;
+
     float guessStickRotation(const Ogre::Vector3& x, const Ogre::Vector3& y, const Ogre::Vector3& z);
     float guessStickCharge();
     void calculateXYRotation();
@@ -69,7 +80,7 @@ protected:
     bool noBallsBlocking(Ogre::Vector3 cueBallDest, Ball* candidateBall, Pocket* candidatePocket);
 
 public:
-    AIPlayer(ThreeDPool* _game, int _difficulty);
+    AIPlayer(ThreeDPool* _game, int _difficulty, bool _adaptive = true);
     AIPlayer(const AIPlayer& orig);
     virtual ~AIPlayer();
     

@@ -44,7 +44,13 @@ const float AIPlayer::HARD_DIFFICULTY_PERFECT_PERCENTAGE   = 0.5;
 
 const int AIPlayer::ROTATIONS_MAX = 15000;
 
-AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
+const int AIPlayer::LOWER_ADAPTIVE_BOUNDARY = -7;
+const int AIPlayer::EASY_ADAPTIVE_BOUNDARIES  [2] = {0, 4};
+const int AIPlayer::MEDIUM_ADAPTIVE_BOUNDARIES[2] = {-3, 3};
+const int AIPlayer::HARD_ADAPTIVE_BOUNDARIES  [2] = {-4, 0};
+const int AIPlayer::HIGHER_ADAPTIVE_BOUNDARY = 7;
+
+AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty, bool _adaptive) :
         game(_game),
         decided(false),
         rotDelta(ROT_DELTA_START),
@@ -53,22 +59,36 @@ AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         rotatingStick(true),
         decidedChargeGoal(false),
         chargeGoal(50.0f),
+        baseDifficulty(_difficulty),
         difficulty(_difficulty),
-        rotations(0)
+        rotations(0),
+        adaptive(_adaptive)
 {
     assert(difficulty == 2 || difficulty == 1 || difficulty == 0); //Difficulty must be easy, medium, or hard
     switch (difficulty) {
         case 2:
             maxDifficultyOffset = HARD_DIFFICULTY_OFFSET;
             perfectPercentage = HARD_DIFFICULTY_PERFECT_PERCENTAGE;
+            if (adaptive) {
+                adaptiveBoundaries[0] = HARD_ADAPTIVE_BOUNDARIES[0];
+                adaptiveBoundaries[1] = HARD_ADAPTIVE_BOUNDARIES[1];
+            }
             break;
         case 1:
             maxDifficultyOffset = MEDIUM_DIFFICULTY_OFFSET;
             perfectPercentage = MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE;
+            if (adaptive) {
+                adaptiveBoundaries[0] = MEDIUM_ADAPTIVE_BOUNDARIES[0];
+                adaptiveBoundaries[1] = MEDIUM_ADAPTIVE_BOUNDARIES[1];
+            }
             break;
         case 0:
             maxDifficultyOffset = EASY_DIFFICULTY_OFFSET;
             perfectPercentage = EASY_DIFFICULTY_PERFECT_PERCENTAGE;
+            if (adaptive) {
+                adaptiveBoundaries[0] = EASY_ADAPTIVE_BOUNDARIES[0];
+                adaptiveBoundaries[1] = EASY_ADAPTIVE_BOUNDARIES[1];
+            }
             break;
     }
 }
@@ -157,6 +177,26 @@ bool AIPlayer::noBallsBlocking(Ogre::Vector3 cueBallDest, Ball* candidateBall, P
 bool AIPlayer::decideShot()
 {
 //    std::cout << "started deciding shot" << std::endl;
+    // Set difficulty if adaptive
+    if (adaptive && game->ballsAssignedToPlayers) {
+        int ourBallsRemaining = targetSolids ? game->solidBallsRemaining : game->stripedBallsRemaining;
+        int oppBallsRemaining = targetSolids ? game->stripedBallsRemaining : game->solidBallsRemaining;
+        int difference = ourBallsRemaining - oppBallsRemaining;
+
+        if (difference <= adaptiveBoundaries[0]) {
+            difficulty = 0;
+            maxDifficultyOffset = EASY_DIFFICULTY_OFFSET;
+            perfectPercentage = EASY_DIFFICULTY_PERFECT_PERCENTAGE;            
+        } else if (difference >= adaptiveBoundaries[1]) {
+            difficulty = 2;
+            maxDifficultyOffset = HARD_DIFFICULTY_OFFSET;
+            perfectPercentage = HARD_DIFFICULTY_PERFECT_PERCENTAGE;              
+        } else {
+            difficulty = 1;
+            maxDifficultyOffset = MEDIUM_DIFFICULTY_OFFSET;
+            perfectPercentage = MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE;    
+        }
+    }
 
     Ogre::SceneNode* cueBallNode = game->cueBall->getNode();
     
