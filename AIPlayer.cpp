@@ -30,25 +30,25 @@
 
 #include <algorithm>
 
-const float AIPlayer::ROT_DELTA_START = 0.01;
+const float AIPlayer::ROT_DELTA_START = 0.03;
 const float AIPlayer::ROT_DELTA_MIN = 0.0000001;
 const int AIPlayer::NO_ROT_COUNT_THRESHOLD = 5;
 
-const int AIPlayer::EASY_DIFFICULTY_OFFSET = 2;
-const int AIPlayer::MEDIUM_DIFFICULTY_OFFSET = 1;
-const int AIPlayer::HARD_DIFFICULTY_OFFSET = 0.5;
+const int AIPlayer::EASY_DIFFICULTY_OFFSET = 8;
+const int AIPlayer::MEDIUM_DIFFICULTY_OFFSET = 4;
+const int AIPlayer::HARD_DIFFICULTY_OFFSET = 2;
 
 const float AIPlayer::EASY_DIFFICULTY_PERFECT_PERCENTAGE   = 0.1;
 const float AIPlayer::MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE = 0.3;
 const float AIPlayer::HARD_DIFFICULTY_PERFECT_PERCENTAGE   = 0.5;
 
-const int AIPlayer::ROTATIONS_MAX = 30000;
+const int AIPlayer::ROTATIONS_MAX = 15000;
 
 AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         game(_game),
         decided(false),
         rotDelta(ROT_DELTA_START),
-        chargeDelta(0.01f),
+        chargeDelta(0.03f),
         noRotCount(0),
         rotatingStick(true),
         decidedChargeGoal(false),
