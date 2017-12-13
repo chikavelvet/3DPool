@@ -32,7 +32,8 @@ GUIManager::GUIManager(ThreeDPool* _game) :
     game(_game),
     progressAlpha(PROGRESS_MAX_ALPHA),
     justCheckedBox(false), justCheckedBox2(false), p1Selected(false), p2Selected(false),
-    p1Type(0), p2Type(0), p1Diff(0), p2Diff(0)
+    p1Type(0), p2Type(0), p1Diff(0), p2Diff(0),
+    p1Adaptive(false), p2Adaptive(false)
 {
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::ImageManager::setImagesetDefaultResourceGroup("Imagesets");
@@ -171,6 +172,7 @@ void GUIManager::player1SelectAI(){
     this->screens[PLAYER_SELECT]->getChild("Player1SelectEasy")->show();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectMedium")->show();
     this->screens[PLAYER_SELECT]->getChild("Player1SelectHard")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player1SelectAdaptive")->show();
 
     if(p1Selected && p2Selected)
         this->screens[PLAYER_SELECT]->getChild("ReadyToGo")->show();
@@ -184,6 +186,7 @@ void GUIManager::player2SelectAI(){
     this->screens[PLAYER_SELECT]->getChild("Player2SelectEasy")->show();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectMedium")->show();
     this->screens[PLAYER_SELECT]->getChild("Player2SelectHard")->show();
+    this->screens[PLAYER_SELECT]->getChild("Player2SelectAdaptive")->show();
 
     if(p1Selected && p2Selected)
         this->screens[PLAYER_SELECT]->getChild("ReadyToGo")->show();
@@ -243,10 +246,18 @@ void GUIManager::player2SelectHard(){
     justCheckedBox2 = false;
 }
 
+void GUIManager::player1SelectAdaptive() {
+    p1Adaptive = this->screens[PLAYER_SELECT]->getChild("Player1SelectAdaptive")->getProperty("Selected") == "true";
+}
+
+void GUIManager::player2SelectAdaptive() {
+    p2Adaptive = this->screens[PLAYER_SELECT]->getChild("Player2SelectAdaptive")->getProperty("Selected") == "true";
+}
 
 void GUIManager::createPlayersLobby(){
     hideAllScreens();
     this->screens[BACKGROUND]->show();
+    using namespace CEGUI;
 
      if (!this->screens[PLAYER_SELECT]) {
 
@@ -257,7 +268,6 @@ void GUIManager::createPlayersLobby(){
         back->setProperty("PushedTextColour", "tl:FF00FF00 tr:FF00FF00 bl:FF00FF00 br:FF00FF00");
         back->setText("Main Menu");
         back->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIManager::createMainMenu, this));        
-
 
         //Player 1 (LEFT) Side
         CEGUI::Window *p1Title = makeWindow(PLAYER_SELECT, "StaticText", "Player1Title", 0.15, 0.05, 0.29, 0.26);
@@ -292,9 +302,13 @@ void GUIManager::createPlayersLobby(){
         p1SelectHard->setProperty("Selected", "False");
         p1SelectHard->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectHard, this));
         p1SelectHard->hide();
-
-
-
+        
+        Window* p1SelectAdaptive = makeWindow(PLAYER_SELECT, "Checkbox", "Player1SelectAdaptive", 0.1, 0.05, 0.27, 0.54);
+        p1SelectAdaptive->setProperty("Text", "Adaptive");
+        p1SelectAdaptive->setProperty("Selected", "False");
+        p1SelectAdaptive->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player1SelectAdaptive, this));
+        p1SelectAdaptive->hide();
+        
         //Player 2 (RIGHT) Side
         CEGUI::Window *p2Title = makeWindow(PLAYER_SELECT, "StaticText", "Player2Title", 0.15, 0.05, 0.66, 0.26);
         p2Title->setProperty("BackgroundEnabled", "False");
@@ -328,7 +342,12 @@ void GUIManager::createPlayersLobby(){
         p2SelectHard->setProperty("Selected", "False");
         p2SelectHard->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectHard, this));
         p2SelectHard->hide();
-
+        
+        Window* p2SelectAdaptive = makeWindow(PLAYER_SELECT, "Checkbox", "Player2SelectAdaptive", 0.1, 0.05, 0.64, 0.54);
+        p2SelectAdaptive->setProperty("Text", "Adaptive");
+        p2SelectAdaptive->setProperty("Selected", "False");
+        p2SelectAdaptive->subscribeEvent(CEGUI::ToggleButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&GUIManager::player2SelectAdaptive, this));
+        p2SelectAdaptive->hide();
 
         CEGUI::Window *readyToGo = makeWindow(PLAYER_SELECT, "Button", "ReadyToGo", 0.15, 0.05, 0.415, 0.55);
         readyToGo->setText("Ready to Go");

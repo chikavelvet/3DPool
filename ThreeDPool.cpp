@@ -363,10 +363,10 @@ void ThreeDPool::createScene(void)
     
     // Set up Players //
     if(mGUIMgr->p1Type == 0) player1 = new ManualPlayer(this); 
-    else player1 = new AIPlayer(this, mGUIMgr->p1Diff);
+    else player1 = new AIPlayer(this, mGUIMgr->p1Diff, mGUIMgr->p1Adaptive);
 
     if(mGUIMgr->p2Type == 0) player2 = new ManualPlayer(this); 
-    else player2 = new AIPlayer(this, mGUIMgr->p2Diff);
+    else player2 = new AIPlayer(this, mGUIMgr->p2Diff, mGUIMgr->p2Adaptive);
     
     // if (isMultiplayer)
     //     if (isAI)
@@ -1147,6 +1147,9 @@ void ThreeDPool::physicsLoop()
             Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(usr);
                         
             Ball* ball = pocketMap[node];
+            
+            if (!ball->getGraphics()->geom->isVisible())
+                continue;
             
             ball->removeFromWorld();
             

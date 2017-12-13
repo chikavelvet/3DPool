@@ -179,6 +179,7 @@ bool AIPlayer::decideShot()
 //    std::cout << "started deciding shot" << std::endl;
     // Set difficulty if adaptive
     if (adaptive && game->ballsAssignedToPlayers) {
+        std::cout << "Adapting Difficulty" << std::endl;
         int ourBallsRemaining = targetSolids ? game->solidBallsRemaining : game->stripedBallsRemaining;
         int oppBallsRemaining = targetSolids ? game->stripedBallsRemaining : game->solidBallsRemaining;
         int difference = ourBallsRemaining - oppBallsRemaining;

@@ -70,6 +70,9 @@ protected:
     void player2SelectMedium();
     void player2SelectHard();
     
+    void player1SelectAdaptive();
+    void player2SelectAdaptive();
+    
     CEGUI::Window* makeWindow(const std::string& parentScreen,
         const std::string& type, const std::string& name,
         float xRelSize, float yRelSize, 
@@ -79,6 +82,7 @@ protected:
 public:
 
     int p1Type, p2Type, p1Diff, p2Diff;
+    bool p1Adaptive, p2Adaptive;
     bool p1Selected, p2Selected;
     bool justCheckedBox;
     bool justCheckedBox2;
