@@ -621,7 +621,13 @@ void GUIManager::decrementRemainingBallCount(bool redBall) {
 
 void GUIManager::endCurrentTurn() {
     CEGUI::Window* activePlayer = sheet->getChild("GameScreen")->getChild("ActivePlayer"); 
-    activePlayer->setText(game->player1Turn ? ("  P1: " + p1Name) : ("  P2: " + p1Name));
+    std::string p1Text = "  P1: " + p1Name;
+    if(p1Type==0)
+        p1Text = "          P1: " + p1Name;
+    std::string p2Text = "  P2: " + p2Name;
+    if(p2Type==0)
+        p2Text = "          P2: " + p2Name;
+    activePlayer->setText(game->player1Turn ? p1Text : p2Text);
     std::string targetting;
 
     if (game->ballsAssignedToPlayers) {

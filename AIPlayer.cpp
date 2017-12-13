@@ -42,7 +42,7 @@ const float AIPlayer::EASY_DIFFICULTY_PERFECT_PERCENTAGE   = 0.1;
 const float AIPlayer::MEDIUM_DIFFICULTY_PERFECT_PERCENTAGE = 0.3;
 const float AIPlayer::HARD_DIFFICULTY_PERFECT_PERCENTAGE   = 0.5;
 
-const int AIPlayer::ROTATIONS_MAX = 4000;
+const int AIPlayer::ROTATIONS_MAX = 30000;
 
 AIPlayer::AIPlayer(ThreeDPool* _game, int _difficulty) :
         game(_game),
@@ -335,17 +335,20 @@ bool AIPlayer::decideShot()
     Ogre::Vector3 dest = chosenBall->getNode()->getPosition() - (direction * radius * 2.0f);
     float distance(Ogre::Vector3((dest-cueBallNode->getPosition()) + (chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition())).length());
 
-    std::cout << "DISTANCE: " << distance << std::endl;
+    // std::cout << "DISTANCE: " << distance << std::endl;
 
     applyDifficulty(dest); //applies random offsets to dest in the x, y, and z directions
 
+    std::cout << "DEST: " << dest << std::endl;
+
+
     cueToDest = dest - game->cueBall->getNode()->getPosition();
-    
+
     Ogre::Vector3 chosenToCue(game->cueBall->getNode()->getPosition() - chosenBall->getNode()->getPosition());
     Ogre::Vector3 chosenBallToPocket(chosenPocket->getNode()->getPosition() - chosenBall->getNode()->getPosition());
 
-    std::cout << "Angle Between best ball and best pocket: " << 
-            Ogre::Degree(chosenToCue.angleBetween(chosenBallToPocket)) << std::endl;
+    // std::cout << "Angle Between best ball and best pocket: " << 
+    //         Ogre::Degree(chosenToCue.angleBetween(chosenBallToPocket)) << std::endl;
 
     decided = true;
     return true;

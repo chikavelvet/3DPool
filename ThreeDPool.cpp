@@ -1126,6 +1126,12 @@ void ThreeDPool::physicsLoop()
                 firstAssignment = true;
             }
             
+            if(ball->solidBall){
+                solidBalls.erase(std::remove(solidBalls.begin(), solidBalls.end(), ball), solidBalls.end());
+            } else{
+                stripedBalls.erase(std::remove(stripedBalls.begin(), stripedBalls.end(), ball), stripedBalls.end());
+            }
+
             decrementRemainingBallCount(ball->solidBall);
             
             ballInThisTurn = true;
